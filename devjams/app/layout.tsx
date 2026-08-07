@@ -1,9 +1,53 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import "./globals.css";
+
+const googleSans = localFont({
+  src: [
+    {
+      path: "../public/fonts/GoogleSans-Regular.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/GoogleSans-Italic.ttf",
+      weight: "400",
+      style: "italic",
+    },
+    {
+      path: "../public/fonts/GoogleSans-Medium.ttf",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/GoogleSans-MediumItalic.ttf",
+      weight: "500",
+      style: "italic",
+    },
+    {
+      path: "../public/fonts/GoogleSans-Bold.ttf",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/GoogleSans-BoldItalic.ttf",
+      weight: "700",
+      style: "italic",
+    },
+  ],
+  variable: "--font-google-sans",
+  display: "swap",
+});
+
+const googleSansFlex = localFont({
+  src: "../public/fonts/GoogleSansFlex.ttf",
+  variable: "--font-google-sans-flex",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "DevJams '26",
-  description: "DevJams '26 - Hack Pack, DevJams' Back.",
+  description: "DevJams 2026 Frontend",
 };
 
 export default function RootLayout({
@@ -12,14 +56,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark h-full">
-      <head>
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap"
-        />
-      </head>
-      <body className="min-h-screen bg-black text-white antialiased flex flex-col justify-between overflow-x-hidden">
+    <html
+      lang="en"
+      className={`${googleSans.variable} ${googleSansFlex.variable} h-full antialiased dark`}
+    >
+      <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
         {children}
       </body>
     </html>
