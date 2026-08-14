@@ -420,6 +420,32 @@ export default function Home() {
         ref={heroRef}
         className="relative z-10 flex flex-col items-center justify-center min-h-screen w-full max-w-[1440px] px-4 py-10"
       >
+        <header className="hero-header" aria-label="Google Developer Groups">
+          <div className="hero-gdg-lockup">
+            <Image
+              src="/assets/gdg-logo-white.svg"
+              alt=""
+              width={46}
+              height={23}
+              priority
+              className="hero-gdg-lockup__icon"
+            />
+            <span className="hero-gdg-lockup__wordmark" aria-hidden="true">
+              <Image
+                src="/assets/gdg-lockup-line.png"
+                alt=""
+                width={3003}
+                height={300}
+                priority
+                className="hero-gdg-lockup__wordmark-image"
+              />
+            </span>
+            <span className="hero-gdg-lockup__name">
+              Vellore Institute of Technology
+            </span>
+          </div>
+        </header>
+
         {/* DevJams '26 Logo Container - Placed ON TOP (z-30) */}
         <div className="relative z-30 w-[955.5px] h-[170.98px] max-w-full scale-[0.36] min-[440px]:scale-[0.52] sm:scale-[0.72] md:scale-[0.88] lg:scale-100 transition-all origin-center">
           {logoLetters.map((letter, index) => (

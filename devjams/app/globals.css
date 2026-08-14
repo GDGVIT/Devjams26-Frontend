@@ -219,3 +219,77 @@ body {
   }
 }
 
+.hero-header {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 50;
+  width: min(1440px, 100vw);
+  height: 92.14px;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.hero-gdg-lockup {
+  position: absolute;
+  top: 24.86px;
+  left: 54.05px;
+  width: 257.9px;
+  height: 42.42px;
+  margin: 0;
+}
+
+.hero-gdg-lockup__icon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 46px;
+  height: 23px;
+}
+.hero-gdg-lockup__wordmark {
+  position: absolute;
+  top: 0;
+  left: 50px;
+  width: 202.42px;
+  height: 26.0925px;
+  overflow: hidden;
+}
+
+.hero-gdg-lockup__wordmark-image {
+  position: absolute;
+  top: 0;
+  left: -58.98px;
+  display: block;
+  width: 261.4px;
+  height: 26.0925px;
+  max-width: none;
+  object-fit: fill;
+  filter: brightness(0) invert(1);
+}
+
+.hero-gdg-lockup__name {
+  position: absolute;
+  top: 26.42px;
+  left: 50px;
+  width: 202.42px;
+  height: 16px;
+  color: #fff;
+  font-family: "Google Sans", sans-serif;
+  font-size: 12.731px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px;
+  letter-spacing: 0;
+  text-align: center;
+  white-space: nowrap;
+}
+@media (max-width: 700px) {
+  .hero-gdg-lockup {
+    top: 16px;
+    left: 16px;
+    width: min(257.9px, calc(100vw - 32px));
+    height: 42.42px;
+  }
+}
+
