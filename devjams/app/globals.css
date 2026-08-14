@@ -90,7 +90,7 @@ body {
 
 .about-devjams__shape--pin {
   left: 911.1626px;
-  top: 387.2815px;
+  top: calc(100vh + 387.2815px);
   width: 364.106px;
   height: 464.3671px;
   z-index: 2;
@@ -104,6 +104,99 @@ body {
   height: 100%;
   max-width: none;
   object-fit: contain;
+}
+
+
+.frame-three {
+  position: relative;
+  width: min(1440px, 100vw);
+  height: 1024px;
+  background: #000;
+  overflow: hidden;
+}
+
+.frame-three__title {
+  position: absolute;
+  left: 114px;
+  top: 179px;
+  width: 1213px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  margin: 0;
+  color: #fff;
+  font-family: "Google Sans", sans-serif;
+  font-size: 64px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: center;
+  text-transform: capitalize;
+  will-change: transform, opacity;
+}
+
+.frame-three__description {
+  position: absolute;
+  left: 346.5px;
+  top: 647.21px;
+  width: 748px;
+  height: 215px;
+  margin: 0;
+  color: #fff;
+  font-family: "Google Sans", sans-serif;
+  font-size: 36px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-align: center;
+  will-change: transform, opacity;
+}
+
+.frame-three__logos {
+  position: absolute;
+  left: 228px;
+  top: 297.95px;
+  width: 1003.7384033203125px;
+  height: 336.3052978515625px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.frame-three__logo {
+  position: absolute;
+  display: block;
+  transform-origin: center center;
+  will-change: transform, opacity;
+  mix-blend-mode: screen;
+}
+
+.frame-three__logo-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: contain;
+}
+
+.frame-three__logo--gemini {
+  left: 0;
+  top: 46.2871807795699px;
+  width: 243.7309362924227px;
+  height: 243.7309362924227px;
+}
+
+.frame-three__logo--gear {
+  left: 760.0074670278898px;
+  top: 46.2871807795699px;
+  width: 243.7309362924227px;
+  height: 243.7309362924227px;
+}
+
+.frame-three__logo--gear .frame-three__logo-image {
+  transform: scale(1.19);
 }
 
 @media (max-width: 700px) {
