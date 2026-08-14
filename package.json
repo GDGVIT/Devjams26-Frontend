@@ -1,0 +1,11 @@
+{
+  "name": "devjams26-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm run dev --prefix devjams",
+    "build": "npm run build --prefix devjams",
+    "start": "npm run start --prefix devjams",
+    "lint": "npm run lint --prefix devjams"
+  }
+}
