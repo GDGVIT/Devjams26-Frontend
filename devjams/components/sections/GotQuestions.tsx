@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { useScroll, useTransform } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
 import { GotQuestionsGraphic } from "../got-questions/GotQuestionsGraphic";
 import { GotQuestionsHeading } from "../got-questions/GotQuestionsHeading";
 import { GotQuestionsSubHeading } from "../got-questions/GotQuestionsSubHeading";
@@ -9,42 +9,52 @@ import { GotQuestionsSubHeading } from "../got-questions/GotQuestionsSubHeading"
 export function GotQuestions() {
   const sectionRef = useRef<HTMLDivElement>(null);
 
-  // Scroll tracking across section viewport
+  // Scroll tracking across pinned sticky 350vh viewport
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start 80%", "start 10%"],
+    offset: ["start start", "end end"],
   });
 
-  // Apex interpolation: Initial (850, 540) -> Final (240, 650)
-  const apexX = useTransform(scrollYProgress, [0, 1], [850, 240]);
-  const apexY = useTransform(scrollYProgress, [0, 1], [540, 650]);
+  // Apex interpolation matching States 1 -> 2 -> 3 -> 4:
+  // State 1 (progress 0.0): apexX = 600, apexY = 0 (collapsed at top edge, flat horizontal lines)
+  // State 2 (progress 0.3): apexX = 600, apexY = 160 (shallow V-shape enters top edge, lines bend)
+  // State 3 (progress 0.6): apexX = 600, apexY = 400 (deep V-shape extends down)
+  // State 4 (progress 1.0): apexX = 220, apexY = 650 (apex touches the very bottom edge y=650)
+  const apexX = useTransform(scrollYProgress, [0, 0.6, 1], [600, 600, 220]);
+  const apexY = useTransform(scrollYProgress, [0, 0.3, 0.6, 1], [0, 160, 400, 650]);
 
-  // Text Animations
-  const gotQuestionsX = useTransform(scrollYProgress, [0, 1], ["54%", "62%"]);
-  const gotQuestionsY = useTransform(scrollYProgress, [0, 1], ["22%", "16%"]);
-
-  // Sub-heading visibility trigger on scroll
-  const breakItDownOpacity = useTransform(scrollYProgress, [0.55, 0.85], [0, 1]);
-  const breakItDownY = useTransform(scrollYProgress, [0.55, 0.85], [30, 0]);
+  // Geometric clip-path mask matching the orange triangle polygon expansion in real time
+  // SVG viewBox is 1000 x 650 -> apexX / 10 = %, apexY / 6.5 = %
+  const clipPath = useTransform([apexX, apexY], (values: number[]) => {
+    const x = ((values[0] ?? 600) / 10).toFixed(2);
+    const y = ((values[1] ?? 0) / 6.5).toFixed(2);
+    return `polygon(0% 0%, 100% 0%, ${x}% ${y}%)`;
+  });
 
   return (
     <section 
       ref={sectionRef} 
-      className="relative w-full h-screen bg-black text-white overflow-hidden"
+      className="relative w-full h-[350vh] bg-black text-white"
     >
-      <div className="relative w-full h-full flex items-center justify-center overflow-hidden bg-black">
-        {/* Composable SVG Graphic Canvas */}
+      <div className="sticky top-0 w-full h-screen flex items-center justify-center overflow-hidden bg-black">
+        {/* Dynamic SVG Graphic Canvas */}
         <GotQuestionsGraphic apexX={apexX} apexY={apexY} />
 
-        {/* Text Overlay Container */}
-        <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-          {/* Composable Main Heading */}
-          <GotQuestionsHeading x={gotQuestionsX} y={gotQuestionsY} />
+        {/* Text Overlay Container clipped by the expanding orange triangle shape */}
+        <motion.div 
+          style={{ clipPath }}
+          className="absolute inset-0 pointer-events-none"
+        >
+          {/* Main Heading */}
+          <GotQuestionsHeading />
 
-          {/* Composable Sub Heading */}
-          <GotQuestionsSubHeading opacity={breakItDownOpacity} y={breakItDownY} />
-        </div>
+          {/* Sub Heading */}
+          <GotQuestionsSubHeading />
+        </motion.div>
       </div>
     </section>
   );
 }
+
+
+

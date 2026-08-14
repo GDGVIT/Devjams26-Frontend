@@ -1,69 +1,86 @@
 "use client";
 
-import { motion, MotionValue } from "motion/react";
+import { motion, MotionValue, useTransform } from "motion/react";
 
 interface GotQuestionsGraphicProps {
   apexX: MotionValue<number>;
   apexY: MotionValue<number>;
 }
 
-export function GotQuestionsGraphic({ apexX, apexY }: GotQuestionsGraphicProps) {
-  // Triangle path definition starting at top edge (y=0)
-  const trianglePath = useTransform(
-    [apexX, apexY],
-    ([x, y]) => `M 0 0 L 1000 0 L ${x} ${y} Z`
-  );
+// 16 baseline Y coordinates for horizontal background lines
+const LINE_BASELINE_Y = [
+  30, 70, 110, 150, 190, 230, 270, 310, 350, 390, 430, 470, 510, 550, 590, 630
+];
 
-  // Left radiating lines (5 cleanly-spaced lines)
-  const leftLine1 = useTransform([apexX, apexY], ([x, y]) => `M 0 0 L ${x} ${y}`);
-  const leftLine2 = useTransform([apexX, apexY], ([x, y]) => `M 0 150 L ${x} ${y}`);
-  const leftLine3 = useTransform([apexX, apexY], ([x, y]) => `M 0 300 L ${x} ${y}`);
-  const leftLine4 = useTransform([apexX, apexY], ([x, y]) => `M 0 450 L ${x} ${y}`);
-  const leftLine5 = useTransform([apexX, apexY], ([x, y]) => `M 0 600 L ${x} ${y}`);
-
-  // Right radiating lines (6 cleanly-spaced lines)
-  const rightLine1 = useTransform([apexX, apexY], ([x, y]) => `M 1000 0 L ${x} ${y}`);
-  const rightLine2 = useTransform([apexX, apexY], ([x, y]) => `M 1000 130 L ${x} ${y}`);
-  const rightLine3 = useTransform([apexX, apexY], ([x, y]) => `M 1000 260 L ${x} ${y}`);
-  const rightLine4 = useTransform([apexX, apexY], ([x, y]) => `M 1000 390 L ${x} ${y}`);
-  const rightLine5 = useTransform([apexX, apexY], ([x, y]) => `M 1000 520 L ${x} ${y}`);
-  const rightLine6 = useTransform([apexX, apexY], ([x, y]) => `M 1000 650 L ${x} ${y}`);
+function BentLine({ y0, apexX, apexY }: { y0: number; apexX: MotionValue<number>; apexY: MotionValue<number> }) {
+  const d = useTransform([apexX, apexY], (values: number[]) => {
+    const x = values[0] ?? 600;
+    const y = values[1] ?? 0;
+    // Only bend a line toward the apex if the apex is BELOW the line's baseline.
+    // Math.max(y, y0) means:
+    //   - if apexY < y0: vertex snaps to y0 → flat horizontal line (State 1)
+    //   - if apexY >= y0: vertex drops to apexY → V-shape converging to apex
+    const vertexY = Math.max(y, y0);
+    return `M 0 ${y0} L ${x.toFixed(1)} ${vertexY.toFixed(1)} L 1000 ${y0}`;
+  });
 
   return (
-    <svg 
-      viewBox="0 0 1000 650" 
+    <motion.path
+      d={d as any}
+      stroke="url(#spectrumGradient)"
+      strokeWidth="1.5"
+      strokeOpacity="0.85"
+      fill="none"
+    />
+  );
+}
+
+export function GotQuestionsGraphic({ apexX, apexY }: GotQuestionsGraphicProps) {
+  // Polygon path definition starting at top edge (y=0) to apex (apexX, apexY)
+  const trianglePath = useTransform([apexX, apexY], (values: number[]) => {
+    const x = values[0] ?? 600;
+    const y = values[1] ?? 0;
+    return `M 0 0 L 1000 0 L ${x.toFixed(1)} ${y.toFixed(1)} Z`;
+  });
+
+  return (
+    <svg
+      viewBox="0 0 1000 650"
       className="w-full h-full select-none pointer-events-none"
       preserveAspectRatio="none"
     >
       <defs>
-        {/* Main horizontal gradient across full coordinate width */}
-        <linearGradient id="mainGradient" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1000" y2="0">
-          <stop offset="0%" stopColor="#c0392b" />
-          <stop offset="25%" stopColor="#9b59b6" />
-          <stop offset="60%" stopColor="#2980b9" />
-          <stop offset="100%" stopColor="#2ecc71" />
+        {/* User-defined spectrum gradient (top-left to top-right vector so all 7 colors are fully visible inside the triangle):
+            #FA3E2C (Minimal Red) → #CC518B (Pink) → #4285F4 (Blue) → #57CAFF (Sky Blue) → #34A853 (Green) → #5CDB6D (Light Green) → #F9AB00 (Minimal Yellow) */}
+        <linearGradient
+          id="spectrumGradient"
+          gradientUnits="userSpaceOnUse"
+          x1="0" y1="0" x2="1000" y2="200"
+        >
+          <stop offset="0%"   stopColor="#FA3E2C" />
+          <stop offset="5%"   stopColor="#CC518B" />
+          <stop offset="22%"  stopColor="#4285F4" />
+          <stop offset="44%"  stopColor="#57CAFF" />
+          <stop offset="66%"  stopColor="#34A853" />
+          <stop offset="82%"  stopColor="#5CDB6D" />
+          <stop offset="92%"  stopColor="#F9AB00" />
+          <stop offset="100%" stopColor="#F9AB00" />
         </linearGradient>
       </defs>
 
-      {/* Main Inverted Triangle */}
-      <motion.path d={trianglePath} fill="url(#mainGradient)" />
+      {/* Background Bending Lines — coloured by position matching spectrum */}
+      <g>
+        {LINE_BASELINE_Y.map((y0) => (
+          <BentLine key={y0} y0={y0} apexX={apexX} apexY={apexY} />
+        ))}
+      </g>
 
-      {/* Left Radiating Lines */}
-      <motion.path d={leftLine1} stroke="url(#mainGradient)" strokeWidth="1.5" strokeOpacity="0.8" />
-      <motion.path d={leftLine2} stroke="url(#mainGradient)" strokeWidth="1.5" strokeOpacity="0.8" />
-      <motion.path d={leftLine3} stroke="url(#mainGradient)" strokeWidth="1.5" strokeOpacity="0.8" />
-      <motion.path d={leftLine4} stroke="url(#mainGradient)" strokeWidth="1.5" strokeOpacity="0.8" />
-      <motion.path d={leftLine5} stroke="url(#mainGradient)" strokeWidth="1.5" strokeOpacity="0.8" />
-
-      {/* Right Radiating Lines */}
-      <motion.path d={rightLine1} stroke="url(#mainGradient)" strokeWidth="1.5" strokeOpacity="0.8" />
-      <motion.path d={rightLine2} stroke="url(#mainGradient)" strokeWidth="1.5" strokeOpacity="0.8" />
-      <motion.path d={rightLine3} stroke="url(#mainGradient)" strokeWidth="1.5" strokeOpacity="0.8" />
-      <motion.path d={rightLine4} stroke="url(#mainGradient)" strokeWidth="1.5" strokeOpacity="0.8" />
-      <motion.path d={rightLine5} stroke="url(#mainGradient)" strokeWidth="1.5" strokeOpacity="0.8" />
-      <motion.path d={rightLine6} stroke="url(#mainGradient)" strokeWidth="1.5" strokeOpacity="0.8" />
+      {/* Triangle fill — matching spectrum gradient */}
+      <motion.path d={trianglePath as any} fill="url(#spectrumGradient)" />
     </svg>
   );
 }
 
-import { useTransform } from "motion/react";
+
+
+
