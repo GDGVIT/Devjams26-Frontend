@@ -229,11 +229,22 @@ body {
   pointer-events: none;
   transform: translateX(-50%);
 }
+.hero-header__row {
+  position: absolute;
+  top: 24px;
+  left: 54.05px;
+  right: 24px;
+  height: 92.14px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  pointer-events: none;
+}
 
 .hero-gdg-lockup {
-  position: absolute;
-  top: 24.86px;
-  left: 54.05px;
+  position: relative;
+  top: 16px;
+  left: 0;
   width: 257.9px;
   height: 42.42px;
   margin: 0;
@@ -284,12 +295,202 @@ body {
   text-align: center;
   white-space: nowrap;
 }
+
+.hero-menu {
+  position: relative;
+  top: 0;
+  right: auto;
+  width: 103.94px;
+  height: 92.14px;
+  pointer-events: auto;
+  cursor: pointer;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  font: inherit;
+  transition: filter 220ms ease, transform 180ms ease;
+}
+
+.hero-menu__dino {
+  position: absolute;
+  left: -1.38px;
+  top: 18.38px;
+  display: block;
+  width: 63.955px;
+  height: 68.768px;
+  max-width: none;
+  transform: rotate(6.138deg);
+  transform-origin: center center;
+}
+
+.hero-menu__dino,
+.hero-menu__mark {
+  will-change: transform;
+  transition: transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hero-menu:hover,
+.hero-menu:focus-visible {
+  filter: drop-shadow(0 0 12px rgba(96, 165, 250, 0.32));
+}
+
+.hero-menu:hover .hero-menu__dino,
+.hero-menu:focus-visible .hero-menu__dino {
+  transform: translate(-2px, -4px) rotate(14deg) scale(1.08);
+}
+
+.hero-menu:hover .hero-menu__mark,
+.hero-menu:focus-visible .hero-menu__mark {
+  transform: translate(3px, -4px) rotate(10deg) scale(1.12);
+}
+.hero-menu.hero-menu--open {
+  filter: drop-shadow(0 0 16px rgba(52, 168, 83, 0.42));
+}
+
+.hero-menu.hero-menu--open .hero-menu__dino {
+  transform: translate(-1px, -2px) rotate(-8deg) scale(1.04);
+}
+
+.hero-menu.hero-menu--open .hero-menu__mark {
+  transform: translate(1px, -2px) rotate(-8deg) scale(1.04);
+}
+
+.hero-menu:active {
+  transform: translateY(1px) scale(0.97);
+}
+
+.hero-menu:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.82);
+  outline-offset: 5px;
+  border-radius: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-menu,
+  .hero-menu__dino,
+  .hero-menu__mark {
+    animation: none;
+    transition: none;
+  }
+}
+
+.hero-menu__mark {
+  position: absolute;
+  left: 47.85px;
+  top: -3px;
+  display: block;
+  width: 38.516px;
+  height: 47.31px;
+  overflow: visible;
+  transform: rotate(0deg);
+}
+
+.hero-content {
+  width: 100%;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateY(42px);
+}
+
+.hero-nav {
+  position: absolute;
+  top: 24px;
+  right: 127.94px;
+  left: auto;
+  z-index: 70;
+  width: 701px;
+  height: 68px;
+  margin-left: 0;
+  box-sizing: border-box;
+  display: block;
+  overflow: hidden;
+  background: #000;
+  border: 1.95px solid #b9b9b9;
+  border-radius: 54.1904px;
+}
+
+.hero-nav__links {
+  position: absolute;
+  top: 22.5px;
+  right: 61.25px;
+  width: 574.75px;
+  height: 23px;
+  display: flex;
+  align-items: center;
+  gap: 46.15px;
+}
+
+.hero-nav__link {
+  flex: none;
+  display: block;
+  color: #fff;
+  font-family: "Google Sans", sans-serif;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 23px;
+  text-decoration: none;
+  transition: color 160ms ease, transform 160ms ease;
+}
+
+.hero-nav__link--active {
+  color: #ea4335;
+}
+
+.hero-nav__link:hover,
+.hero-nav__link:focus-visible {
+  color: #fbbc04;
+  transform: translateY(-1px);
+  outline: none;
+}
 @media (max-width: 700px) {
-  .hero-gdg-lockup {
+  .hero-nav {
+    left: 16px;
+    right: auto;
+    top: 12px;
+    width: calc(100vw - 32px);
+    height: 56px;
+    margin-left: 0;
+  }
+  .hero-content {
+    transform: translateY(28px);
+  }
+
+  .hero-nav__links {
+    width: calc(100% - 32px);
+    height: 23px;
+    justify-content: space-between;
+    gap: 0;
+  }
+
+  .hero-nav__link {
+    font-size: 11px;
+    line-height: 16px;
+  }
+}
+@media (max-width: 700px) {
+  .hero-header__row {
     top: 16px;
     left: 16px;
+    right: 16px;
+  }
+
+  .hero-gdg-lockup {
+    top: 8px;
+    left: 0;
     width: min(257.9px, calc(100vw - 32px));
     height: 42.42px;
+    transform: scale(0.72);
+    transform-origin: top left;
+  }
+
+  .hero-menu {
+    top: 0;
+    right: 0;
+    transform: scale(0.72);
+    transform-origin: top right;
   }
 }
 

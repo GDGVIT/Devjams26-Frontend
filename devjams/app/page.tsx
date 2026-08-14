@@ -3,6 +3,7 @@
 import Image from "next/image";
 import {
   motion,
+  AnimatePresence,
   useMotionValue,
   useMotionValueEvent,
   useScroll,
@@ -10,7 +11,7 @@ import {
 import type { MotionValue } from "motion/react";
 import FoldText from "./components/FoldText";
 import SplitText from "./components/SplitText";
-import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   FRAME_ONE_ANIMATION_START_PROGRESS,
   FRAME_THREE_EDGE_LOGO_OFFSETS,
@@ -79,6 +80,7 @@ export default function Home() {
   const shapeStartRef = useRef<Partial<Record<ShapeKey, ShapeBounds>>>({});
   const shapeTargetRef = useRef<Partial<Record<ShapeKey, ShapeBounds>>>({});
   const frameThreeGeometryRef = useRef<FrameThreeGeometry | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const { scrollY } = useScroll();
 
@@ -418,9 +420,11 @@ export default function Home() {
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center overflow-x-clip select-none">
       <section
         ref={heroRef}
+        id="home"
         className="relative z-10 flex flex-col items-center justify-center min-h-screen w-full max-w-[1440px] px-4 py-10"
       >
         <header className="hero-header" aria-label="Google Developer Groups">
+          <div className="hero-header__row">
           <div className="hero-gdg-lockup">
             <Image
               src="/assets/gdg-logo-white.svg"
@@ -444,8 +448,82 @@ export default function Home() {
               Vellore Institute of Technology
             </span>
           </div>
+          <button
+            type="button"
+            className={`hero-menu${menuOpen ? " hero-menu--open" : ""}`}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            aria-pressed={menuOpen}
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            <Image
+              src="/assets/dino-menu.svg"
+              alt=""
+              width={63.955}
+              height={68.768}
+              priority
+              className="hero-menu__dino"
+            />
+            <svg
+              className="hero-menu__mark"
+              xmlns="http://www.w3.org/2000/svg"
+              width="60"
+              height="55"
+              viewBox="0 0 60 55"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path d="M17.465 0.615787L19.1528 1.68895L17.1208 11.336L25.008 5.41198L26.6957 6.48514L20.8016 15.7548L19.6332 15.0119L24.5367 7.30012L24.5107 7.2836L16.7121 13.1545L15.6605 12.4858L17.6688 2.93318L17.6428 2.91667L12.7393 10.6284L11.5709 9.88547L17.465 0.615787Z" fill="white"/>
+              <path d="M32.2433 24.9556C31.4734 25.4392 30.7203 25.6186 29.9841 25.4938C29.2479 25.369 28.5709 24.9776 27.9532 24.3196C27.5179 23.856 27.2136 23.382 27.0402 22.8976C26.8738 22.4207 26.8165 21.94 26.868 21.4555C26.9196 20.9709 27.0761 20.4933 27.3377 20.0227C27.6063 19.5595 27.9541 19.1133 28.3813 18.6842C28.8224 18.27 29.2894 17.9582 29.7822 17.7488C30.275 17.5394 30.7683 17.428 31.2621 17.4145C31.763 17.4085 32.2426 17.4999 32.7011 17.6885C33.1665 17.8845 33.5853 18.1807 33.9574 18.5771C34.4418 19.093 34.7335 19.621 34.8326 20.1611C34.9461 20.7016 34.9332 21.2273 34.7937 21.7381C34.6613 22.2564 34.4357 22.7354 34.1171 23.1752C33.8055 23.6226 33.4669 24.0037 33.1014 24.3187L29.0262 19.978C28.7649 20.2092 28.55 20.4672 28.3813 20.7522C28.2201 21.0301 28.1201 21.328 28.081 21.6461C28.0495 21.9571 28.0901 22.2777 28.2031 22.6078C28.316 22.9378 28.5199 23.2599 28.8148 23.574C29.1939 23.9778 29.5962 24.219 30.0219 24.2978C30.4545 24.384 30.9001 24.2892 31.3587 24.0134L32.2433 24.9556Z" fill="white"/>
+              <path d="M39.9783 29.8745L40.4978 30.9903L39.3542 31.5228L39.3671 31.5507C40.4706 31.6365 41.2713 32.2141 41.7692 33.2834C41.99 33.7576 42.1089 34.183 42.1259 34.5598C42.1429 34.9365 42.0803 35.2767 41.9391 35.5802C41.7976 35.8837 41.5814 36.1484 41.2906 36.3743C41.0135 36.6052 40.6796 36.8115 40.2891 36.9933L35.547 39.2013L34.995 38.0158L39.8766 35.7429C40.3229 35.5351 40.6156 35.2404 40.7547 34.8588C40.8939 34.4772 40.8574 34.0587 40.6452 33.603C40.4764 33.2404 40.2734 32.9503 40.0362 32.7326C39.8034 32.5242 39.5436 32.3793 39.2568 32.2978C38.97 32.2163 38.6655 32.1942 38.3432 32.2311C38.0346 32.2729 37.7177 32.3696 37.3922 32.5212L33.3196 34.4174L32.7676 33.2319L39.9783 29.8745Z" fill="white"/>
+              <path d="M36.5274 51.7389L36.4904 50.5087L37.7514 50.4707L37.7505 50.44C37.2501 50.178 36.8755 49.8352 36.6267 49.4117C36.3882 48.9879 36.2602 48.4838 36.2426 47.8995C36.2269 47.3766 36.2804 46.9389 36.4032 46.5863C36.5365 46.2334 36.7276 45.9455 36.9775 45.7225C37.2273 45.4995 37.5251 45.3366 37.8709 45.2339C38.2272 45.141 38.6207 45.0881 39.0513 45.0752L44.2798 44.9179L44.3192 46.225L38.9369 46.387C38.4448 46.4018 38.0595 46.557 37.7811 46.8527C37.5027 47.1484 37.371 47.5474 37.3861 48.0498C37.3982 48.4496 37.47 48.7912 37.6017 49.0745C37.7336 49.3682 37.9153 49.6089 38.1467 49.7969C38.3781 49.9849 38.6439 50.1206 38.944 50.2039C39.2546 50.2972 39.5893 50.3384 39.9482 50.3277L44.4386 50.1925L44.4779 51.4997L36.5274 51.7389Z" fill="white"/>
+              <path d="M32.7789 22.4843C32.97 22.283 33.1196 22.0572 33.2278 21.8068C33.3422 21.5632 33.4013 21.3141 33.4052 21.0595C33.422 20.8054 33.3833 20.5524 33.2891 20.3003C33.2078 20.0488 33.0671 19.8144 32.8669 19.5972C32.6604 19.3733 32.432 19.2072 32.1816 19.099C31.9443 18.9914 31.6984 18.9356 31.4437 18.9318C31.1891 18.928 30.9358 18.9732 30.6837 19.0675C30.4384 19.1555 30.2077 19.2866 29.9916 19.4607L32.7789 22.4843Z" fill="black"/>
+            </svg>
+          </button>
+          </div>
+        <AnimatePresence initial={false}>
+          {menuOpen ? (
+            <motion.nav
+              className="hero-nav"
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: 701, opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
+              style={{ transformOrigin: "right center" }}
+              aria-label="Primary navigation"
+            >
+              <motion.div
+                className="hero-nav__links"
+                initial={{ opacity: 0, x: 28 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 28 }}
+                transition={{ duration: 0.22, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <a className="hero-nav__link hero-nav__link--active" href="#home" onClick={() => setMenuOpen(false)}>
+                  Home
+                </a>
+                <a className="hero-nav__link" href="#about" onClick={() => setMenuOpen(false)}>
+                  About
+                </a>
+                <a className="hero-nav__link" href="#tracks" onClick={() => setMenuOpen(false)}>
+                  Tracks
+                </a>
+                <a className="hero-nav__link" href="#gallery" onClick={() => setMenuOpen(false)}>
+                  Gallery
+                </a>
+                <a className="hero-nav__link" href="#faqs" onClick={() => setMenuOpen(false)}>
+                  FAQs
+                </a>
+                <a className="hero-nav__link" href="#contact" onClick={() => setMenuOpen(false)}>
+                  Contact
+                </a>
+              </motion.div>
+            </motion.nav>
+          ) : null}
+        </AnimatePresence>
         </header>
 
+        <div className="hero-content">
         {/* DevJams '26 Logo Container - Placed ON TOP (z-30) */}
         <div className="relative z-30 w-[955.5px] h-[170.98px] max-w-full scale-[0.36] min-[440px]:scale-[0.52] sm:scale-[0.72] md:scale-[0.88] lg:scale-100 transition-all origin-center">
           {logoLetters.map((letter, index) => (
@@ -591,9 +669,10 @@ export default function Home() {
         >
           Idea Submission
         </motion.button>
+        </div>
       </section>
 
-      <section ref={frameTwoRef} className="about-devjams">
+      <section id="about" ref={frameTwoRef} className="about-devjams">
         <motion.div
           className="about-devjams__content"
           style={{ opacity: aboutOpacity, x: aboutX, y: aboutY }}
@@ -627,7 +706,7 @@ export default function Home() {
         />
       </motion.div>
 
-      <section ref={frameThreeRef} className="frame-three">
+      <section id="tracks" ref={frameThreeRef} className="frame-three">
         <h2 className="frame-three__title">
           <FoldText
             text="About GDG"
