@@ -494,8 +494,8 @@ body {
 
 .hero-nav {
   position: absolute;
-  top: 24px;
-  right: 127.94px;
+  top: 34px;
+  right: 147.94px;
   left: auto;
   z-index: 70;
   width: 701px;
@@ -547,7 +547,7 @@ body {
   .hero-nav {
     left: 16px;
     right: auto;
-    top: 12px;
+    top: 22px;
     width: calc(100vw - 32px);
     height: 56px;
     margin-left: 0;
