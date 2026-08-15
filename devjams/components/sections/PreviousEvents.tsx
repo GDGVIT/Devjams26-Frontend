@@ -30,10 +30,12 @@ export function PreviousEvents() {
           <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-12 md:-translate-x-1/2 bg-gradient-to-b from-orange-400 via-purple-500 to-blue-500 rounded-full opacity-90" />
 
           {/* Single Scroll-Driven White Dot */}
-          <motion.div
-            className="absolute left-[14px] md:left-1/2 w-6 h-6 rounded-full bg-white shadow-[0_0_18px_4px_rgba(255,255,255,0.7)] z-30 md:-translate-x-1/2 -translate-y-1/2 pointer-events-none"
-            style={{ top: dotTop }}
-          />
+          <div className="absolute left-4 md:left-1/2 top-6 bottom-6 w-12 md:-translate-x-1/2 flex justify-center pointer-events-none z-30">
+            <motion.div
+              className="absolute w-6 h-6 rounded-full bg-white shadow-[0_0_18px_4px_rgba(255,255,255,0.7)] -translate-y-1/2"
+              style={{ top: dotTop }}
+            />
+          </div>
 
           <div className="w-full flex flex-col gap-16 md:gap-32 relative z-10">
             {EVENTS.map((event, index) => {
