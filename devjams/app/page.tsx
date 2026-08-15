@@ -37,6 +37,8 @@ import {
   type ShapeBounds,
 } from "./frame-transition";
 type ShapeKey = "web" | "android";
+import { PreviousEvents } from "../components/sections/PreviousEvents";
+import { GotQuestions } from "../components/sections/GotQuestions";
 
 type ShapeMotionValues = {
   x: MotionValue<number>;
@@ -800,25 +802,6 @@ export default function Home() {
           })}
         </div>
 
-        {/* Tagline Text */}
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.9, ease: "easeOut" }}
-          className="mt-2 sm:mt-4 mb-8 text-center relative z-30"
-          style={{
-            color: "#FFF",
-            textAlign: "center",
-            fontFamily: '"Google Sans", var(--font-google-sans), sans-serif',
-            fontSize: "clamp(26px, 4.5vw, 48px)",
-            fontStyle: "normal",
-            fontWeight: 700,
-            lineHeight: "normal",
-            letterSpacing: "-2.4px",
-          }}
-        >
-          HACK PACK, DEVJAMS’ BACK.
-        </motion.h1>
 
         {/* Idea Submission Button */}
         <motion.button
@@ -996,6 +979,9 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+      {/* Remaining site sections from the upstream implementation */}
+      <PreviousEvents />
+      <GotQuestions />
     </main>
   );
 }
