@@ -417,7 +417,7 @@ body {
   width: 63.955px;
   height: 68.768px;
   max-width: none;
-  transform: rotate(6.138deg);
+  transform: rotate(0deg);
   transform-origin: center center;
 }
 
@@ -434,7 +434,7 @@ body {
 
 .hero-menu:hover .hero-menu__dino,
 .hero-menu:focus-visible .hero-menu__dino {
-  transform: translate(-2px, -4px) rotate(14deg) scale(1.08);
+  transform: scale(1.04);
 }
 
 .hero-menu:hover .hero-menu__mark,
@@ -446,7 +446,7 @@ body {
 }
 
 .hero-menu.hero-menu--open .hero-menu__dino {
-  transform: translate(-1px, -2px) rotate(-8deg) scale(1.04);
+  transform: translate(-1px, -2px) rotate(8deg) scale(1.04);
 }
 
 .hero-menu.hero-menu--open .hero-menu__mark {
