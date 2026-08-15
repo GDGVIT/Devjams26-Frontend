@@ -28,7 +28,7 @@ const logoLetters: LogoLetter[] = [
 
 export function HeroLogo() {
   return (
-    <div className="relative z-30 w-[955.5px] h-[170.98px] max-w-full scale-[0.36] min-[440px]:scale-[0.52] sm:scale-[0.72] md:scale-[0.88] lg:scale-100 transition-all origin-center">
+    <div className="relative z-30 w-[955.5px] h-[170.98px] max-w-full scale-[0.30] min-[360px]:scale-[0.38] min-[440px]:scale-[0.52] sm:scale-[0.72] md:scale-[0.88] lg:scale-100 -my-10 min-[360px]:-my-6 sm:my-0 transition-all origin-center">
       {logoLetters.map((letter, index) => (
         <motion.div
           key={index}

@@ -23,7 +23,8 @@ export function HeroCTA() {
       whileTap={{ scale: 0.94 }}
       className="cursor-pointer bg-white text-black font-bold text-lg rounded-full flex items-center justify-center transition-shadow shadow-[0_0_20px_rgba(255,255,255,0.25)] relative z-30"
       style={{
-        width: "243px",
+        width: "100%",
+        maxWidth: "243px",
         height: "55px",
         fontFamily: '"Google Sans", var(--font-google-sans), sans-serif',
       }}

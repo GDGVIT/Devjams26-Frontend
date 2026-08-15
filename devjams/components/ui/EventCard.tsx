@@ -12,8 +12,8 @@ interface EventCardProps {
 export function EventCard({ title, description, imageUrl, alignment }: EventCardProps) {
   return (
     <motion.div 
-      className={`flex flex-col gap-4 w-full max-w-[500px] group cursor-pointer ${
-        alignment === "right" ? "items-start" : "items-end"
+      className={`flex flex-col gap-2.5 sm:gap-4 w-full max-w-[500px] group cursor-pointer items-start ${
+        alignment === "right" ? "md:items-start" : "md:items-end"
       }`}
       initial="hidden"
       whileInView="visible"
@@ -21,7 +21,7 @@ export function EventCard({ title, description, imageUrl, alignment }: EventCard
       viewport={{ margin: "-15% 0px -15% 0px", amount: 0.1 }}
     >
       <motion.div 
-        className="w-full overflow-hidden rounded-2xl aspect-[16/10] border border-white/10 relative origin-center shadow-2xl"
+        className="w-full overflow-hidden rounded-xl sm:rounded-2xl aspect-[16/10] border border-white/10 relative origin-center shadow-2xl"
         variants={{
           hidden: { scale: 0.75, opacity: 0.3, y: 40 },
           visible: { scale: 1, opacity: 1, y: 0 }
@@ -37,15 +37,17 @@ export function EventCard({ title, description, imageUrl, alignment }: EventCard
       </motion.div>
       
       <motion.div 
-        className={`flex flex-col w-full ${alignment === "right" ? "text-left items-start" : "text-right items-end"}`}
+        className={`flex flex-col w-full text-left items-start ${
+          alignment === "right" ? "md:text-left md:items-start" : "md:text-right md:items-end"
+        }`}
         variants={{
           hidden: { opacity: 0, y: 15 },
           visible: { opacity: 1, y: 0 }
         }}
         transition={{ duration: 0.5, delay: 0.1 }}
       >
-        <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">{title}</h3>
-        <p className="text-gray-400 text-sm md:text-base leading-relaxed text-left w-full">
+        <h3 className="text-lg sm:text-2xl md:text-3xl font-bold text-white mb-1 sm:mb-2">{title}</h3>
+        <p className="text-gray-400 text-xs sm:text-sm md:text-base leading-normal sm:leading-relaxed text-left w-full">
           {description}
         </p>
       </motion.div>
