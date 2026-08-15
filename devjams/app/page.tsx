@@ -605,7 +605,12 @@ export default function Home() {
       >
         <header className="hero-header" aria-label="Google Developer Groups">
           <div className="hero-header__row">
-          <div className="hero-gdg-lockup">
+          <motion.div
+            className="hero-gdg-lockup"
+            initial={{ opacity: 0, x: -32 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+          >
             <Image
               src="/assets/gdg-logo-white.svg"
               alt=""
@@ -627,9 +632,14 @@ export default function Home() {
             <span className="hero-gdg-lockup__name">
               Vellore Institute of Technology
             </span>
+          </motion.div>
           </div>
-          <button
+        </header>
+          <motion.button
             type="button"
+            initial={{ opacity: 0, x: 40, scale: 0.84 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            transition={{ duration: 0.55, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
             className={`hero-menu${menuOpen ? " hero-menu--open" : ""}`}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
@@ -659,9 +669,8 @@ export default function Home() {
               <path d="M36.5274 51.7389L36.4904 50.5087L37.7514 50.4707L37.7505 50.44C37.2501 50.178 36.8755 49.8352 36.6267 49.4117C36.3882 48.9879 36.2602 48.4838 36.2426 47.8995C36.2269 47.3766 36.2804 46.9389 36.4032 46.5863C36.5365 46.2334 36.7276 45.9455 36.9775 45.7225C37.2273 45.4995 37.5251 45.3366 37.8709 45.2339C38.2272 45.141 38.6207 45.0881 39.0513 45.0752L44.2798 44.9179L44.3192 46.225L38.9369 46.387C38.4448 46.4018 38.0595 46.557 37.7811 46.8527C37.5027 47.1484 37.371 47.5474 37.3861 48.0498C37.3982 48.4496 37.47 48.7912 37.6017 49.0745C37.7336 49.3682 37.9153 49.6089 38.1467 49.7969C38.3781 49.9849 38.6439 50.1206 38.944 50.2039C39.2546 50.2972 39.5893 50.3384 39.9482 50.3277L44.4386 50.1925L44.4779 51.4997L36.5274 51.7389Z" fill="white"/>
               <path d="M32.7789 22.4843C32.97 22.283 33.1196 22.0572 33.2278 21.8068C33.3422 21.5632 33.4013 21.3141 33.4052 21.0595C33.422 20.8054 33.3833 20.5524 33.2891 20.3003C33.2078 20.0488 33.0671 19.8144 32.8669 19.5972C32.6604 19.3733 32.432 19.2072 32.1816 19.099C31.9443 18.9914 31.6984 18.9356 31.4437 18.9318C31.1891 18.928 30.9358 18.9732 30.6837 19.0675C30.4384 19.1555 30.2077 19.2866 29.9916 19.4607L32.7789 22.4843Z" fill="black"/>
             </svg>
-          </button>
-          </div>
-        <AnimatePresence initial={false}>
+          </motion.button>
+        <AnimatePresence>
           {menuOpen ? (
             <motion.nav
               className="hero-nav"
@@ -701,7 +710,6 @@ export default function Home() {
             </motion.nav>
           ) : null}
         </AnimatePresence>
-        </header>
 
         <div className="hero-content">
         {/* DevJams '26 Logo Container - Placed ON TOP (z-30) */}

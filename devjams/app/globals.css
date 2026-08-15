@@ -318,7 +318,7 @@ body {
 }
 
 .hero-header {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 50%;
   z-index: 50;
@@ -395,9 +395,9 @@ body {
 }
 
 .hero-menu {
-  position: relative;
-  top: 0;
-  right: auto;
+  position: fixed;
+  top: 24px;
+  right: 24px;
   width: 103.94px;
   height: 92.14px;
   pointer-events: auto;
@@ -493,7 +493,7 @@ body {
 }
 
 .hero-nav {
-  position: absolute;
+  position: fixed;
   top: 34px;
   right: 147.94px;
   left: auto;
@@ -585,8 +585,8 @@ body {
   }
 
   .hero-menu {
-    top: 0;
-    right: 0;
+    top: 16px;
+    right: 16px;
     transform: scale(0.72);
     transform-origin: top right;
   }
