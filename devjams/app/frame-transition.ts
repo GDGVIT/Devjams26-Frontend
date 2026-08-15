@@ -121,6 +121,37 @@ export const FRAME_THREE_LOGOS = {
   },
 } as const satisfies Record<string, ShapeBounds>;
 
+export const FRAME_FOUR_LOGO_ORDER = ["gear", "gemini", "cloud"] as const;
+export const FRAME_FOUR_SHAPES = {
+  gear: {
+    x: 119.3134,
+    y: 30.4502,
+    width: 453.8907,
+    height: 453.8907,
+  },
+  gemini: {
+    x: 164.7314,
+    y: 347.2815,
+    width: 364.106,
+    height: 464.3671,
+  },
+  cloud: {
+    x: 112.373,
+    y: 739.2776,
+    width: 467.627,
+    height: 285.7433,
+  },
+} as const satisfies Record<string, ShapeBounds>;
+
+export const FRAME_FOUR_CONTENT_ENTER_OFFSET = {
+  x: 160,
+  y: 0,
+} as const;
+
+export function frameFourContentOffsetAt(progress: number) {
+  return FRAME_FOUR_CONTENT_ENTER_OFFSET.x * (1 - smoothScrollProgressAt(progress));
+}
+
 const GEMINI_FADE_STOPS = [
   [0, 1],
   [0.25, 0.85],
@@ -179,6 +210,14 @@ export function uniformShapeTransformAt(
     scaleX: scale,
     scaleY: scale,
   };
+}
+
+export function frameFourSharedLogoTransformAt(
+  start: ShapeBounds,
+  target: ShapeBounds,
+  progress: number,
+) {
+  return uniformShapeTransformAt(start, target, progress);
 }
 
 export function halfVisibleScrollAt(

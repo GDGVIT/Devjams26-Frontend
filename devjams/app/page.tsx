@@ -13,6 +13,8 @@ import FoldText from "./components/FoldText";
 import SplitText from "./components/SplitText";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
+  FRAME_FOUR_CONTENT_ENTER_OFFSET,
+  FRAME_FOUR_SHAPES,
   FRAME_ONE_ANIMATION_START_PROGRESS,
   FRAME_THREE_EDGE_LOGO_OFFSETS,
   FRAME_THREE_LOGOS,
@@ -22,10 +24,12 @@ import {
   FRAME_TWO_SHAPES,
   HERO_TRACK_ENTRY_DELAYS,
   alignShapeBoundsX,
-  geminiOpacityAt,
-  halfVisibleScrollAt,
+  frameFourContentOffsetAt,
+  frameFourSharedLogoTransformAt,
   frameTwoMapEntryTransformAt,
   frameTwoMapsOpacityAt,
+  geminiOpacityAt,
+  halfVisibleScrollAt,
   interpolateShapeBounds,
   scrollTransitionProgressAt,
   smoothScrollProgressAt,
@@ -46,6 +50,14 @@ type FrameThreeGeometry = {
   heroHeight: number;
   frameTwoStart: number;
   frameTwoHeight: number;
+  frameFourStart: number;
+  frameFourHeight: number;
+  frameThreePageLeft: number;
+  frameThreePageTop: number;
+  frameThreeScale: number;
+  frameFourPageLeft: number;
+  frameFourPageTop: number;
+  frameFourScale: number;
   viewportHeight: number;
   frameTwoLoadEnd: number;
   frameThreeTransitionEnd: number;
@@ -69,11 +81,19 @@ function readNaturalBounds(element: HTMLElement): ShapeBounds {
     height: rect.height,
   };
 }
-
+const FRAME_FOUR_START_SHAPES = {
+  cloud: {
+    x: 1480,
+    y: FRAME_FOUR_SHAPES.cloud.y,
+    width: 278,
+    height: 203,
+  },
+} as const;
 export default function Home() {
   const heroRef = useRef<HTMLElement>(null);
   const frameTwoRef = useRef<HTMLElement>(null);
   const frameThreeRef = useRef<HTMLElement>(null);
+  const frameFourRef = useRef<HTMLElement>(null);
   const webRef = useRef<HTMLDivElement>(null);
   const androidRef = useRef<HTMLDivElement>(null);
   const mapsRef = useRef<HTMLDivElement>(null);
@@ -101,6 +121,14 @@ export default function Home() {
   const aboutY = useMotionValue(36);
 
   const mapsFrameThreeX = useMotionValue(0);
+  const frameThreeWebOpacity = useMotionValue(1);
+  const frameFourCloudX = useMotionValue(0);
+  const frameFourCloudY = useMotionValue(0);
+  const frameFourCloudScale = useMotionValue(1);
+  const frameFourCloudOpacity = useMotionValue(0);
+  const frameFourAboutOpacity = useMotionValue(0);
+  const frameFourAboutX = useMotionValue<number>(FRAME_FOUR_CONTENT_ENTER_OFFSET.x);
+  const frameFourAboutY = useMotionValue<number>(36);
   const mapsFrameThreeY = useMotionValue(0);
   const mapsFrameThreeScaleX = useMotionValue(1);
   const mapsFrameThreeScaleY = useMotionValue(1);
@@ -108,6 +136,12 @@ export default function Home() {
   const frameThreeGeminiX = useMotionValue(FRAME_THREE_EDGE_LOGO_OFFSETS.gemini);
   const frameThreeGeminiRotate = useMotionValue(-180);
   const frameThreeGeminiOpacity = useMotionValue(0);
+  const frameThreeGeminiY = useMotionValue(0);
+  const frameThreeGeminiScaleX = useMotionValue(1);
+  const frameThreeGeminiScaleY = useMotionValue(1);
+  const frameThreeGearY = useMotionValue(0);
+  const frameThreeGearScaleX = useMotionValue(1);
+  const frameThreeGearScaleY = useMotionValue(1);
   const frameThreeGearX = useMotionValue(FRAME_THREE_EDGE_LOGO_OFFSETS.gear);
   const frameThreeGearRotate = useMotionValue(180);
   const frameThreeGearOpacity = useMotionValue(0);
@@ -290,29 +324,161 @@ export default function Home() {
       webY,
     ],
   );
+  const syncFrameFourScroll = useCallback(
+    (pageScroll: number) => {
+      const geometry = frameThreeGeometryRef.current;
+      if (!geometry) return;
+
+      const transitionStart =
+        geometry.frameFourStart - geometry.viewportHeight;
+      const rawProgress = Math.min(
+        1,
+        Math.max(0, (pageScroll - transitionStart) / geometry.frameFourHeight),
+      );
+      const progress = smoothScrollProgressAt(rawProgress);
+
+      if (pageScroll < transitionStart) {
+        frameThreeGeminiY.set(0);
+        frameThreeGeminiScaleX.set(1);
+        frameThreeGeminiScaleY.set(1);
+        frameThreeGearY.set(0);
+        frameThreeGearScaleX.set(1);
+        frameThreeGearScaleY.set(1);
+        frameFourCloudOpacity.set(0);
+        frameFourAboutOpacity.set(0);
+        frameFourAboutX.set(FRAME_FOUR_CONTENT_ENTER_OFFSET.x);
+        frameFourAboutY.set(36);
+        return;
+      }
+
+      const absoluteBounds = (
+        shape: ShapeBounds,
+        sectionLeft: number,
+        sectionTop: number,
+        sectionScale: number,
+      ): ShapeBounds => ({
+        x: sectionLeft + shape.x * sectionScale,
+        y: sectionTop + shape.y * sectionScale,
+        width: shape.width * sectionScale,
+        height: shape.height * sectionScale,
+      });
+
+      const sourceGear = absoluteBounds(
+        FRAME_THREE_LOGOS.gear,
+        geometry.frameThreePageLeft,
+        geometry.frameThreePageTop,
+        geometry.frameThreeScale,
+      );
+      const targetGear = absoluteBounds(
+        FRAME_FOUR_SHAPES.gear,
+        geometry.frameFourPageLeft,
+        geometry.frameFourPageTop,
+        geometry.frameFourScale,
+      );
+      const gearTransform = frameFourSharedLogoTransformAt(
+        sourceGear,
+        targetGear,
+        progress,
+      );
+      frameThreeGearX.set(gearTransform.x);
+      frameThreeGearY.set(gearTransform.y);
+      frameThreeGearScaleX.set(gearTransform.scaleX);
+      frameThreeGearScaleY.set(gearTransform.scaleY);
+      frameThreeGearRotate.set(0);
+      frameThreeGearOpacity.set(1);
+
+      const sourceGemini = absoluteBounds(
+        FRAME_THREE_LOGOS.gemini,
+        geometry.frameThreePageLeft,
+        geometry.frameThreePageTop,
+        geometry.frameThreeScale,
+      );
+      const targetGemini = absoluteBounds(
+        FRAME_FOUR_SHAPES.gemini,
+        geometry.frameFourPageLeft,
+        geometry.frameFourPageTop,
+        geometry.frameFourScale,
+      );
+      const geminiTransform = frameFourSharedLogoTransformAt(
+        sourceGemini,
+        targetGemini,
+        progress,
+      );
+      frameThreeGeminiX.set(geminiTransform.x);
+      frameThreeGeminiY.set(geminiTransform.y);
+      frameThreeGeminiScaleX.set(geminiTransform.scaleX);
+      frameThreeGeminiScaleY.set(geminiTransform.scaleY);
+      frameThreeGeminiRotate.set(0);
+      frameThreeGeminiOpacity.set(1);
+
+      const cloudTransform = uniformShapeTransformAt(
+        FRAME_FOUR_START_SHAPES.cloud,
+        FRAME_FOUR_SHAPES.cloud,
+        progress,
+      );
+      frameFourCloudX.set(cloudTransform.x);
+      frameFourCloudY.set(cloudTransform.y);
+      frameFourCloudScale.set(cloudTransform.scaleX);
+      frameFourCloudOpacity.set(progress);
+
+      frameThreeWebOpacity.set(1 - progress);
+      mapsOpacity.set(1 - progress);
+      frameFourAboutOpacity.set(progress);
+      frameFourAboutX.set(frameFourContentOffsetAt(progress));
+      frameFourAboutY.set(36 * (1 - progress));
+    },
+    [
+      frameFourAboutOpacity,
+      frameFourAboutX,
+      frameFourAboutY,
+      frameFourCloudOpacity,
+      frameFourCloudScale,
+      frameFourCloudX,
+      frameFourCloudY,
+      frameThreeGeminiOpacity,
+      frameThreeGeminiRotate,
+      frameThreeGeminiScaleX,
+      frameThreeGeminiScaleY,
+      frameThreeGeminiX,
+      frameThreeGeminiY,
+      frameThreeGearOpacity,
+      frameThreeGearRotate,
+      frameThreeGearScaleX,
+      frameThreeGearScaleY,
+      frameThreeGearX,
+      frameThreeGearY,
+      frameThreeWebOpacity,
+      mapsOpacity,
+    ],
+  );
+
 
   useMotionValueEvent(scrollY, "change", syncScrollProgress);
   useMotionValueEvent(scrollY, "change", syncFrameThreeScroll);
+  useMotionValueEvent(scrollY, "change", syncFrameFourScroll);
 
   useLayoutEffect(() => {
     const measureTransition = () => {
       const hero = heroRef.current;
       const frame = frameTwoRef.current;
       const frameThree = frameThreeRef.current;
+      const frameFour = frameFourRef.current;
       const web = webRef.current;
       const android = androidRef.current;
       const maps = mapsRef.current;
-      if (!hero || !frame || !frameThree || !web || !android || !maps) return;
+      if (!hero || !frame || !frameThree || !frameFour || !web || !android || !maps) return;
 
       const heroRect = hero.getBoundingClientRect();
       const frameRect = frame.getBoundingClientRect();
       const frameThreeRect = frameThree.getBoundingClientRect();
+      const frameFourRect = frameFour.getBoundingClientRect();
       const frameScale = frameRect.width / 1440;
       const heroPageTop = heroRect.top + window.scrollY;
       const framePageTop = frameRect.top + window.scrollY;
       const framePageLeft = frameRect.left + window.scrollX;
       const frameThreePageTop = frameThreeRect.top + window.scrollY;
       const frameThreePageLeft = frameThreeRect.left + window.scrollX;
+      const frameFourPageTop = frameFourRect.top + window.scrollY;
       const targetBounds = (
         shape: ShapeBounds,
         sectionLeft: number,
@@ -343,12 +509,19 @@ export default function Home() {
           frameScale,
         ),
       };
-
       frameThreeGeometryRef.current = {
         heroStart: heroPageTop,
         heroHeight: heroRect.height,
         frameTwoStart: framePageTop,
         frameTwoHeight: frameRect.height,
+        frameFourStart: frameFourPageTop,
+        frameFourHeight: frameFourRect.height,
+        frameThreePageLeft,
+        frameThreePageTop,
+        frameThreeScale: frameThreeRect.width / 1440,
+        frameFourPageLeft: frameFourRect.left + window.scrollX,
+        frameFourPageTop,
+        frameFourScale: frameFourRect.width / 1440,
         viewportHeight: window.innerHeight,
         frameTwoLoadEnd:
           framePageTop + frameRect.height - window.innerHeight,
@@ -373,9 +546,9 @@ export default function Home() {
           frameThreeRect.width / 1440,
         ),
       };
-
       syncScrollProgress(scrollY.get());
       syncFrameThreeScroll(scrollY.get());
+      syncFrameFourScroll(scrollY.get());
     };
 
     measureTransition();
@@ -383,6 +556,7 @@ export default function Home() {
     if (heroRef.current) resizeObserver.observe(heroRef.current);
     if (frameTwoRef.current) resizeObserver.observe(frameTwoRef.current);
     if (frameThreeRef.current) resizeObserver.observe(frameThreeRef.current);
+    if (frameFourRef.current) resizeObserver.observe(frameFourRef.current);
     if (mapsRef.current) resizeObserver.observe(mapsRef.current);
     window.addEventListener("resize", measureTransition);
 
@@ -392,6 +566,7 @@ export default function Home() {
     };
   }, [
     scrollY,
+    syncFrameFourScroll,
     syncFrameThreeScroll,
     syncScrollProgress,
   ]);
@@ -582,7 +757,10 @@ export default function Home() {
                         y: shapeMotionValues[shapeKey].y,
                         scaleX: shapeMotionValues[shapeKey].scaleX,
                         scaleY: shapeMotionValues[shapeKey].scaleY,
-                        opacity: shapeKey === "android" ? androidFrameThreeOpacity : 1,
+                        opacity:
+                          shapeKey === "android"
+                            ? androidFrameThreeOpacity
+                            : frameThreeWebOpacity,
                       }
                     : index === 2
                       ? { opacity: geminiOpacity, scale: geminiScale }
@@ -742,6 +920,9 @@ export default function Home() {
             className="frame-three__logo frame-three__logo--gemini"
             style={{
               x: frameThreeGeminiX,
+              y: frameThreeGeminiY,
+              scaleX: frameThreeGeminiScaleX,
+              scaleY: frameThreeGeminiScaleY,
               rotate: frameThreeGeminiRotate,
               opacity: frameThreeGeminiOpacity,
             }}
@@ -758,6 +939,9 @@ export default function Home() {
             className="frame-three__logo frame-three__logo--gear"
             style={{
               x: frameThreeGearX,
+              y: frameThreeGearY,
+              scaleX: frameThreeGearScaleX,
+              scaleY: frameThreeGearScaleY,
               rotate: frameThreeGearRotate,
               opacity: frameThreeGearOpacity,
             }}
@@ -768,6 +952,46 @@ export default function Home() {
               width={337}
               height={337}
               className="frame-three__logo-image"
+            />
+          </motion.div>
+        </div>
+      </section>
+
+      <section id="about-vit" ref={frameFourRef} className="frame-four">
+        <motion.div
+          className="frame-four__content"
+          style={{
+            opacity: frameFourAboutOpacity,
+            x: frameFourAboutX,
+            y: frameFourAboutY,
+          }}
+        >
+          <h2 className="frame-four__title">About VIT</h2>
+          <p className="frame-four__description">
+            VIT, ranked 11th in NIRF engineering, is a premier Indian university attracting talent from across the nation and abroad. Known for its cultural diversity, it combines innovative education with world-class infrastructure and cutting-edge technology.
+          </p>
+        </motion.div>
+
+        <div className="frame-four__logos" aria-label="VIT tracks">
+          <motion.div
+            className="frame-four__logo frame-four__logo--cloud"
+            style={{
+              left: FRAME_FOUR_START_SHAPES.cloud.x,
+              top: FRAME_FOUR_START_SHAPES.cloud.y,
+              width: FRAME_FOUR_START_SHAPES.cloud.width,
+              height: FRAME_FOUR_START_SHAPES.cloud.height,
+              x: frameFourCloudX,
+              y: frameFourCloudY,
+              scale: frameFourCloudScale,
+              opacity: frameFourCloudOpacity,
+            }}
+          >
+            <Image
+              src="/assets/cloud.svg"
+              alt="Cloud"
+              width={278}
+              height={203}
+              className="frame-four__logo-image"
             />
           </motion.div>
         </div>

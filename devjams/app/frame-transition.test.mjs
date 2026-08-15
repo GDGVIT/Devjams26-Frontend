@@ -8,6 +8,11 @@ import {
   FRAME_TWO_LOGO_CENTER_X,
   FRAME_TWO_MAPS_LEFT,
   FRAME_TWO_MAPS_RIGHT_NUDGE,
+  FRAME_FOUR_CONTENT_ENTER_OFFSET,
+  FRAME_FOUR_LOGO_ORDER,
+  FRAME_FOUR_SHAPES,
+  frameFourContentOffsetAt,
+  frameFourSharedLogoTransformAt,
   geminiOpacityAt,
   halfVisibleScrollAt,
   alignShapeBoundsX,
@@ -158,4 +163,67 @@ test("Gemini fades continuously across the requested scroll range", () => {
   assert.equal(geminiOpacityAt(0.5), 0.5);
   assert.ok(Math.abs(geminiOpacityAt(0.75) - 0.15) < 1e-9);
   assert.equal(geminiOpacityAt(1), 0);
+});
+
+test("Frame 4 uses the requested left-side logo order and mirrored bounds", () => {
+  assert.deepEqual(FRAME_FOUR_LOGO_ORDER, ["gear", "gemini", "cloud"]);
+  assert.deepEqual(FRAME_FOUR_SHAPES, {
+    gear: {
+      x: 119.3134,
+      y: 30.4502,
+      width: 453.8907,
+      height: 453.8907,
+    },
+    gemini: {
+      x: 164.7314,
+      y: 347.2815,
+      width: 364.106,
+      height: 464.3671,
+    },
+    cloud: {
+      x: 112.373,
+      y: 739.2776,
+      width: 467.627,
+      height: 285.7433,
+    },
+  });
+});
+
+test("Frame 4 content enters from the right and settles in place", () => {
+  assert.equal(FRAME_FOUR_CONTENT_ENTER_OFFSET.x, 160);
+  assert.equal(FRAME_FOUR_CONTENT_ENTER_OFFSET.y, 0);
+  assert.equal(frameFourContentOffsetAt(0), 160);
+  assert.equal(frameFourContentOffsetAt(1), 0);
+  assert.ok(frameFourContentOffsetAt(0.5) > 0);
+  assert.ok(frameFourContentOffsetAt(0.5) < 160);
+});
+
+test("Frame 3 gear and Gemini use shared transforms into Frame 4", () => {
+  const gearStart = frameFourSharedLogoTransformAt(
+    FRAME_THREE_LOGOS.gear,
+    FRAME_FOUR_SHAPES.gear,
+    0,
+  );
+  const gearEnd = frameFourSharedLogoTransformAt(
+    FRAME_THREE_LOGOS.gear,
+    FRAME_FOUR_SHAPES.gear,
+    1,
+  );
+  const geminiEnd = frameFourSharedLogoTransformAt(
+    FRAME_THREE_LOGOS.gemini,
+    FRAME_FOUR_SHAPES.gemini,
+    1,
+  );
+
+  assert.deepEqual(gearStart, {
+    x: 0,
+    y: 0,
+    scaleX: 1,
+    scaleY: 1,
+  });
+  assert.ok(gearEnd.x < 0);
+  assert.ok(gearEnd.y < 0);
+  assert.ok(gearEnd.scaleX > 1);
+  assert.ok(geminiEnd.y > 0);
+  assert.ok(geminiEnd.scaleX > 1);
 });
