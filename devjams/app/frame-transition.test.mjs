@@ -26,6 +26,7 @@ import {
   uniformShapeTransformAt,
   FRAME_THREE_EDGE_LOGO_OFFSETS,
   FRAME_TWO_CONTENT_ENTER_OFFSET,
+  heroMenuShouldCollapseAtScroll,
 } from "./frame-transition.ts";
 
 test("Frame 2 content enters from the side and Frame 3 logos enter from opposite edges", () => {
@@ -226,4 +227,10 @@ test("Frame 3 gear and Gemini use shared transforms into Frame 4", () => {
   assert.ok(gearEnd.scaleX > 1);
   assert.ok(geminiEnd.y > 0);
   assert.ok(geminiEnd.scaleX > 1);
+});
+
+test("hero menu collapses after scrolling and never auto-expands", () => {
+  assert.equal(heroMenuShouldCollapseAtScroll(0), false);
+  assert.equal(heroMenuShouldCollapseAtScroll(1), true);
+  assert.equal(heroMenuShouldCollapseAtScroll(640), true);
 });

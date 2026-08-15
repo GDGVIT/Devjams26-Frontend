@@ -29,6 +29,7 @@ import {
   frameTwoMapEntryTransformAt,
   frameTwoMapsOpacityAt,
   geminiOpacityAt,
+  heroMenuShouldCollapseAtScroll,
   halfVisibleScrollAt,
   interpolateShapeBounds,
   scrollTransitionProgressAt,
@@ -102,7 +103,7 @@ export default function Home() {
   const shapeStartRef = useRef<Partial<Record<ShapeKey, ShapeBounds>>>({});
   const shapeTargetRef = useRef<Partial<Record<ShapeKey, ShapeBounds>>>({});
   const frameThreeGeometryRef = useRef<FrameThreeGeometry | null>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(true);
 
   const { scrollY } = useScroll();
 
@@ -458,7 +459,9 @@ export default function Home() {
   useMotionValueEvent(scrollY, "change", syncScrollProgress);
   useMotionValueEvent(scrollY, "change", syncFrameThreeScroll);
   useMotionValueEvent(scrollY, "change", syncFrameFourScroll);
-
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    if (heroMenuShouldCollapseAtScroll(latest)) setMenuOpen(false);
+  });
   useLayoutEffect(() => {
     const measureTransition = () => {
       const hero = heroRef.current;

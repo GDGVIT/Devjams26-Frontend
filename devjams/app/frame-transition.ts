@@ -268,3 +268,7 @@ export function geminiOpacityAt(progress: number) {
 
   return 0;
 }
+
+export function heroMenuShouldCollapseAtScroll(scrollY: number) {
+  return scrollY > 0;
+}
