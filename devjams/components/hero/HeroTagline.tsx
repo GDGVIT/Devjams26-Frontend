@@ -13,11 +13,11 @@ export function HeroTagline() {
         color: "#FFF",
         textAlign: "center",
         fontFamily: '"Google Sans", var(--font-google-sans), sans-serif',
-        fontSize: "clamp(26px, 4.5vw, 48px)",
+        fontSize: "clamp(18px, 4.5vw, 48px)",
         fontStyle: "normal",
         fontWeight: 700,
-        lineHeight: "normal",
-        letterSpacing: "-2.4px",
+        lineHeight: "1.2",
+        letterSpacing: "-0.04em",
       }}
     >
       HACK PACK, DEVJAMS’ BACK.
