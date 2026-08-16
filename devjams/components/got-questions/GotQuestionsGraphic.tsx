@@ -26,7 +26,7 @@ function BentLine({ y0, apexX, apexY }: { y0: number; apexX: MotionValue<number>
 
   return (
     <motion.path
-      d={d as any}
+      d={d}
       stroke="url(#spectrumGradient)"
       strokeWidth="1.5"
       strokeOpacity="0.85"
@@ -76,7 +76,7 @@ export function GotQuestionsGraphic({ apexX, apexY }: GotQuestionsGraphicProps) 
       </g>
 
       {/* Triangle fill — matching spectrum gradient */}
-      <motion.path d={trianglePath as any} fill="url(#spectrumGradient)" />
+      <motion.path d={trianglePath} fill="url(#spectrumGradient)" />
     </svg>
   );
 }
