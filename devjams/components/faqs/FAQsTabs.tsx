@@ -15,7 +15,7 @@ export function FAQsTabs({
   onSelectCategory,
 }: FAQsTabsProps) {
   return (
-    <div className="flex items-center justify-center w-full my-3 sm:my-5 px-2">
+    <div className="flex items-center justify-center w-full my-1 sm:my-2 px-2">
       <div className="inline-flex items-center gap-1 sm:gap-2 p-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
         {categories.map((cat) => {
           const isActive = cat.id === activeCategoryId;

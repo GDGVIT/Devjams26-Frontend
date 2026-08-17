@@ -12,10 +12,10 @@ export function FooterHeader() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="font-bold text-white tracking-tight max-w-4xl leading-[1.08] break-words"
-          style={{ fontSize: "clamp(2rem, 5.2vw, 84px)" }}
+          className="font-normal font-[400] text-white tracking-tight max-w-6xl leading-[0.96] break-words"
+          style={{ fontSize: "clamp(2.5rem, 8vw, 140px)" }}
         >
-          Wanna build something cool?
+          Wanna do something cool?
         </motion.h2>
 
         {/* Social Icons */}
