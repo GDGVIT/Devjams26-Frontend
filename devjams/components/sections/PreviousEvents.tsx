@@ -26,13 +26,18 @@ export function PreviousEvents() {
         <PreviousEventsHeader />
 
         <div className="relative w-full flex flex-col items-center">
-          {/* Central Timeline Line */}
-          <div className="absolute left-2 sm:left-4 md:left-1/2 top-0 bottom-0 w-3 sm:w-6 md:w-12 md:-translate-x-1/2 bg-gradient-to-b from-orange-400 via-purple-500 to-blue-500 rounded-full opacity-90" />
+          {/* Central Timeline Line - wider with exact smooth gradient matching Figma reference */}
+          <div 
+            className="absolute left-3 sm:left-5 md:left-1/2 top-0 bottom-0 w-6 sm:w-9 md:w-12 lg:w-14 md:-translate-x-1/2 rounded-full opacity-95 shadow-[0_0_28px_rgba(242,125,30,0.3)]"
+            style={{
+              background: "linear-gradient(180deg, #F27D1E 0%, #DC4855 24%, #AD5AAA 50%, #4E80EB 76%, #F2C81E 100%)"
+            }}
+          />
 
-          {/* Single Scroll-Driven White Dot */}
-          <div className="absolute left-2 sm:left-4 md:left-1/2 top-1.5 bottom-1.5 sm:top-3 sm:bottom-3 md:top-6 md:bottom-6 w-3 sm:w-6 md:w-12 md:-translate-x-1/2 flex justify-center pointer-events-none z-30">
+          {/* Only Single Scroll-Driven Glowing White Dot */}
+          <div className="absolute left-3 sm:left-5 md:left-1/2 top-3 bottom-3 sm:top-5 sm:bottom-5 md:top-8 md:bottom-8 w-6 sm:w-9 md:w-12 lg:w-14 md:-translate-x-1/2 flex justify-center pointer-events-none z-30">
             <motion.div
-              className="absolute w-3 h-3 sm:w-4 sm:h-4 md:w-6 md:h-6 rounded-full bg-white shadow-[0_0_10px_2px_rgba(255,255,255,0.7)] md:shadow-[0_0_18px_4px_rgba(255,255,255,0.7)] -translate-y-1/2"
+              className="absolute w-4 h-4 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-full bg-white shadow-[0_0_14px_4px_rgba(255,255,255,0.9)] md:shadow-[0_0_24px_6px_rgba(255,255,255,0.95)] -translate-y-1/2"
               style={{ top: dotTop }}
             />
           </div>
@@ -47,7 +52,7 @@ export function PreviousEvents() {
                   key={event.id}
                   className={`w-full flex ${
                     isEven ? "md:justify-start" : "md:justify-end"
-                  } justify-start pl-7 sm:pl-14 md:pl-0 relative`}
+                  } justify-start pl-8 sm:pl-16 md:pl-0 relative`}
                 >
                   {/* Composable Decorative Background SVG */}
                   <PreviousEventsDecorations index={index} />
@@ -70,4 +75,3 @@ export function PreviousEvents() {
     </section>
   );
 }
-

@@ -7,5 +7,8 @@
     "build": "npm run build --prefix devjams",
     "start": "npm run start --prefix devjams",
     "lint": "npm run lint --prefix devjams"
+  },
+  "dependencies": {
+    "next": "latest" 
   }
 }

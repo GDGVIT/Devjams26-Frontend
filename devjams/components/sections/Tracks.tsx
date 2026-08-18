@@ -6,12 +6,12 @@ import { TrackCarousel } from "../ui/TrackCarousel";
 
 export function Tracks() {
   return (
-    <section className="relative w-full py-24 bg-black overflow-hidden flex flex-col items-center">
+    <section className="relative w-full py-10 sm:py-14 md:py-16 bg-black overflow-hidden flex flex-col items-center">
       {/* Composable Tracks Section Header */}
       <TracksHeader />
 
       {/* Composable Track Carousel */}
-      <div className="w-full max-w-[1400px] mx-auto px-4 mt-12">
+      <div className="w-full max-w-[1400px] mx-auto px-4 mt-2 sm:mt-3">
         <TrackCarousel tracks={TRACKS_DATA} />
       </div>
     </section>

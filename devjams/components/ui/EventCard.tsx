@@ -37,17 +37,15 @@ export function EventCard({ title, description, imageUrl, alignment }: EventCard
       </motion.div>
       
       <motion.div 
-        className={`flex flex-col w-full text-left items-start ${
-          alignment === "right" ? "md:text-left md:items-start" : "md:text-right md:items-end"
-        }`}
+        className="flex flex-col w-full text-left items-start"
         variants={{
           hidden: { opacity: 0, y: 15 },
           visible: { opacity: 1, y: 0 }
         }}
         transition={{ duration: 0.5, delay: 0.1 }}
       >
-        <h3 className="text-lg sm:text-2xl md:text-3xl font-bold text-white mb-1 sm:mb-2">{title}</h3>
-        <p className="text-gray-400 text-xs sm:text-sm md:text-base leading-normal sm:leading-relaxed text-left w-full">
+        <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-1 sm:mb-2">{title}</h3>
+        <p className="text-gray-300 text-xs sm:text-sm md:text-base leading-relaxed text-left w-full">
           {description}
         </p>
       </motion.div>
