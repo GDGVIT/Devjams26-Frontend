@@ -4,6 +4,117 @@ export type ShapeBounds = {
   width: number;
   height: number;
 };
+export const FRAME_REFERENCE_WIDTH = 1440;
+
+export function frameScaleAtViewport(viewportWidth: number): number {
+  return Math.min(1, Math.max(0, viewportWidth / FRAME_REFERENCE_WIDTH));
+}
+
+export function scaleShapeBounds(shape: ShapeBounds, scale: number): ShapeBounds {
+  return {
+    x: shape.x * scale,
+    y: shape.y * scale,
+    width: shape.width * scale,
+    height: shape.height * scale,
+  };
+}
+export const MOBILE_FRAME_REFERENCE_WIDTH = 375;
+export const MOBILE_FRAME_REFERENCE_HEIGHT = 812;
+
+export function mobileFrameScaleAtViewport(viewportWidth: number): number {
+  return Math.min(
+    1,
+    Math.max(0, viewportWidth / MOBILE_FRAME_REFERENCE_WIDTH),
+  );
+}
+
+export function mobileFrameVerticalScaleAtViewport(viewportHeight: number): number {
+  return Math.max(0, viewportHeight / MOBILE_FRAME_REFERENCE_HEIGHT);
+}
+
+export function scaleMobileShapeBoundsAtViewport(
+  shape: ShapeBounds,
+  viewportWidth: number,
+  viewportHeight: number,
+): ShapeBounds {
+  const horizontalScale = mobileFrameScaleAtViewport(viewportWidth);
+  const verticalScale = mobileFrameVerticalScaleAtViewport(viewportHeight);
+
+  return {
+    x: shape.x * horizontalScale,
+    y: shape.y * verticalScale,
+    width: shape.width * horizontalScale,
+    height: shape.height * verticalScale,
+  };
+}
+
+export const FRAME_TWO_MOBILE_SHAPES = {
+  web: {
+    x: 125,
+    y: -20,
+    width: 250,
+    height: 280,
+  },
+  maps: {
+    x: 75,
+    y: 220,
+    width: 300,
+    height: 390,
+  },
+  android: {
+    x: 10,
+    y: 610,
+    width: 365,
+    height: 202,
+  },
+} as const satisfies Record<string, ShapeBounds>;
+
+export const FRAME_FOUR_MOBILE_SHAPES = {
+  gear: {
+    x: -20,
+    y: -20,
+    width: 250,
+    height: 280,
+  },
+  gemini: {
+    x: -20,
+    y: 220,
+    width: 300,
+    height: 390,
+  },
+  cloud: {
+    x: -20,
+    y: 610,
+    width: 365,
+    height: 202,
+  },
+} as const satisfies Record<string, ShapeBounds>;
+export const FRAME_THREE_MOBILE_SHAPES = {
+  web: {
+    x: 74.8828125,
+    y: 85.9375,
+    width: 60.9375,
+    height: 67.96875,
+  },
+  maps: {
+    x: 124.5703125,
+    y: 85.9375,
+    width: 65.625,
+    height: 67.96875,
+  },
+  gemini: {
+    x: 178.9453125,
+    y: 85.9375,
+    width: 67.96875,
+    height: 67.96875,
+  },
+  gear: {
+    x: 235.6640625,
+    y: 85.9375,
+    width: 64.453125,
+    height: 67.96875,
+  },
+} as const satisfies Record<string, ShapeBounds>;
 
 export type ShapeTransform = {
   x: number;
@@ -92,32 +203,32 @@ export const FRAME_THREE_EDGE_LOGO_OFFSETS = {
   gear: 420,
 };
 export const HERO_TRACK_ENTRY_DELAYS = [0.5, 0.6, 0.7, 0.8] as const;
-export const FRAME_THREE_LOGO_HEIGHT = 243.7309362924227;
+export const FRAME_THREE_LOGO_HEIGHT = 261;
 
 export const FRAME_THREE_LOGOS = {
   gemini: {
-    x: 228,
-    y: 344.2371807795699,
-    width: 243.7309362924227,
-    height: 243.7309362924227,
+    x: 687.15,
+    y: 330,
+    width: 261,
+    height: FRAME_THREE_LOGO_HEIGHT,
   },
   web: {
-    x: 498.80757404817996,
-    y: 344.2371807795699,
-    width: 243.7309362924227,
-    height: 243.7309362924227,
+    x: 287.55,
+    y: 330,
+    width: 234,
+    height: FRAME_THREE_LOGO_HEIGHT,
   },
   maps: {
-    x: 769.6151480963599,
-    y: 344.2371807795699,
-    width: 191.31568117577268,
-    height: 243.7309362924227,
+    x: 478.35,
+    y: 330,
+    width: 252,
+    height: FRAME_THREE_LOGO_HEIGHT,
   },
   gear: {
-    x: 988.0074670278898,
-    y: 344.2371807795699,
-    width: 243.7309362924227,
-    height: 243.7309362924227,
+    x: 904.95,
+    y: 330,
+    width: 247.5,
+    height: FRAME_THREE_LOGO_HEIGHT,
   },
 } as const satisfies Record<string, ShapeBounds>;
 

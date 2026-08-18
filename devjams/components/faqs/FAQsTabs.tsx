@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion } from "../gsap-motion";
 import { FAQCategory } from "./FAQsData";
 
 interface FAQsTabsProps {

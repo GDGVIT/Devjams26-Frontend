@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import { motion, useScroll, useTransform } from "../gsap-motion";
 import { EventCard } from "../ui/EventCard";
 import { EVENTS } from "../previous-events/PreviousEventsData";
 import { PreviousEventsHeader } from "../previous-events/PreviousEventsHeader";

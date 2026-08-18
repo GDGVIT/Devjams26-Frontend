@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import { motion, useScroll, useTransform } from "../gsap-motion";
 import { FAQ_CATEGORIES } from "../faqs/FAQsData";
 import { FAQsHeader } from "../faqs/FAQsHeader";
 import { FAQsTabs } from "../faqs/FAQsTabs";
