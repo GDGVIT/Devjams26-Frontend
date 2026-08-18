@@ -458,13 +458,11 @@ export default function Home() {
   );
 
 
+  useMotionValueEvent(scrollY, "change", syncScrollProgress);
+  useMotionValueEvent(scrollY, "change", syncFrameThreeScroll);
+  useMotionValueEvent(scrollY, "change", syncFrameFourScroll);
   useMotionValueEvent(scrollY, "change", (latest) => {
-    syncScrollProgress(latest);
-    syncFrameThreeScroll(latest);
-    syncFrameFourScroll(latest);
-    if (latest > 50 && menuOpen) {
-      setMenuOpen(false);
-    }
+    if (heroMenuShouldCollapseAtScroll(latest)) setMenuOpen(false);
   });
   useLayoutEffect(() => {
     const measureTransition = () => {
@@ -721,12 +719,12 @@ export default function Home() {
           {logoLetters.map((letter, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: -24, scale: 0.9 }}
+              initial={{ opacity: 0, y: -30, scale: 0.85 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              whileHover={{ y: -6, scale: 1.04, transition: { duration: 0.15 } }}
+              whileHover={{ y: -6, scale: 1.04, transition: { duration: 0.2 } }}
               transition={{
-                duration: 0.4,
-                delay: index * 0.02 + 0.05,
+                duration: 0.55,
+                delay: index * 0.045 + 0.1,
                 ease: [0.215, 0.61, 0.355, 1],
               }}
               className="absolute cursor-pointer"
@@ -736,7 +734,6 @@ export default function Home() {
                 width: `${letter.width}px`,
                 height: `${letter.height}px`,
                 zIndex: letter.zIndex,
-                willChange: "transform, opacity",
               }}
             >
               <Image
@@ -761,11 +758,11 @@ export default function Home() {
               <motion.div
                 key={index}
                 ref={shapeRef}
-                initial={{ opacity: 0, y: 30, scale: 0.85 }}
+                initial={{ opacity: 0, y: 40, scale: 0.8 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{
-                  duration: 0.45,
-                  delay: 0.15 + index * 0.07,
+                  duration: 0.6,
+                  delay: 0.5 + index * 0.1,
                   ease: "easeOut",
                 }}
                 style={
@@ -779,11 +776,10 @@ export default function Home() {
                           shapeKey === "android"
                             ? androidFrameThreeOpacity
                             : frameThreeWebOpacity,
-                        willChange: "transform, opacity",
                       }
                     : index === 2
-                      ? { opacity: geminiOpacity, scale: geminiScale, willChange: "transform, opacity" }
-                      : { opacity: cloudOpacity, willChange: "opacity" }
+                      ? { opacity: geminiOpacity, scale: geminiScale }
+                      : { opacity: cloudOpacity }
                 }
                 className={`relative flex items-center justify-center mix-blend-screen ${icon.className}`}
               >
@@ -791,7 +787,7 @@ export default function Home() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{
-                    duration: 0.45,
+                    duration: 0.6,
                     delay: HERO_TRACK_ENTRY_DELAYS[index],
                     ease: "easeOut",
                   }}
@@ -823,28 +819,26 @@ export default function Home() {
         {/* Idea Submission Button */}
         <motion.button
           type="button"
-          initial={{ opacity: 0, scale: 0.88, y: 12 }}
+          initial={{ opacity: 0, scale: 0.85, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{
-            duration: 0.4,
-            delay: 0.35,
+            duration: 0.5,
+            delay: 1.1,
             type: "spring",
-            stiffness: 300,
-            damping: 20,
+            stiffness: 220,
+            damping: 18,
           }}
           whileHover={{
-            scale: 1.06,
+            scale: 1.07,
             backgroundColor: "#ffffff",
             boxShadow: "0 0 35px rgba(255,255,255,0.45)",
-            transition: { duration: 0.15 },
           }}
-          whileTap={{ scale: 0.95 }}
+          whileTap={{ scale: 0.94 }}
           className="cursor-pointer bg-white text-black font-bold text-lg rounded-full flex items-center justify-center transition-shadow shadow-[0_0_20px_rgba(255,255,255,0.25)] relative z-30"
           style={{
             width: "243px",
             height: "55px",
             fontFamily: '"Google Sans", var(--font-google-sans), sans-serif',
-            willChange: "transform, opacity",
           }}
         >
           Idea Submission
@@ -907,11 +901,11 @@ export default function Home() {
           tag="p"
           text="Fueled by curiosity and a bit of chaos, we are a community of coders who love to push limits, designers who bring ideas to life, and managers who turn vision into reality. We build crazy things that matter."
           className="frame-three__description"
-          delay={20}
-          duration={0.5}
+          delay={35}
+          duration={0.8}
           ease="power3.out"
-          splitType="words"
-          from={{ opacity: 0, y: 25 }}
+          splitType="words, chars"
+          from={{ opacity: 0, y: 40 }}
           to={{ opacity: 1, y: 0 }}
           threshold={0.1}
           rootMargin="-100px"

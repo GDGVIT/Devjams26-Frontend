@@ -21,6 +21,7 @@ export function TrackCarousel({ tracks }: TrackCarouselProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
 
   const handleNext = useCallback(() => {
     setActiveIndex((prev) => (prev + 1) % tracks.length);
@@ -58,6 +59,7 @@ export function TrackCarousel({ tracks }: TrackCarouselProps) {
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
     setStartX(e.pageX);
+    setScrollLeft(activeIndex);
   };
 
   const handleMouseUp = (e: React.MouseEvent) => {
@@ -158,7 +160,6 @@ export function TrackCarousel({ tracks }: TrackCarouselProps) {
                   ? "0 30px 60px -12px rgba(0,0,0,0.85), 0 0 25px rgba(255,255,255,0.2)" 
                   : "0 15px 35px rgba(0,0,0,0.6)",
                 transformStyle: "preserve-3d",
-                willChange: "transform, opacity",
               }}
               initial={false}
               animate={{
@@ -171,9 +172,9 @@ export function TrackCarousel({ tracks }: TrackCarouselProps) {
               }}
               transition={{
                 type: "spring",
-                stiffness: 360,
-                damping: 28,
-                mass: 0.7,
+                stiffness: 280,
+                damping: 26,
+                mass: 1,
               }}
             >
               {/* Track Heading */}
