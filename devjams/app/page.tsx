@@ -41,7 +41,7 @@ import {
   scaleShapeBounds,
   heroMenuShouldCollapseAtScroll,
   menuDefaultsOpenAtViewport,
-  scrollTransitionProgressAt,
+  frameThreeMapsShapeAtViewport,
   smoothScrollProgressAt,
   uniformShapeTransformAt,
   type ShapeBounds,
@@ -667,10 +667,11 @@ export default function Home() {
           isMobile,
         ),
         frameThreeMaps: targetBounds(
-          FRAME_THREE_LOGOS.maps,
+          frameThreeMapsShapeAtViewport(isMobile),
           frameThreePageLeft,
           frameThreePageTop,
-          frameScale,
+          isMobile ? mobileFrameScale : frameScale,
+          isMobile,
         ),
       };
       syncScrollProgress(scrollY.get());

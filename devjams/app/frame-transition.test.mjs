@@ -37,6 +37,7 @@ import {
   FRAME_TWO_CONTENT_ENTER_OFFSET,
   heroMenuShouldCollapseAtScroll,
   menuDefaultsOpenAtViewport,
+  frameThreeMapsShapeAtViewport,
 } from "./frame-transition.ts";
 
 test("menu opens by default only above the mobile breakpoint", () => {
@@ -119,6 +120,16 @@ test("mobile Web handoff aligns with the Frame 3 four-logo row", () => {
   assert.ok(web.y + web.height <= 812);
 });
 
+test("mobile Frame 3 maps use the compact four-logo row target", () => {
+  assert.deepEqual(
+    frameThreeMapsShapeAtViewport(true),
+    FRAME_THREE_MOBILE_SHAPES.maps,
+  );
+  assert.deepEqual(
+    frameThreeMapsShapeAtViewport(false),
+    FRAME_THREE_LOGOS.maps,
+  );
+});
 test("Frame 2 content enters from the side and Frame 3 logos enter from opposite edges", () => {
   assert.ok(FRAME_TWO_CONTENT_ENTER_OFFSET.x < 0);
   assert.equal(FRAME_TWO_CONTENT_ENTER_OFFSET.y, 0);

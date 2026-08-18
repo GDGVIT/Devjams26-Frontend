@@ -236,6 +236,10 @@ export const FRAME_THREE_LOGOS = {
   },
 } as const satisfies Record<string, ShapeBounds>;
 
+export function frameThreeMapsShapeAtViewport(isMobile: boolean): ShapeBounds {
+  return isMobile ? FRAME_THREE_MOBILE_SHAPES.maps : FRAME_THREE_LOGOS.maps;
+}
+
 export const FRAME_FOUR_LOGO_ORDER = ["gear", "gemini", "cloud"] as const;
 export const FRAME_FOUR_SHAPES = {
   gear: {
