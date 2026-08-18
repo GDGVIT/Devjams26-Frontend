@@ -210,8 +210,8 @@ body {
 
 .frame-four__content {
   position: absolute;
-  left: calc((100% - 562px) / 2);
-  top: 430px;
+  left: 765px;
+  top: calc((1024px - 417px) / 2);
   width: 562px;
   height: 417px;
   display: flex;
