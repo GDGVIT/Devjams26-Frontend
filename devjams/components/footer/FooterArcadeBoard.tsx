@@ -3,21 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
-interface CharacterState {
-  x: number;
-  y: number;
-  rotation: number;
-  scale: number;
-}
-
-interface GhostState {
-  id: number;
-  x: number;
-  y: number;
-  color: string;
-  isFleeing: boolean;
-}
-
 interface ScorePopup {
   id: number;
   x: number;
@@ -54,12 +39,9 @@ function getTrackCoord(s: number): { x: number; y: number; rot: number } {
 }
 
 export function FooterArcadeBoard() {
-  const [pacman, setPacman] = useState<CharacterState>({ x: 5, y: 7.5, rotation: 0, scale: 1 });
-  const [ghosts, setGhosts] = useState<GhostState[]>([
-    { id: 0, x: 45, y: 7.5, color: "#F97316", isFleeing: false },
-    { id: 1, x: 95, y: 45, color: "#06B6D4", isFleeing: false },
-    { id: 2, x: 45, y: 90.5, color: "#EF4444", isFleeing: false },
-  ]);
+  const boardRef = useRef<HTMLDivElement>(null);
+  const pacmanRef = useRef<HTMLDivElement>(null);
+  const ghostRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [popups, setPopups] = useState<ScorePopup[]>([]);
 
   const simRef = useRef({
@@ -70,6 +52,7 @@ export function FooterArcadeBoard() {
       { id: 2, s: 0.85, dir: 1, speed: 0.023, color: "#EF4444", timer: 2 },
     ],
     nextPopupId: 0,
+    isVisible: false,
   });
 
   useEffect(() => {
@@ -80,6 +63,8 @@ export function FooterArcadeBoard() {
     const EAT_THRESHOLD = 0.016;
 
     const updateSimulation = (now: number) => {
+      if (!simRef.current.isVisible) return;
+
       const dt = Math.min((now - lastTime) / 1000, 0.1);
       lastTime = now;
 
@@ -108,7 +93,6 @@ export function FooterArcadeBoard() {
       });
 
       // 2. Pac-Man Chase AI: Find closest ghost along track
-      let targetGhost = state.ghosts[0];
       let minDistance = 1;
       let chaseDir = 1;
 
@@ -119,7 +103,6 @@ export function FooterArcadeBoard() {
 
         if (shortest < minDistance) {
           minDistance = shortest;
-          targetGhost = g;
           chaseDir = dClockwise <= dCounter ? 1 : -1;
         }
       });
@@ -159,48 +142,59 @@ export function FooterArcadeBoard() {
           g.s = ((state.pacman.s + 0.45 + (Math.random() * 0.1 - 0.05)) % 1 + 1) % 1;
           g.dir = Math.random() < 0.5 ? 1 : -1;
           g.speed = 0.045 + Math.random() * 0.012;
-          // Pick a fresh random color
           g.color = GHOST_COLORS[Math.floor(Math.random() * GHOST_COLORS.length)];
           g.timer = 2 + Math.random() * 3;
         }
       });
 
-      // Visual coordinates calculation
+      // Visual coordinates calculation & Direct DOM updates (no React re-renders)
       const pacCoord = getTrackCoord(state.pacman.s);
       const visualRot = chaseDir === 1 ? pacCoord.rot : (pacCoord.rot + 180) % 360;
 
-      const renderedGhosts: GhostState[] = state.ghosts.map((g) => {
-        const coord = getTrackCoord(g.s);
-        const dClockwise = (g.s - state.pacman.s + 1) % 1;
-        const dCounter = (state.pacman.s - g.s + 1) % 1;
-        const dist = Math.min(dClockwise, dCounter);
-        return {
-          id: g.id,
-          x: coord.x,
-          y: coord.y,
-          color: g.color,
-          isFleeing: dist < 0.18,
-        };
-      });
+      if (pacmanRef.current) {
+        pacmanRef.current.style.left = `${pacCoord.x}%`;
+        pacmanRef.current.style.top = `${pacCoord.y}%`;
+        pacmanRef.current.style.transform = `translate(-50%, -50%) rotate(${visualRot + 180}deg) scale(${state.pacman.scale})`;
+      }
 
-      setPacman({
-        x: pacCoord.x,
-        y: pacCoord.y,
-        rotation: visualRot,
-        scale: state.pacman.scale,
+      state.ghosts.forEach((g, index) => {
+        const el = ghostRefs.current[index];
+        if (el) {
+          const coord = getTrackCoord(g.s);
+          el.style.left = `${coord.x}%`;
+          el.style.top = `${coord.y}%`;
+        }
       });
-
-      setGhosts(renderedGhosts);
 
       animationFrameId = requestAnimationFrame(updateSimulation);
     };
 
-    animationFrameId = requestAnimationFrame(updateSimulation);
-    return () => cancelAnimationFrame(animationFrameId);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        simRef.current.isVisible = entry.isIntersecting;
+        if (entry.isIntersecting) {
+          lastTime = performance.now();
+          cancelAnimationFrame(animationFrameId);
+          animationFrameId = requestAnimationFrame(updateSimulation);
+        } else {
+          cancelAnimationFrame(animationFrameId);
+        }
+      },
+      { threshold: 0.05 }
+    );
+
+    if (boardRef.current) {
+      observer.observe(boardRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(animationFrameId);
+    };
   }, []);
 
   return (
-    <div className="relative w-full rounded-2xl sm:rounded-3xl bg-[#09090b] border border-white/20 p-4 sm:p-6 md:p-8 overflow-hidden select-none shadow-2xl">
+    <div ref={boardRef} className="relative w-full rounded-2xl sm:rounded-3xl bg-[#09090b] border border-white/20 p-4 sm:p-6 md:p-8 overflow-hidden select-none shadow-2xl">
       {/* Top Dash Pills Row */}
       <div className="w-full flex items-center justify-between gap-1.5 sm:gap-2.5 mb-1.5 sm:mb-2 opacity-30">
         {Array.from({ length: 10 }).map((_, i) => (
@@ -475,11 +469,13 @@ export function FooterArcadeBoard() {
       {/* --- DYNAMIC ARCADE CHASE & EAT ANIMATION (USING OFFICIAL ASSETS) --- */}
       {/* 1. Pac-Man (Rendered from official pacman.svg asset with no glow) */}
       <div
+        ref={pacmanRef}
         className="absolute w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 z-20 pointer-events-none transition-transform duration-75 ease-out"
         style={{
-          left: `${pacman.x}%`,
-          top: `${pacman.y}%`,
-          transform: `translate(-50%, -50%) rotate(${pacman.rotation + 180}deg) scale(${pacman.scale})`,
+          left: "5%",
+          top: "7.5%",
+          transform: "translate(-50%, -50%) rotate(180deg) scale(1)",
+          willChange: "transform, left, top",
         }}
       >
         <Image
@@ -492,18 +488,22 @@ export function FooterArcadeBoard() {
       </div>
 
       {/* 2. Ghosts (Rendered from official ghost.svg & ghost1.svg assets with no glow) */}
-      {ghosts.map((ghost) => (
+      {[0, 1, 2].map((id) => (
         <div
-          key={ghost.id}
+          key={id}
+          ref={(el) => {
+            ghostRefs.current[id] = el;
+          }}
           className="absolute w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 z-20 pointer-events-none transition-transform duration-75"
           style={{
-            left: `${ghost.x}%`,
-            top: `${ghost.y}%`,
+            left: id === 0 ? "45%" : id === 1 ? "95%" : "45%",
+            top: id === 0 ? "7.5%" : id === 1 ? "45%" : "90.5%",
             transform: "translate(-50%, -50%)",
+            willChange: "left, top",
           }}
         >
           <Image
-            src={ghost.id % 2 === 1 ? "/assets/logo/ghost1.svg" : "/assets/logo/ghost.svg"}
+            src={id % 2 === 1 ? "/assets/logo/ghost1.svg" : "/assets/logo/ghost.svg"}
             alt="Ghost"
             width={47}
             height={47}
