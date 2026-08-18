@@ -656,7 +656,7 @@ body {
   .hero-menu {
     top: 4px;
     right: 4px;
-    scale: 0.56 !important;
+    scale: 0.64 !important;
     transform-origin: top right;
   }
 }

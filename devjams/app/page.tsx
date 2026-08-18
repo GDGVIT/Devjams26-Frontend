@@ -768,7 +768,7 @@ export default function Home() {
           <motion.button
             type="button"
             initial={false}
-            animate={{ opacity: 1, x: 0, scale: isMobileViewport ? 0.56 : 1 }}
+            animate={{ opacity: 1, x: 0, scale: isMobileViewport ? 0.64 : 1 }}
             transition={{ duration: 0.55, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
             className={`hero-menu${menuOpen ? " hero-menu--open" : ""}`}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
