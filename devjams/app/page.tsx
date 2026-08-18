@@ -6,8 +6,8 @@ import {
   AnimatePresence,
   useMotionValue,
   useScroll,
-} from "motion/react";
-import type { MotionValue } from "motion/react";
+} from "../components/gsap-motion";
+import type { MotionValue } from "../components/gsap-motion";
 import FoldText from "./components/FoldText";
 import SplitText from "./components/SplitText";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";

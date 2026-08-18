@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, MotionValue, useTransform } from "motion/react";
+import { motion, MotionValue, useTransform } from "../gsap-motion";
 
 interface GotQuestionsGraphicProps {
   apexX: MotionValue<number>;
