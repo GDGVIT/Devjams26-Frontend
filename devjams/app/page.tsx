@@ -38,6 +38,7 @@ import {
   type ShapeBounds,
 } from "./frame-transition";
 type ShapeKey = "web" | "android";
+import { Tracks } from "../components/sections/Tracks";
 import { PreviousEvents } from "../components/sections/PreviousEvents";
 import { GotQuestions } from "../components/sections/GotQuestions";
 import { Footer } from "../components/sections/Footer";
@@ -992,6 +993,7 @@ export default function Home() {
         </div>
       </section>
       {/* Remaining site sections */}
+      <Tracks />
       <PreviousEvents />
       <GotQuestions />
 

@@ -473,9 +473,9 @@ export function FooterArcadeBoard() {
       ))}
 
       {/* --- DYNAMIC ARCADE CHASE & EAT ANIMATION (USING OFFICIAL ASSETS) --- */}
-      {/* 1. Pac-Man (Rendered from official pacman.svg asset) */}
+      {/* 1. Pac-Man (Rendered from official pacman.svg asset with no glow) */}
       <div
-        className="absolute w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 z-20 pointer-events-none transition-transform duration-75 ease-out filter drop-shadow-[0_0_12px_rgba(255,228,50,0.4)]"
+        className="absolute w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 z-20 pointer-events-none transition-transform duration-75 ease-out"
         style={{
           left: `${pacman.x}%`,
           top: `${pacman.y}%`,
@@ -491,11 +491,11 @@ export function FooterArcadeBoard() {
         />
       </div>
 
-      {/* 2. Ghosts (Rendered from official ghost.svg & ghost1.svg assets) */}
+      {/* 2. Ghosts (Rendered from official ghost.svg & ghost1.svg assets with no glow) */}
       {ghosts.map((ghost) => (
         <div
           key={ghost.id}
-          className="absolute w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 z-20 pointer-events-none transition-transform duration-75 filter drop-shadow-[0_0_12px_rgba(255,255,255,0.3)]"
+          className="absolute w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 z-20 pointer-events-none transition-transform duration-75"
           style={{
             left: `${ghost.x}%`,
             top: `${ghost.y}%`,

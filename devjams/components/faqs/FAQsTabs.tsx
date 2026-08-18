@@ -15,8 +15,8 @@ export function FAQsTabs({
   onSelectCategory,
 }: FAQsTabsProps) {
   return (
-    <div className="flex items-center justify-center w-full my-1 sm:my-2 px-2">
-      <div className="inline-flex items-center gap-1 sm:gap-2 p-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
+    <div className="flex items-center justify-center w-full my-4 sm:my-6 px-2 overflow-x-auto">
+      <div className="inline-flex items-center gap-2 sm:gap-4 p-1.5 rounded-full bg-transparent">
         {categories.map((cat) => {
           const isActive = cat.id === activeCategoryId;
 
@@ -24,9 +24,14 @@ export function FAQsTabs({
             <button
               key={cat.id}
               onClick={() => onSelectCategory(cat.id)}
-              className={`relative px-5 sm:px-8 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold transition-colors duration-200 outline-none select-none cursor-pointer whitespace-nowrap ${
-                isActive ? "text-black" : "text-white/70 hover:text-white"
+              className={`relative min-w-[150px] sm:min-w-[190px] md:w-[243px] h-[48px] sm:h-[55px] rounded-full flex items-center justify-center transition-colors duration-200 outline-none select-none cursor-pointer whitespace-nowrap px-4 ${
+                isActive ? "text-black" : "text-white hover:text-white/80"
               }`}
+              style={{
+                fontFamily: "var(--font-google-sans), sans-serif",
+                fontSize: "clamp(1.1rem, 2vw, 24px)",
+                fontWeight: 400,
+              }}
             >
               {isActive && (
                 <motion.div
