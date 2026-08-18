@@ -14,6 +14,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, typ
 import {
   FRAME_FOUR_CONTENT_ENTER_OFFSET,
   FRAME_FOUR_MOBILE_SHAPES,
+  FRAME_FOUR_LOGO_Z_INDEX,
   FRAME_FOUR_SHAPES,
   FRAME_ONE_ANIMATION_START_PROGRESS,
   FRAME_REFERENCE_WIDTH,
@@ -42,8 +43,9 @@ import {
   heroMenuShouldCollapseAtScroll,
   menuDefaultsOpenAtViewport,
   frameThreeMapsShapeAtViewport,
-  smoothScrollProgressAt,
+  scrollTransitionProgressAt,
   uniformShapeTransformAt,
+  smoothScrollProgressAt,
   type ShapeBounds,
 } from "./frame-transition";
 type ShapeKey = "web" | "android";
