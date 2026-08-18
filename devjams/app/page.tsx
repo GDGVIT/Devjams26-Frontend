@@ -1152,7 +1152,11 @@ export default function Home() {
           </p>
         </motion.div>
 
-        <div className="frame-four__logos" aria-label="VIT tracks">
+        <div
+          className="frame-four__logos"
+          aria-label="VIT tracks"
+          style={{ zIndex: FRAME_FOUR_LOGO_Z_INDEX }}
+        >
           <motion.div
             className="frame-four__logo frame-four__logo--cloud"
             style={{

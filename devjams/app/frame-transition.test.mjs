@@ -13,6 +13,7 @@ import {
   FRAME_TWO_MAPS_RIGHT_NUDGE,
   FRAME_FOUR_CONTENT_ENTER_OFFSET,
   FRAME_FOUR_LOGO_ORDER,
+  FRAME_FOUR_LOGO_Z_INDEX,
   FRAME_FOUR_SHAPES,
   FRAME_FOUR_MOBILE_SHAPES,
   frameFourContentOffsetAt,
@@ -129,6 +130,10 @@ test("mobile Frame 3 maps use the compact four-logo row target", () => {
     frameThreeMapsShapeAtViewport(false),
     FRAME_THREE_LOGOS.maps,
   );
+});
+
+test("VIT logos render above the text layer", () => {
+  assert.ok(FRAME_FOUR_LOGO_Z_INDEX > 10);
 });
 test("Frame 2 content enters from the side and Frame 3 logos enter from opposite edges", () => {
   assert.ok(FRAME_TWO_CONTENT_ENTER_OFFSET.x < 0);
