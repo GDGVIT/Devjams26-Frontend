@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import { motion, useScroll, useTransform } from "../gsap-motion";
 import { GotQuestionsGraphic } from "../got-questions/GotQuestionsGraphic";
 import { GotQuestionsHeading } from "../got-questions/GotQuestionsHeading";
 import { GotQuestionsSubHeading } from "../got-questions/GotQuestionsSubHeading";

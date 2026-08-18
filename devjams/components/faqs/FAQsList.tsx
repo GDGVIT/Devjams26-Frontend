@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "../gsap-motion";
 import { FAQCategory } from "./FAQsData";
 
 interface FAQsListProps {

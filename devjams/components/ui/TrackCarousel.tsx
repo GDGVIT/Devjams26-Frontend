@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { motion } from "motion/react";
+import { useState, useEffect, useRef, useCallback, type MouseEvent } from "react";
+import { motion } from "../gsap-motion";
 import Image from "next/image";
 
 export interface TrackData {
@@ -149,7 +149,7 @@ export function TrackCarousel({ tracks }: TrackCarouselProps) {
           return (
             <motion.div
               key={track.id}
-              onClick={(e) => {
+              onClick={(e: MouseEvent<HTMLDivElement>) => {
                 e.stopPropagation();
                 setActiveIndex(index);
               }}

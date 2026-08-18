@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion } from "../gsap-motion";
 
 interface EventCardProps {
   title: string;
