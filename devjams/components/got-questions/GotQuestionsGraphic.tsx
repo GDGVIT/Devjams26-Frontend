@@ -53,7 +53,7 @@ function BentLine({
 
   return (
     <motion.path
-      d={d as any}
+      d={d}
       stroke={`url(#lineGrad_${index})`}
       strokeWidth="1.6"
       strokeOpacity="0.88"
@@ -133,7 +133,7 @@ export function GotQuestionsGraphic({
 
         {/* Dynamic triangle / full-screen expanding clip path */}
         <clipPath id="triangleClip">
-          <motion.path d={trianglePath as any} />
+          <motion.path d={trianglePath} />
         </clipPath>
       </defs>
 

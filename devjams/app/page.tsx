@@ -768,7 +768,7 @@ export default function Home() {
           <motion.button
             type="button"
             initial={false}
-            animate={{ opacity: 1, x: 0, scale: isMobileViewport ? 0.64 : 1 }}
+            animate={{ opacity: 1, x: 0, scale: isMobileViewport ? 0.84 : 1 }}
             transition={{ duration: 0.55, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
             className={`hero-menu${menuOpen ? " hero-menu--open" : ""}`}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
@@ -817,7 +817,7 @@ export default function Home() {
               <motion.nav
                 id="primary-navigation-sheet"
                 className="hero-nav"
-                initial={isMobileViewport ? { x: "100%", opacity: 0 } : false}
+                initial={isMobileViewport ? { x: "100%", opacity: 0 } : { width: "68px", opacity: 1, x: 0 }}
                 animate={{ width: "var(--hero-nav-open-width)", opacity: 1, x: 0 }}
                 exit={{ x: "100%", opacity: 0 }}
                 transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
@@ -839,7 +839,7 @@ export default function Home() {
                 </div>
               <motion.div
                 className="hero-nav__links"
-                initial={false}
+                initial={{ opacity: 0, x: 28 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 28 }}
                 transition={{ duration: 0.22, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}

@@ -9,6 +9,7 @@ import {
   useImperativeHandle,
   useLayoutEffect,
   useRef,
+  useState,
   type CSSProperties,
   type PropsWithChildren,
   type ReactNode,
@@ -56,9 +57,8 @@ function createValue<T>(initial: T): MotionValue<T> {
 }
 
 export function useMotionValue<T>(initial: T) {
-  const value = useRef<MotionValue<T> | null>(null);
-  if (!value.current) value.current = createValue(initial);
-  return value.current;
+  const [value] = useState(() => createValue(initial));
+  return value;
 }
 
 function clamp(value: number) {
@@ -186,45 +186,43 @@ function gsapTransition(transition?: Record<string, unknown>) {
   };
 }
 
-function staticStyle(style?: MotionStyle) {
-  if (!style) return {};
-  const result: Record<string, unknown> = {};
-  Object.entries(style).forEach(([key, value]) => {
-    if (!isMotionValue(value) && !["x", "y", "scale", "scaleX", "scaleY", "rotate", "rotateX", "rotateY"].includes(key)) {
-      result[key] = value;
-    }
-  });
-  return result;
-}
 
 function MotionElement({ as, ...props }: MotionProps & { as: string }) {
   const elementRef = useRef<HTMLElement | null>(null);
   const { ref, initial, animate, exit, whileInView, whileHover, whileTap, variants, viewport, transition, style, layoutId, children, ...domProps } = props;
   useImperativeHandle(ref as Ref<HTMLElement>, () => elementRef.current as HTMLElement);
-
   useLayoutEffect(() => {
     const element = elementRef.current;
     if (!element) return;
-    const context = gsap.context(() => {
-      const initialTarget = resolveTarget(initial, variants);
-      const animateTarget = resolveTarget(animate, variants);
-      const inViewTarget = resolveTarget(whileInView, variants) ?? animateTarget;
-      if (initialTarget) gsap.set(element, gsapTarget(initialTarget));
-      const run = () => {
-        if (inViewTarget) gsap.to(element, { ...gsapTarget(inViewTarget), ...gsapTransition(transition) });
-      };
-      if (whileInView) {
-        const observer = new IntersectionObserver(([entry]) => {
-          if (entry.isIntersecting) {
-            run();
-            if (viewport?.once !== false) observer.disconnect();
-          }
-        }, { threshold: viewport?.amount ?? 0.1, rootMargin: viewport?.margin });
-        observer.observe(element);
-        return () => observer.disconnect();
+
+    const initialTarget = resolveTarget(initial, variants);
+    const animateTarget = resolveTarget(animate, variants);
+    const inViewTarget = resolveTarget(whileInView, variants) ?? animateTarget;
+    if (initialTarget) gsap.set(element, gsapTarget(initialTarget));
+
+    let activeTween: gsap.core.Tween | undefined;
+    const run = () => {
+      if (inViewTarget) {
+        activeTween?.kill();
+        activeTween = gsap.to(element, {
+          ...gsapTarget(inViewTarget),
+          ...gsapTransition(transition),
+        });
       }
-      if (animateTarget) gsap.to(element, { ...gsapTarget(animateTarget), ...gsapTransition(transition) });
-    }, element);
+    };
+
+    let observer: IntersectionObserver | undefined;
+    if (whileInView) {
+      observer = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) {
+          run();
+          if (viewport?.once !== false) observer?.disconnect();
+        }
+      }, { threshold: viewport?.amount ?? 0.1, rootMargin: viewport?.margin });
+      observer.observe(element);
+    } else {
+      run();
+    }
 
     const hoverTarget = whileHover ? gsapTarget(whileHover) : null;
     const tapTarget = whileTap ? gsapTarget(whileTap) : null;
@@ -237,7 +235,8 @@ function MotionElement({ as, ...props }: MotionProps & { as: string }) {
     if (onPointerDown) element.addEventListener("pointerdown", onPointerDown);
     if (onPointerUp) element.addEventListener("pointerup", onPointerUp);
     return () => {
-      context.revert();
+      activeTween?.kill();
+      observer?.disconnect();
       if (onEnter) element.removeEventListener("pointerenter", onEnter);
       if (onLeave) element.removeEventListener("pointerleave", onLeave);
       if (onPointerDown) element.removeEventListener("pointerdown", onPointerDown);
@@ -255,8 +254,25 @@ function MotionElement({ as, ...props }: MotionProps & { as: string }) {
     return () => subscriptions.forEach((unsubscribe) => unsubscribe());
   }, [style]);
 
+  useLayoutEffect(() => {
+    const element = elementRef.current;
+    if (!element) return;
+    const subscriptions = Object.entries(domProps)
+      .filter(([, value]) => isMotionValue(value))
+      .map(([key, value]) => (value as MotionValue<unknown>).on("change", (next) => {
+        element.setAttribute(key, String(next));
+      }));
+    return () => subscriptions.forEach((unsubscribe) => unsubscribe());
+  }, [domProps]);
+
+  const renderedProps = Object.fromEntries(
+    Object.entries(domProps).map(([key, value]) => [key, isMotionValue(value) ? value.get() : value]),
+  );
+
+  // The host ref is consumed by the layout effects above.
+  // eslint-disable-next-line react-hooks/refs
   return createElement(as, {
-    ...domProps,
+    ...renderedProps,
     ref: elementRef,
   }, children as ReactNode);
 }
@@ -266,10 +282,16 @@ const MotionComponent = forwardRef<HTMLElement, MotionProps & { as?: string }>((
 ));
 MotionComponent.displayName = "GsapMotionElement";
 
-export const motion = new Proxy({} as Record<string, typeof MotionComponent>, {
-  get: (_, tag: string) => forwardRef<HTMLElement, MotionProps>((props, ref) => (
+function createMotionComponent(tag: string) {
+  const component = forwardRef<HTMLElement, MotionProps>((props, ref) => (
     <MotionElement {...props} as={tag} ref={ref} />
-  )),
+  ));
+  component.displayName = `GsapMotion(${tag})`;
+  return component;
+}
+
+export const motion = new Proxy({} as Record<string, typeof MotionComponent>, {
+  get: (_, tag: string) => createMotionComponent(tag),
 });
 
 export function useMotionValueEvent<T>(value: MotionValue<T>, event: "change", callback: (latest: T) => void) {
