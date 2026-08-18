@@ -40,7 +40,6 @@ import {
 type ShapeKey = "web" | "android";
 import { PreviousEvents } from "../components/sections/PreviousEvents";
 import { GotQuestions } from "../components/sections/GotQuestions";
-import { FAQs } from "../components/sections/FAQs";
 import { Footer } from "../components/sections/Footer";
 
 type ShapeMotionValues = {
@@ -992,15 +991,13 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
-      {/* Remaining site sections from the upstream implementation */}
+      {/* Remaining site sections */}
       <PreviousEvents />
       <GotQuestions />
 
-      {/* FAQs Section */}
-      <FAQs />
-
       {/* Footer Section */}
       <Footer />
-    </div>
+
+    </main>
   );
 }

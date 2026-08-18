@@ -14,7 +14,7 @@ export function FooterArcadeHUD() {
       <div className="flex items-center gap-3 sm:gap-4 mt-0.5 sm:mt-1">
         <div className="flex items-center gap-2 text-sm sm:text-base md:text-lg font-bold leading-none">
           <span className="text-white font-mono tracking-wider">10</span>
-          <span className="text-[#FBBF24] font-extrabold tracking-widest">
+          <span className="text-[#FBBC04] font-extrabold tracking-widest">
             READY!
           </span>
         </div>
@@ -28,7 +28,7 @@ export function FooterArcadeHUD() {
           className="h-[3.5px] sm:h-[5px] w-44 sm:w-64 md:w-80 max-w-[50%] rounded-full origin-left"
           style={{
             background:
-              "linear-gradient(90deg, #5B6BFF 0%, #D9534F 35%, #F0AD4E 65%, #5CB85C 100%)",
+              "linear-gradient(90deg, #3186FF 0%, #FC413D 35%, #FBBC04 65%, #00B95C 100%)",
           }}
         />
       </div>

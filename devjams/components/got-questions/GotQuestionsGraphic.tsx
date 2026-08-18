@@ -5,21 +5,48 @@ import { motion, MotionValue, useTransform } from "motion/react";
 interface GotQuestionsGraphicProps {
   apexX: MotionValue<number>;
   apexY: MotionValue<number>;
+  linesOpacity?: MotionValue<number>;
+  fullGradientOpacity?: MotionValue<number>;
 }
 
-// 18 baseline Y coordinates for horizontal background lines fanning from apex
+// 14 cleanly spaced baseline Y coordinates
 const LINE_BASELINE_Y = [
-  25, 60, 95, 130, 165, 200, 235, 270, 305, 340, 375, 410, 445, 480, 515, 550, 585, 620
+  25, 65, 110, 155, 200, 245, 290, 335, 380, 425, 470, 515, 555, 595
 ];
 
-function BentLine({ y0, apexX, apexY }: { y0: number; apexX: MotionValue<number>; apexY: MotionValue<number> }) {
+// Color palette mapping the right rays to the exact spectrum: Blue -> Cyan -> Green -> Yellow -> Orange -> Red
+const LINE_RIGHT_COLORS = [
+  "#AD5AAA", // 0: Top Purple / Violet
+  "#749BFF", // 1: Periwinkle
+  "#4E80EB", // 2: Blue
+  "#3186FF", // 3: Google Blue
+  "#1BB2E0", // 4: Cyan
+  "#0EBC61", // 5: Green
+  "#28C758", // 6: Fresh Green
+  "#62D648", // 7: Lime Green
+  "#A7DF32", // 8: Yellow Green
+  "#F2C81E", // 9: Bright Yellow
+  "#F27D1E", // 10: Sunset Orange
+  "#FBBC04", // 11: Amber
+  "#DC4855", // 12: Coral Red
+  "#FC413D", // 13: Red
+];
+
+function BentLine({ 
+  y0, 
+  index, 
+  apexX, 
+  apexY 
+}: { 
+  y0: number; 
+  index: number; 
+  apexX: MotionValue<number>; 
+  apexY: MotionValue<number>; 
+}) {
   const d = useTransform([apexX, apexY], (values: number[]) => {
     const x = values[0] ?? 550;
     const y = values[1] ?? 0;
-    // Only bend a line toward the apex if the apex is BELOW the line's baseline.
-    // Math.max(y, y0) means:
-    //   - if apexY < y0: vertex snaps to y0 → flat horizontal line
-    //   - if apexY >= y0: vertex drops to apexY → V-shape converging to apex
+    // When apex drops, lines bend toward the apex. When y reaches 650, all lines converge into (x, y) at the bottom.
     const vertexY = Math.max(y, y0);
     return `M 0 ${y0} L ${x.toFixed(1)} ${vertexY.toFixed(1)} L 1000 ${y0}`;
   });
@@ -27,19 +54,34 @@ function BentLine({ y0, apexX, apexY }: { y0: number; apexX: MotionValue<number>
   return (
     <motion.path
       d={d as any}
-      stroke="url(#linesSpectrumGradient)"
-      strokeWidth="1.75"
-      strokeOpacity="0.9"
+      stroke={`url(#lineGrad_${index})`}
+      strokeWidth="1.6"
+      strokeOpacity="0.88"
       fill="none"
     />
   );
 }
 
-export function GotQuestionsGraphic({ apexX, apexY }: GotQuestionsGraphicProps) {
-  // Polygon path definition starting at top edge (0 0 to 1000 0) to apex (apexX, apexY)
-  const trianglePath = useTransform([apexX, apexY], (values: number[]) => {
+export function GotQuestionsGraphic({ 
+  apexX, 
+  apexY,
+  linesOpacity,
+  fullGradientOpacity 
+}: GotQuestionsGraphicProps) {
+  // Polygon path definition: starts as triangle, then expands to full-screen rectangle on transition
+  const trianglePath = useTransform([apexX, apexY, fullGradientOpacity || apexY], (values: number[]) => {
     const x = values[0] ?? 550;
     const y = values[1] ?? 0;
+    const full = values[2] !== undefined && fullGradientOpacity ? values[2] : 0;
+    
+    if (full >= 0.99) {
+      return "M 0 0 L 1000 0 L 1000 650 L 0 650 Z";
+    }
+    if (full > 0) {
+      const leftX = (x * (1 - full)).toFixed(1);
+      const rightX = (x + (1000 - x) * full).toFixed(1);
+      return `M 0 0 L 1000 0 L ${rightX} 650 L ${leftX} 650 Z`;
+    }
     return `M 0 0 L 1000 0 L ${x.toFixed(1)} ${y.toFixed(1)} Z`;
   });
 
@@ -50,26 +92,24 @@ export function GotQuestionsGraphic({ apexX, apexY }: GotQuestionsGraphicProps) 
       preserveAspectRatio="none"
     >
       <defs>
-        {/* Lines Spectrum Gradient matching the ray colors from left (Crimson/Red) to apex to right (Amber -> Lime -> Green -> Cyan -> Blue) */}
-        <linearGradient
-          id="linesSpectrumGradient"
-          gradientUnits="userSpaceOnUse"
-          x1="0"
-          y1="0"
-          x2="1000"
-          y2="0"
-        >
-          <stop offset="0%" stopColor="#DC2626" />
-          <stop offset="15%" stopColor="#B91C1C" />
-          <stop offset="28%" stopColor="#991B1B" />
-          <stop offset="35%" stopColor="#EA580C" />
-          <stop offset="48%" stopColor="#F59E0B" />
-          <stop offset="60%" stopColor="#84CC16" />
-          <stop offset="72%" stopColor="#10B981" />
-          <stop offset="85%" stopColor="#06B6D4" />
-          <stop offset="95%" stopColor="#38BDF8" />
-          <stop offset="100%" stopColor="#3B82F6" />
-        </linearGradient>
+        {/* Soft, wide-transition line gradients matching the exact palette tokens */}
+        {LINE_RIGHT_COLORS.map((rightColor, index) => (
+          <linearGradient
+            key={`lineGrad_${index}`}
+            id={`lineGrad_${index}`}
+            gradientUnits="userSpaceOnUse"
+            x1="0"
+            y1="0"
+            x2="1000"
+            y2="0"
+          >
+            <stop offset="0%" stopColor="#DC4855" />
+            <stop offset="18%" stopColor="#DC4855" />
+            <stop offset="35%" stopColor={index > 8 ? "#F27D1E" : index < 4 ? "#AD5AAA" : "#0EBC61"} stopOpacity="0.9" />
+            <stop offset="55%" stopColor={rightColor} />
+            <stop offset="100%" stopColor={rightColor} />
+          </linearGradient>
+        ))}
 
         {/* Base linear gradient across the top boundary of the triangle */}
         <linearGradient
@@ -80,119 +120,65 @@ export function GotQuestionsGraphic({ apexX, apexY }: GotQuestionsGraphicProps) 
           x2="1000"
           y2="0"
         >
-          <stop offset="0%" stopColor="#DC2626" />
-          <stop offset="30%" stopColor="#7C3AED" />
-          <stop offset="60%" stopColor="#0284C7" />
-          <stop offset="85%" stopColor="#10B981" />
-          <stop offset="100%" stopColor="#22C55E" />
+          <stop offset="0%" stopColor="#DC4855" />
+          <stop offset="35%" stopColor="#AD5AAA" />
+          <stop offset="70%" stopColor="#4E80EB" />
+          <stop offset="100%" stopColor="#38BDF8" />
         </linearGradient>
 
-        {/* Central Warm Sunset Glow — positioned towards center-right so left stays deep red */}
-        <radialGradient
-          id="centerOrangeGlow"
-          cx="54%"
-          cy="60%"
-          r="42%"
-          fx="54%"
-          fy="60%"
-        >
-          <stop offset="0%" stopColor="#FF7A18" stopOpacity="0.75" />
-          <stop offset="40%" stopColor="#EA580C" stopOpacity="0.45" />
-          <stop offset="75%" stopColor="#991B1B" stopOpacity="0.15" />
-          <stop offset="100%" stopColor="#450A0A" stopOpacity="0" />
-        </radialGradient>
-
-        {/* Left Rich Red Radial Glow */}
-        <radialGradient
-          id="leftRedGlow"
-          cx="18%"
-          cy="45%"
-          r="45%"
-          fx="18%"
-          fy="45%"
-        >
-          <stop offset="0%" stopColor="#E11D48" stopOpacity="0.85" />
-          <stop offset="45%" stopColor="#DC2626" stopOpacity="0.7" />
-          <stop offset="80%" stopColor="#991B1B" stopOpacity="0.4" />
-          <stop offset="100%" stopColor="#450A0A" stopOpacity="0" />
-        </radialGradient>
-
-        {/* Top Purple Radial Highlight */}
-        <radialGradient
-          id="topPurpleGlow"
-          cx="48%"
-          cy="12%"
-          r="42%"
-          fx="48%"
-          fy="12%"
-        >
-          <stop offset="0%" stopColor="#6366F1" stopOpacity="0.9" />
-          <stop offset="50%" stopColor="#4F46E5" stopOpacity="0.5" />
-          <stop offset="100%" stopColor="#312E81" stopOpacity="0" />
-        </radialGradient>
-
-        {/* Soft Gaussian blur for mesh gradient blending */}
-        <filter id="meshGlow" x="-30%" y="-30%" width="160%" height="160%">
-          <feGaussianBlur stdDeviation="65" result="blur" />
+        {/* Ultra-soft Gaussian blur for seamless, diffuse liquid color blending */}
+        <filter id="meshGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="150" result="blur" />
         </filter>
 
-        {/* Dynamic triangle clip path */}
+        {/* Dynamic triangle / full-screen expanding clip path */}
         <clipPath id="triangleClip">
           <motion.path d={trianglePath as any} />
         </clipPath>
       </defs>
 
-      {/* Background Bending Lines — coloured by position matching spectrum */}
-      <g>
-        {LINE_BASELINE_Y.map((y0) => (
-          <BentLine key={y0} y0={y0} apexX={apexX} apexY={apexY} />
+      {/* Background Bending Lines with fade-out as full-screen gradient expands */}
+      <motion.g style={{ opacity: linesOpacity ?? 1 }}>
+        {LINE_BASELINE_Y.map((y0, idx) => (
+          <BentLine key={y0} y0={y0} index={idx} apexX={apexX} apexY={apexY} />
         ))}
-      </g>
+      </motion.g>
 
-      {/* Triangle fill with layered mesh gradient */}
+      {/* Triangle fill that seamlessly expands into full-screen liquid mesh gradient */}
       <g clipPath="url(#triangleClip)">
         {/* Base Gradient Layer */}
         <rect width="1000" height="650" fill="url(#triangleBaseGradient)" />
 
-        {/* Blurred Color Blobs for rich mesh transition */}
+        {/* High-diffusion mesh blobs using the exact color tokens */}
         <g filter="url(#meshGlow)">
-          {/* Upper Left Deep Red / Crimson Blob */}
-          <ellipse cx="140" cy="180" rx="220" ry="200" fill="#E11D48" opacity="0.95" />
+          {/* Upper Left Coral Red */}
+          <ellipse cx="140" cy="180" rx="380" ry="320" fill="#DC4855" opacity="0.95" />
 
-          {/* Lower Left Rich Crimson / Red Blob extending all the way down to apex */}
-          <ellipse cx="180" cy="440" rx="210" ry="230" fill="#DC2626" opacity="0.95" />
+          {/* Lower Left Coral Red extending down to apex */}
+          <ellipse cx="200" cy="460" rx="360" ry="340" fill="#DC4855" opacity="0.95" />
           
-          {/* Left Flank Base Red */}
-          <ellipse cx="80" cy="320" rx="160" ry="240" fill="#B91C1C" opacity="0.9" />
+          {/* Apex Point Warm Sunset Red/Orange */}
+          <ellipse cx="260" cy="620" rx="300" ry="240" fill="#F27D1E" opacity="0.9" />
+
+          {/* Center-Bottom Sunset Amber Glow */}
+          <ellipse cx="480" cy="470" rx="340" ry="280" fill="#F27D1E" opacity="0.85" />
           
-          {/* Upper Center Indigo / Purple Blob */}
-          <ellipse cx="480" cy="80" rx="240" ry="160" fill="#6366F1" opacity="0.9" />
+          {/* Center Warm Golden Yellow Burst */}
+          <ellipse cx="550" cy="400" rx="300" ry="260" fill="#F2C81E" opacity="0.8" />
           
-          {/* Top-Right Sky Blue / Cyan Blob */}
-          <ellipse cx="850" cy="100" rx="230" ry="190" fill="#00A8FF" opacity="0.95" />
+          {/* Upper-Center Purple / Violet Aura */}
+          <ellipse cx="460" cy="90" rx="360" ry="240" fill="#AD5AAA" opacity="0.9" />
           
-          {/* Mid-Right Emerald Green Blob */}
-          <ellipse cx="820" cy="360" rx="210" ry="230" fill="#10B981" opacity="0.95" />
+          {/* Top-Right Sky Blue Aura */}
+          <ellipse cx="820" cy="100" rx="380" ry="260" fill="#4E80EB" opacity="0.95" />
           
-          {/* Lime / Yellow-Green Accent on Right Flank */}
-          <ellipse cx="720" cy="470" rx="170" ry="170" fill="#84CC16" opacity="0.85" />
+          {/* Mid-Right Emerald Green Transition */}
+          <ellipse cx="780" cy="360" rx="340" ry="300" fill="#0EBC61" opacity="0.85" />
           
-          {/* Warm Amber / Sunset Orange Glow — centered more to the middle-right */}
-          <ellipse cx="500" cy="430" rx="200" ry="180" fill="#FF7A18" opacity="0.85" />
-          
-          {/* Apex Convergence Dark Crimson / Burgundy */}
-          <ellipse cx="260" cy="620" rx="180" ry="140" fill="#7F1D1D" opacity="0.95" />
+          {/* Lower-Right Green / Amber Hue */}
+          <ellipse cx="680" cy="520" rx="280" ry="240" fill="#0EBC61" opacity="0.7" />
         </g>
-
-        {/* Layered Radial Light Highlights */}
-        <rect width="1000" height="650" fill="url(#leftRedGlow)" />
-        <rect width="1000" height="650" fill="url(#centerOrangeGlow)" />
-        <rect width="1000" height="650" fill="url(#topPurpleGlow)" opacity="0.6" />
       </g>
     </svg>
   );
 }
-
-
-
-

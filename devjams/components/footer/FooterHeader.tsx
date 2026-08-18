@@ -91,8 +91,8 @@ export function FooterHeader() {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="font-normal text-white hover:text-white flex items-center gap-3 group transition-colors cursor-pointer leading-tight self-start"
-          style={{ fontSize: "clamp(1.25rem, 2.8vw, 42px)" }}
+          className="text-white hover:text-white flex items-center gap-3 group transition-colors cursor-pointer leading-tight self-start"
+          style={{ fontSize: "clamp(2rem, 3.5vw, 50px)", fontWeight: 400 }}
         >
           <span>Let’s talk tech</span>
           <span className="inline-block transition-transform duration-300 group-hover:translate-x-2">
@@ -106,59 +106,59 @@ export function FooterHeader() {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="flex flex-col items-start md:items-end text-left md:text-right gap-1.5"
+          className="flex flex-col items-start md:items-end text-left md:text-right gap-2"
         >
           <h3
-            className="font-normal text-white tracking-tight leading-tight"
-            style={{ fontSize: "clamp(1.25rem, 2.8vw, 42px)" }}
+            className="font-[400] text-white tracking-tight leading-tight"
+            style={{ fontSize: "clamp(2rem, 3.5vw, 50px)", fontWeight: 400 }}
           >
             Contact us
           </h3>
 
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 text-gray-300">
+          <div className="flex flex-col sm:flex-row gap-6 sm:gap-10 md:gap-12 text-gray-300 pt-1">
             {/* Person 1 */}
-            <div className="flex flex-col gap-0.5">
+            <div className="flex flex-col items-start md:items-end text-left md:text-right gap-1">
               <span
-                className="font-normal text-white leading-snug"
-                style={{ fontSize: "clamp(0.85rem, 1.4vw, 20px)" }}
+                className="text-white leading-tight"
+                style={{ fontSize: "clamp(1.1rem, 1.75vw, 24.71px)", fontWeight: 400 }}
               >
                 Meda Varshith Kumar Reddy
               </span>
               <a
                 href="tel:+919686352426"
-                className="hover:text-white transition-colors text-gray-400 leading-snug"
-                style={{ fontSize: "clamp(0.8rem, 1.25vw, 18px)" }}
+                className="hover:text-white transition-colors text-white/70 leading-snug"
+                style={{ fontSize: "clamp(0.95rem, 1.35vw, 19.22px)", fontWeight: 400 }}
               >
                 +919686352426
               </a>
               <a
                 href="mailto:varshithisworking@gmail.com"
-                className="hover:text-white transition-colors text-gray-400 break-all sm:break-normal leading-snug"
-                style={{ fontSize: "clamp(0.8rem, 1.25vw, 18px)" }}
+                className="hover:text-white transition-colors text-white/70 break-all sm:break-normal leading-snug"
+                style={{ fontSize: "clamp(0.95rem, 1.35vw, 19.22px)", fontWeight: 400 }}
               >
                 varshithisworking@gmail.com
               </a>
             </div>
 
             {/* Person 2 */}
-            <div className="flex flex-col gap-0.5">
+            <div className="flex flex-col items-start md:items-end text-left md:text-right gap-1">
               <span
-                className="font-normal text-white leading-snug"
-                style={{ fontSize: "clamp(0.85rem, 1.4vw, 20px)" }}
+                className="text-white leading-tight"
+                style={{ fontSize: "clamp(1.1rem, 1.75vw, 24.71px)", fontWeight: 400 }}
               >
                 Reenu B
               </span>
               <a
                 href="tel:+919656463672"
-                className="hover:text-white transition-colors text-gray-400 leading-snug"
-                style={{ fontSize: "clamp(0.8rem, 1.25vw, 18px)" }}
+                className="hover:text-white transition-colors text-white/70 leading-snug"
+                style={{ fontSize: "clamp(0.95rem, 1.35vw, 19.22px)", fontWeight: 400 }}
               >
                 +919656463672
               </a>
               <a
                 href="mailto:reenubiju10@gmail.com"
-                className="hover:text-white transition-colors text-gray-400 break-all sm:break-normal leading-snug"
-                style={{ fontSize: "clamp(0.8rem, 1.25vw, 18px)" }}
+                className="hover:text-white transition-colors text-white/70 break-all sm:break-normal leading-snug"
+                style={{ fontSize: "clamp(0.95rem, 1.35vw, 19.22px)", fontWeight: 400 }}
               >
                 reenubiju10@gmail.com
               </a>

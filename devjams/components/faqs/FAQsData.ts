@@ -30,11 +30,6 @@ export const FAQ_CATEGORIES: FAQCategory[] = [
         question: "What is the mode of the event?",
         answer: "DevJams '26 is hosted in a hybrid format, allowing participants to attend in-person at the venue or contribute remotely.",
       },
-      {
-        id: "g4",
-        question: "Will hardware be provided for hardware-based projects?",
-        answer: "Basic hardware components and IoT starter kits will be made available at the physical venue for registered teams.",
-      },
     ],
   },
   {
@@ -55,11 +50,6 @@ export const FAQ_CATEGORIES: FAQCategory[] = [
         id: "r3",
         question: "Can I participate individually without a team?",
         answer: "Yes, solo hackers are welcome! You can also join our Discord community to connect with potential teammates.",
-      },
-      {
-        id: "r4",
-        question: "What is the deadline for project idea submission?",
-        answer: "All initial idea submissions must be submitted before the registration deadline posted on our platform.",
       },
     ],
   },

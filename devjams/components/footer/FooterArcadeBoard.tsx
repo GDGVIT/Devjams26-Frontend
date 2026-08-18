@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 
 interface CharacterState {
   x: number;
@@ -30,43 +31,43 @@ const GHOST_COLORS = ["#F97316", "#06B6D4", "#EF4444", "#EC4899"];
 function getTrackCoord(s: number): { x: number; y: number; rot: number } {
   const normS = ((s % 1) + 1) % 1;
 
-  // Segment 1 (Top Corridor - strictly above logo): 0.00 -> 0.35
+  // Segment 1 (Top Corridor - comfortably above logo): 0.00 -> 0.35
   if (normS < 0.35) {
     const r = normS / 0.35;
-    return { x: 3.5 + r * 93, y: 5.5, rot: 0 };
+    return { x: 5 + r * 90, y: 7.5, rot: 0 };
   }
-  // Segment 2 (Right Corridor - strictly right of '6'): 0.35 -> 0.50
+  // Segment 2 (Right Corridor - comfortably right of '6'): 0.35 -> 0.50
   else if (normS < 0.50) {
     const r = (normS - 0.35) / 0.15;
-    return { x: 96.5, y: 5.5 + r * 89, rot: 90 };
+    return { x: 95, y: 7.5 + r * 83, rot: 90 };
   }
-  // Segment 3 (Bottom Corridor - strictly below descenders): 0.50 -> 0.85
+  // Segment 3 (Bottom Corridor - comfortably below descenders with zero clipping): 0.50 -> 0.85
   else if (normS < 0.85) {
     const r = (normS - 0.50) / 0.35;
-    return { x: 96.5 - r * 93, y: 94.5, rot: 180 };
+    return { x: 95 - r * 90, y: 90.5, rot: 180 };
   }
-  // Segment 4 (Left Corridor - strictly left of 'D'): 0.85 -> 1.00
+  // Segment 4 (Left Corridor - comfortably left of 'D'): 0.85 -> 1.00
   else {
     const r = (normS - 0.85) / 0.15;
-    return { x: 3.5, y: 94.5 - r * 89, rot: 270 };
+    return { x: 5, y: 90.5 - r * 83, rot: 270 };
   }
 }
 
 export function FooterArcadeBoard() {
-  const [pacman, setPacman] = useState<CharacterState>({ x: 3.5, y: 5.5, rotation: 0, scale: 1 });
+  const [pacman, setPacman] = useState<CharacterState>({ x: 5, y: 7.5, rotation: 0, scale: 1 });
   const [ghosts, setGhosts] = useState<GhostState[]>([
-    { id: 0, x: 45, y: 5.5, color: "#F97316", isFleeing: false },
-    { id: 1, x: 96.5, y: 45, color: "#06B6D4", isFleeing: false },
-    { id: 2, x: 45, y: 94.5, color: "#EF4444", isFleeing: false },
+    { id: 0, x: 45, y: 7.5, color: "#F97316", isFleeing: false },
+    { id: 1, x: 95, y: 45, color: "#06B6D4", isFleeing: false },
+    { id: 2, x: 45, y: 90.5, color: "#EF4444", isFleeing: false },
   ]);
   const [popups, setPopups] = useState<ScorePopup[]>([]);
 
   const simRef = useRef({
-    pacman: { s: 0.02, speed: 0.08, eatsCount: 0, scale: 1 },
+    pacman: { s: 0.02, speed: 0.035, eatsCount: 0, scale: 1 },
     ghosts: [
-      { id: 0, s: 0.22, dir: 1, speed: 0.048, color: "#F97316", timer: 3 },
-      { id: 1, s: 0.52, dir: -1, speed: 0.052, color: "#06B6D4", timer: 4 },
-      { id: 2, s: 0.82, dir: 1, speed: 0.045, color: "#EF4444", timer: 2 },
+      { id: 0, s: 0.25, dir: 1, speed: 0.024, color: "#F97316", timer: 3 },
+      { id: 1, s: 0.58, dir: -1, speed: 0.026, color: "#06B6D4", timer: 4 },
+      { id: 2, s: 0.85, dir: 1, speed: 0.023, color: "#EF4444", timer: 2 },
     ],
     nextPopupId: 0,
   });
@@ -75,7 +76,8 @@ export function FooterArcadeBoard() {
     let animationFrameId: number;
     let lastTime = performance.now();
 
-    const EAT_THRESHOLD = 0.038; // Distance at which Pac-Man eats the ghost
+    // Exact on-contact collision threshold calibrated to enlarged sprites
+    const EAT_THRESHOLD = 0.016;
 
     const updateSimulation = (now: number) => {
       const dt = Math.min((now - lastTime) / 1000, 0.1);
@@ -198,7 +200,7 @@ export function FooterArcadeBoard() {
   }, []);
 
   return (
-    <div className="relative w-full rounded-2xl sm:rounded-3xl bg-[#09090b] border border-white/20 p-3 sm:p-5 md:p-6 overflow-hidden select-none shadow-2xl">
+    <div className="relative w-full rounded-2xl sm:rounded-3xl bg-[#09090b] border border-white/20 p-4 sm:p-6 md:p-8 overflow-hidden select-none shadow-2xl">
       {/* Top Dash Pills Row */}
       <div className="w-full flex items-center justify-between gap-1.5 sm:gap-2.5 mb-1.5 sm:mb-2 opacity-30">
         {Array.from({ length: 10 }).map((_, i) => (
@@ -220,7 +222,7 @@ export function FooterArcadeBoard() {
       />
 
       {/* Central DevJams '26 Gradient SVG Logo with dedicated padding to prevent text overlap */}
-      <div className="relative z-10 w-full max-w-full flex items-center justify-center py-5 sm:py-7 md:py-8 px-6 sm:px-10 md:px-14 pointer-events-none">
+      <div className="relative z-10 w-full max-w-full flex items-center justify-center py-6 sm:py-8 md:py-10 px-8 sm:px-12 md:px-16 pointer-events-none">
         <svg
           viewBox="0 0 960 180"
           className="w-full h-auto max-w-[1150px] drop-shadow-[0_0_20px_rgba(255,255,255,0.1)]"
@@ -229,59 +231,116 @@ export function FooterArcadeBoard() {
         >
           <defs>
             <linearGradient id="grad-D" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#4338CA" />
-              <stop offset="50%" stopColor="#3B82F6" />
-              <stop offset="100%" stopColor="#38BDF8" />
+              <stop offset="0%" stopColor="#3B7DED" />
+              <stop offset="50%" stopColor="#3186FF" />
+              <stop offset="100%" stopColor="#749BFF" />
             </linearGradient>
 
-            <linearGradient id="grad-bracket" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#F59E0B" />
-              <stop offset="100%" stopColor="#EC4899" />
+            {/* Mask and Filter from /assets/logo/gdglogo.svg */}
+            <mask id="mask0_1227_1702" style={{ maskType: "alpha" }} maskUnits="userSpaceOnUse" x="4" y="5" width="67" height="39">
+              <rect x="9.25168" y="16.8596" width="33.429" height="14.2227" rx="7.11135" transform="rotate(30.5381 9.25168 16.8596)" fill="url(#paint0_linear_1227_1702)"/>
+              <rect width="33.429" height="14.2227" rx="7.11135" transform="matrix(-0.759465 0.650548 0.650548 0.759465 63.9023 12.0569)" fill="url(#paint1_linear_1227_1702)"/>
+              <rect width="33.429" height="14.2227" rx="7.11135" transform="matrix(-0.759465 0.650548 0.650548 0.759465 63.9023 12.0569)" fill="url(#paint2_linear_1227_1702)"/>
+              <rect width="33.429" height="14.676" rx="7.33802" transform="matrix(0.759465 -0.650548 -0.650548 -0.759465 11.2584 36.8733)" fill="url(#paint3_linear_1227_1702)"/>
+              <rect x="65.083" y="32.6555" width="33.429" height="15.4285" rx="7.71426" transform="rotate(-149.462 65.083 32.6555)" fill="url(#paint4_linear_1227_1702)"/>
+              <rect x="65.083" y="32.6555" width="33.429" height="15.4285" rx="7.71426" transform="rotate(-149.462 65.083 32.6555)" fill="url(#paint5_linear_1227_1702)"/>
+            </mask>
+
+            <filter id="filter0_f_1227_1702" x="-32.5409" y="-46.5095" width="151.027" height="149.007" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+              <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+              <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+              <feGaussianBlur stdDeviation="15" result="effect1_foregroundBlur_1227_1702"/>
+            </filter>
+
+            <linearGradient id="paint0_linear_1227_1702" x1="41.4372" y1="24.2591" x2="31.5354" y2="13.5413" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#FB413B"/>
+              <stop offset="1" stopColor="#FF64A0"/>
+            </linearGradient>
+            <linearGradient id="paint1_linear_1227_1702" x1="0" y1="7.11135" x2="33.429" y2="7.11135" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#EA4335"/>
+              <stop offset="0.197115" stopColor="#FF7DAF"/>
+              <stop offset="0.365385" stopColor="#F9AB00"/>
+              <stop offset="0.5" stopColor="#FFD427"/>
+              <stop offset="0.644231" stopColor="#34A853"/>
+              <stop offset="0.783654" stopColor="#5CDB6D"/>
+              <stop offset="0.923077" stopColor="#4285F4"/>
+              <stop offset="1" stopColor="#57CAFF"/>
+            </linearGradient>
+            <linearGradient id="paint2_linear_1227_1702" x1="33.429" y1="7.29574" x2="-1.00166" y2="6.29592" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#FAD917"/>
+              <stop offset="0.457033" stopColor="#F74B47"/>
+              <stop offset="0.706224" stopColor="#F74B47"/>
+              <stop offset="1" stopColor="#FF64A0"/>
+            </linearGradient>
+            <linearGradient id="paint3_linear_1227_1702" x1="33.429" y1="7.52828" x2="-1.00343" y2="6.5593" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#FAD917"/>
+              <stop offset="0.457033" stopColor="#F74B47"/>
+              <stop offset="0.9675" stopColor="#F74B47"/>
+            </linearGradient>
+            <linearGradient id="paint4_linear_1227_1702" x1="65.083" y1="40.3698" x2="98.512" y2="40.3698" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#EA4335"/>
+              <stop offset="0.197115" stopColor="#FF7DAF"/>
+              <stop offset="0.365385" stopColor="#F9AB00"/>
+              <stop offset="0.5" stopColor="#FFD427"/>
+              <stop offset="0.644231" stopColor="#34A853"/>
+              <stop offset="0.783654" stopColor="#5CDB6D"/>
+              <stop offset="0.923077" stopColor="#4285F4"/>
+              <stop offset="1" stopColor="#57CAFF"/>
+            </linearGradient>
+            <linearGradient id="paint5_linear_1227_1702" x1="97.7572" y1="39.6789" x2="66.0616" y2="39.015" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#338BFD"/>
+              <stop offset="1" stopColor="#3AC566"/>
             </linearGradient>
 
             <linearGradient id="grad-e" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#FBBF24" />
-              <stop offset="100%" stopColor="#FB7185" />
+              <stop offset="0%" stopColor="#FFEE48" />
+              <stop offset="45%" stopColor="#FBBC04" />
+              <stop offset="100%" stopColor="#FC413D" />
             </linearGradient>
 
             <linearGradient id="grad-v" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#FB7185" />
-              <stop offset="100%" stopColor="#8B5CF6" />
+              <stop offset="0%" stopColor="#FC413D" />
+              <stop offset="40%" stopColor="#E43E2B" />
+              <stop offset="100%" stopColor="#749BFF" />
             </linearGradient>
 
             <linearGradient id="grad-J" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#84CC16" />
-              <stop offset="100%" stopColor="#10B981" />
+              <stop offset="0%" stopColor="#2BA24C" />
+              <stop offset="100%" stopColor="#00B95C" />
             </linearGradient>
 
             <linearGradient id="grad-a" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#FACC15" />
-              <stop offset="100%" stopColor="#FB923C" />
+              <stop offset="0%" stopColor="#FFEE48" />
+              <stop offset="50%" stopColor="#FFE432" />
+              <stop offset="100%" stopColor="#FBBC04" />
             </linearGradient>
 
             <linearGradient id="grad-m" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#38BDF8" />
-              <stop offset="100%" stopColor="#6366F1" />
+              <stop offset="0%" stopColor="#749BFF" />
+              <stop offset="50%" stopColor="#3186FF" />
+              <stop offset="100%" stopColor="#3B7DED" />
             </linearGradient>
 
             <linearGradient id="grad-s" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#F43F5E" />
-              <stop offset="100%" stopColor="#EA580C" />
+              <stop offset="0%" stopColor="#FC413D" />
+              <stop offset="100%" stopColor="#E43E2B" />
             </linearGradient>
 
-            <linearGradient id="grad-quote" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#F59E0B" />
-              <stop offset="100%" stopColor="#EA580C" />
+            <linearGradient id="grad-quote" x1="50%" y1="0%" x2="20%" y2="100%">
+              <stop offset="0%" stopColor="#FC413D" />
+              <stop offset="35%" stopColor="#FBBC04" />
+              <stop offset="100%" stopColor="#FFE432" />
             </linearGradient>
 
             <linearGradient id="grad-2" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#22C55E" />
-              <stop offset="100%" stopColor="#10B981" />
+              <stop offset="0%" stopColor="#2BA24C" />
+              <stop offset="100%" stopColor="#00B95C" />
             </linearGradient>
 
             <linearGradient id="grad-6" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#06B6D4" />
-              <stop offset="100%" stopColor="#4F46E5" />
+              <stop offset="0%" stopColor="#749BFF" />
+              <stop offset="50%" stopColor="#3186FF" />
+              <stop offset="100%" stopColor="#3B7DED" />
             </linearGradient>
           </defs>
 
@@ -305,17 +364,23 @@ export function FooterArcadeBoard() {
             />
           </g>
 
-          {/* <> Brackets Icon above e / v */}
-          <g transform="translate(172, 16)" style={{ mixBlendMode: "screen" }}>
-            <path
-              d="M14 6 L4 18 L14 30 M24 6 L34 18 L24 30"
-              stroke="url(#grad-bracket)"
-              strokeWidth="6.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="none"
-              opacity="0.95"
-            />
+          {/* Exact GDG Logo from /assets/logo/gdglogo.svg */}
+          <g transform="translate(166, 6)" style={{ mixBlendMode: "screen" }}>
+            <g mask="url(#mask0_1227_1702)">
+              <g filter="url(#filter0_f_1227_1702)">
+                <path d="M12.5165 47.2439C19.0849 48.9463 19.026 41.3211 21.0289 33.5929C23.0318 25.8655 26.3375 20.9611 19.7691 19.2587C13.2008 17.5562 6.2525 22.4412 4.24871 30.1687C2.24669 37.8968 5.94813 45.5414 12.5165 47.2439Z" fill="#FFE432"/>
+                <path d="M38.6292 20.0505C47.3791 19.2815 53.8361 11.4076 53.0502 2.46485C52.2642 -6.47871 44.5337 -13.105 35.783 -12.3359C27.0323 -11.5669 20.5744 -3.69286 21.3603 5.24985C22.1462 14.1926 29.8776 20.8196 38.6292 20.0505Z" fill="#FC413D"/>
+                <path d="M37.018 72.3761C46.1135 71.1274 52.1748 60.5625 50.5563 48.7798C48.9387 36.9969 40.2525 28.4575 31.1571 29.7071C22.0616 30.9567 16.0003 41.5208 17.6188 53.3035C19.2372 65.0862 27.9226 73.6258 37.018 72.3761Z" fill="#00B95C"/>
+                <path d="M37.016 72.376C46.1115 71.1273 52.1728 60.5624 50.5543 48.7797C48.9367 36.9969 40.2505 28.4574 31.1551 29.707C22.0596 30.9566 15.9983 41.5207 17.6167 53.3034C19.2352 65.0861 27.9206 73.6257 37.016 72.376Z" fill="#00B95C"/>
+                <path d="M44.3262 62.4114C51.5741 57.0789 52.6915 46.2877 46.8213 38.308C40.951 30.3274 22.8124 17.7862 15.5636 23.1179C8.31487 28.4513 14.701 49.6375 20.5712 57.618C26.4431 65.5976 37.0774 67.744 44.3262 62.4114Z" fill="#00B95C"/>
+                <path d="M74.1639 35.1994C82.771 34.443 89.1583 27.1102 88.43 18.8224C87.7015 10.5338 80.1332 4.42749 71.526 5.18392C62.9189 5.94034 56.5316 13.2731 57.26 21.5617C57.9884 29.8503 65.5567 35.9558 74.1639 35.1994Z" fill="#3186FF"/>
+                <path d="M5.6658 39.4636C14.1213 44.7935 25.533 41.8858 31.1552 32.9672C36.7774 24.0494 34.4816 12.4983 26.0261 7.16848C17.5705 1.83781 6.15961 4.74537 0.536632 13.6641C-5.08557 22.5818 -2.78883 34.1337 5.6658 39.4636Z" fill="#FBBC04"/>
+                <path d="M47.0557 44.803C57.0865 50.4755 69.4668 47.5624 74.7065 38.2947C79.947 29.0278 76.0629 16.9177 66.0312 11.2453C55.9994 5.5712 43.6201 8.48597 38.3795 17.752C33.1399 27.0197 37.0232 39.1298 47.0549 44.8031L47.0557 44.803Z" fill="#3186FF"/>
+                <path d="M60.2369 -2.38256C62.9311 0.678217 60.3971 7.31112 54.5784 12.4341C48.7588 17.5572 41.8577 19.2286 39.1636 16.1687C36.4693 13.107 39.0024 6.47335 44.8212 1.35122C50.6408 -3.77184 57.5427 -5.44335 60.236 -2.38334L60.2369 -2.38256Z" fill="#749BFF"/>
+                <path d="M61.2071 13.7357C70.0443 3.96524 72.2844 -8.40828 66.2115 -13.9013C60.1387 -19.3943 48.0509 -15.9281 39.2138 -6.15769C30.3767 3.61275 28.1357 15.9863 34.2094 21.4793C40.2823 26.9722 52.37 23.5061 61.2071 13.7357Z" fill="#FC413D"/>
+                <path d="M14.9083 40.5788C20.9869 44.1692 27.6065 44.214 29.6946 40.6799C31.7826 37.1449 24.1106 25.8844 18.032 22.2941C11.9543 18.7037 7.98979 22.5411 5.90254 26.0752C3.81451 29.6102 8.82979 36.9885 14.9083 40.5788Z" fill="#FFEE48"/>
+              </g>
+            </g>
           </g>
 
           {/* Letter v */}
@@ -366,7 +431,7 @@ export function FooterArcadeBoard() {
           {/* Letter ' (Quote) */}
           <g transform="translate(724.43, 1.98)" style={{ mixBlendMode: "screen" }}>
             <path
-              d="M23.6513 0.350006H41.9156L32.3646 55.0888H0.527771L23.6513 0.350006Z"
+              d="M 24 1 C 33.39 1 41 8.61 41 18 C 41 22.5 39.5 27 38 31 L 24 53 L 10 43 L 15 28 C 10.1 26 7 21.4 7 18 C 7 8.61 14.61 1 24 1 Z"
               fill="url(#grad-quote)"
               fillOpacity="0.9"
             />
@@ -376,7 +441,7 @@ export function FooterArcadeBoard() {
           <g transform="translate(773.45, 4.66)" style={{ mixBlendMode: "screen" }}>
             <path
               d="M1.78691 166.582V139.558C2.08957 139.255 3.45151 137.893 5.87275 135.471C8.294 132.897 11.3205 129.642 14.9524 125.706C18.7356 121.769 22.7458 117.53 26.983 112.988C31.3715 108.446 35.6087 104.056 39.6946 99.8169C43.9317 95.4265 47.7149 91.4902 51.0441 88.0081C54.3733 84.526 56.7945 81.9522 58.3078 80.2869C63.6043 74.6852 67.3119 69.5378 69.4304 64.8445C71.549 59.9999 72.6083 55.0038 72.6083 49.8564C72.6083 46.5257 71.776 43.195 70.1114 39.8643C68.4468 36.5336 65.9499 33.8084 62.6207 31.6889C59.4428 29.418 55.5839 28.2825 51.0441 28.2825C46.5043 28.2825 42.6454 29.1909 39.4675 31.0076C36.2897 32.8244 33.7171 35.171 31.7498 38.0475C29.7825 40.924 28.2693 44.0276 27.21 47.3583L0.424988 36.2308C1.63561 32.1431 3.60288 27.9797 6.32678 23.7406C9.05068 19.5016 12.5312 15.641 16.7684 12.1589C21.0055 8.52537 25.9993 5.64885 31.7498 3.52931C37.6516 1.40978 44.2344 0.350006 51.4981 0.350006C62.0911 0.350006 71.1707 2.62094 78.7371 7.16282C86.4548 11.7047 92.3566 17.6091 96.4425 24.8761C100.68 32.1431 102.798 40.0157 102.798 48.4938C102.798 54.8524 101.663 61.1354 99.3933 67.3426C97.2747 73.3984 94.3239 79.1514 90.5407 84.6017C86.9088 90.0519 82.823 95.1994 78.2832 100.044C76.1646 102.466 73.6677 105.116 70.7924 107.992C68.0685 110.869 65.269 113.897 62.3937 117.076C59.5185 120.104 56.7189 123.056 53.995 125.933C51.2711 128.809 48.7742 131.459 46.5043 133.881C44.3857 136.152 42.6454 137.893 41.2835 139.104L41.9645 140.467H104.841V166.582H1.78691Z"
-              fill="url(#grad-2)"
+              fill="url(#grad-J)"
               fillOpacity="0.88"
             />
           </g>
@@ -407,49 +472,43 @@ export function FooterArcadeBoard() {
         </div>
       ))}
 
-      {/* --- DYNAMIC ARCADE CHASE & EAT ANIMATION (NO TEXT OVERLAP) --- */}
-      {/* 1. Pac-Man (Grows bigger when eating ghosts) */}
+      {/* --- DYNAMIC ARCADE CHASE & EAT ANIMATION (USING OFFICIAL ASSETS) --- */}
+      {/* 1. Pac-Man (Rendered from official pacman.svg asset) */}
       <div
-        className="absolute w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 z-20 pointer-events-none transition-transform duration-100 ease-out"
+        className="absolute w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 z-20 pointer-events-none transition-transform duration-75 ease-out filter drop-shadow-[0_0_12px_rgba(255,228,50,0.4)]"
         style={{
           left: `${pacman.x}%`,
           top: `${pacman.y}%`,
-          transform: `translate(-50%, -50%) rotate(${pacman.rotation}deg) scale(${pacman.scale})`,
+          transform: `translate(-50%, -50%) rotate(${pacman.rotation + 180}deg) scale(${pacman.scale})`,
         }}
       >
-        <svg viewBox="0 0 100 100" className="w-full h-full">
-          <path fill="#FACC15" d="M50 50 L95 20 A45 45 0 1 0 95 80 Z">
-            <animate
-              attributeName="d"
-              values="M50 50 L95 20 A45 45 0 1 0 95 80 Z; M50 50 L98 48 A45 45 0 1 0 98 52 Z; M50 50 L95 20 A45 45 0 1 0 95 80 Z"
-              dur="0.18s"
-              repeatCount="indefinite"
-            />
-          </path>
-        </svg>
+        <Image
+          src="/assets/logo/pacman.svg"
+          alt="Pac-Man"
+          width={51}
+          height={50}
+          className="w-full h-full object-contain pointer-events-none"
+        />
       </div>
 
-      {/* 2. Ghosts (Dynamic Spawning) */}
+      {/* 2. Ghosts (Rendered from official ghost.svg & ghost1.svg assets) */}
       {ghosts.map((ghost) => (
         <div
           key={ghost.id}
-          className="absolute w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 z-20 pointer-events-none transition-transform duration-75"
+          className="absolute w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 z-20 pointer-events-none transition-transform duration-75 filter drop-shadow-[0_0_12px_rgba(255,255,255,0.3)]"
           style={{
             left: `${ghost.x}%`,
             top: `${ghost.y}%`,
             transform: "translate(-50%, -50%)",
           }}
         >
-          <svg viewBox="0 0 100 100" className="w-full h-full">
-            <path
-              fill={ghost.color}
-              d="M50 10 C25 10 15 30 15 55 L15 90 L28 80 L40 90 L50 80 L60 90 L72 80 L85 90 L85 55 C85 30 75 10 50 10 Z"
-            />
-            <circle cx="38" cy="42" r="10" fill="#FFF" />
-            <circle cx="62" cy="42" r="10" fill="#FFF" />
-            <circle cx="42" cy="42" r="5" fill="#1E3A8A" />
-            <circle cx="66" cy="42" r="5" fill="#1E3A8A" />
-          </svg>
+          <Image
+            src={ghost.id % 2 === 1 ? "/assets/logo/ghost1.svg" : "/assets/logo/ghost.svg"}
+            alt="Ghost"
+            width={47}
+            height={47}
+            className="w-full h-full object-contain pointer-events-none"
+          />
         </div>
       ))}
     </div>
