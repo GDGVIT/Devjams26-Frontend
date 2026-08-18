@@ -36,7 +36,15 @@ import {
   FRAME_THREE_EDGE_LOGO_OFFSETS,
   FRAME_TWO_CONTENT_ENTER_OFFSET,
   heroMenuShouldCollapseAtScroll,
+  menuDefaultsOpenAtViewport,
 } from "./frame-transition.ts";
+
+test("menu opens by default only above the mobile breakpoint", () => {
+  assert.equal(menuDefaultsOpenAtViewport(375), false);
+  assert.equal(menuDefaultsOpenAtViewport(700), false);
+  assert.equal(menuDefaultsOpenAtViewport(701), true);
+  assert.equal(menuDefaultsOpenAtViewport(1440), true);
+});
 test("responsive frame scale clamps to the shared reference width", () => {
   const mobileScale = frameScaleAtViewport(320);
 

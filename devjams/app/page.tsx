@@ -40,6 +40,7 @@ import {
   scaleMobileShapeBoundsAtViewport,
   scaleShapeBounds,
   heroMenuShouldCollapseAtScroll,
+  menuDefaultsOpenAtViewport,
   scrollTransitionProgressAt,
   smoothScrollProgressAt,
   uniformShapeTransformAt,
@@ -117,7 +118,10 @@ export default function Home() {
   const shapeStartRef = useRef<Partial<Record<ShapeKey, ShapeBounds>>>({});
   const shapeTargetRef = useRef<Partial<Record<ShapeKey, ShapeBounds>>>({});
   const frameThreeGeometryRef = useRef<FrameThreeGeometry | null>(null);
-  const [menuOpen, setMenuOpen] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
+  useEffect(() => {
+    if (menuDefaultsOpenAtViewport(window.innerWidth)) setMenuOpen(true);
+  }, []);
   const [viewportWidth, setViewportWidth] = useState(FRAME_REFERENCE_WIDTH);
   const [viewportHeight, setViewportHeight] = useState(812);
   useEffect(() => {
@@ -802,70 +806,78 @@ export default function Home() {
             </svg>
           </motion.button>
         <AnimatePresence>
-          {menuOpen ? (
-            <>
-              <motion.button
-                type="button"
-                className="hero-nav__backdrop"
-                aria-label="Close navigation"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                onClick={() => setMenuOpen(false)}
-              />
-              <motion.nav
-                id="primary-navigation-sheet"
-                className="hero-nav"
-                initial={isMobileViewport ? { x: "100%", opacity: 0 } : { width: "68px", opacity: 1, x: 0 }}
-                animate={{ width: "var(--hero-nav-open-width)", opacity: 1, x: 0 }}
-                exit={{ x: "100%", opacity: 0 }}
-                transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
-                style={{ transformOrigin: "right center" }}
-                role={isMobileViewport ? "dialog" : undefined}
-                aria-modal={isMobileViewport ? true : undefined}
-                aria-label="Primary navigation"
-              >
-                <div className="hero-nav__sheet-head">
-                  <h2 className="hero-nav__sheet-title">Menu</h2>
-                  <button
-                    type="button"
-                    className="hero-nav__close"
-                    aria-label="Close navigation"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    <span aria-hidden="true">×</span>
-                  </button>
-                </div>
+          <>
+            <motion.button
+              type="button"
+              className="hero-nav__backdrop"
+              aria-label="Close navigation"
+              aria-hidden={!menuOpen}
+              tabIndex={-1}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: menuOpen ? 1 : 0 }}
+              transition={{ duration: 0.2 }}
+              style={{ pointerEvents: menuOpen ? "auto" : "none" }}
+              onClick={() => setMenuOpen(false)}
+            />
+            <motion.nav
+              id="primary-navigation-sheet"
+              className="hero-nav"
+              initial={isMobileViewport ? { x: "100%", opacity: 0 } : { width: "68px", opacity: 0 }}
+              animate={
+                isMobileViewport
+                  ? { x: menuOpen ? 0 : "100%", opacity: menuOpen ? 1 : 0 }
+                  : {
+                      width: menuOpen ? "var(--hero-nav-open-width)" : "68px",
+                      opacity: menuOpen ? 1 : 0,
+                      x: 0,
+                    }
+              }
+              transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
+              style={{ transformOrigin: "right center", pointerEvents: menuOpen ? "auto" : "none" }}
+              role={isMobileViewport ? "dialog" : undefined}
+              aria-modal={isMobileViewport && menuOpen ? true : undefined}
+              aria-hidden={!menuOpen}
+              aria-label="Primary navigation"
+            >
+              <div className="hero-nav__sheet-head">
+                <h2 className="hero-nav__sheet-title">Menu</h2>
+                <button
+                  type="button"
+                  className="hero-nav__close"
+                  aria-label="Close navigation"
+                  tabIndex={menuOpen ? 0 : -1}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
               <motion.div
                 className="hero-nav__links"
                 initial={{ opacity: 0, x: 28 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 28 }}
-                transition={{ duration: 0.22, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                animate={{ opacity: menuOpen ? 1 : 0, x: menuOpen ? 0 : 28 }}
+                transition={{ duration: 0.22, delay: menuOpen ? 0.1 : 0, ease: [0.16, 1, 0.3, 1] }}
               >
-                <a className="hero-nav__link hero-nav__link--active" href="#home" onClick={() => setMenuOpen(false)}>
+                <a className="hero-nav__link hero-nav__link--active" href="#home" tabIndex={menuOpen ? 0 : -1} onClick={() => setMenuOpen(false)}>
                   Home
                 </a>
-                <a className="hero-nav__link" href="#about" onClick={() => setMenuOpen(false)}>
+                <a className="hero-nav__link" href="#about" tabIndex={menuOpen ? 0 : -1} onClick={() => setMenuOpen(false)}>
                   About
                 </a>
-                <a className="hero-nav__link" href="#tracks" onClick={() => setMenuOpen(false)}>
+                <a className="hero-nav__link" href="#tracks" tabIndex={menuOpen ? 0 : -1} onClick={() => setMenuOpen(false)}>
                   Tracks
                 </a>
-                <a className="hero-nav__link" href="#gallery" onClick={() => setMenuOpen(false)}>
+                <a className="hero-nav__link" href="#gallery" tabIndex={menuOpen ? 0 : -1} onClick={() => setMenuOpen(false)}>
                   Gallery
                 </a>
-                <a className="hero-nav__link" href="#faqs" onClick={() => setMenuOpen(false)}>
+                <a className="hero-nav__link" href="#faqs" tabIndex={menuOpen ? 0 : -1} onClick={() => setMenuOpen(false)}>
                   FAQs
                 </a>
-                <a className="hero-nav__link" href="#contact" onClick={() => setMenuOpen(false)}>
+                <a className="hero-nav__link" href="#contact" tabIndex={menuOpen ? 0 : -1} onClick={() => setMenuOpen(false)}>
                   Contact
                 </a>
               </motion.div>
-              </motion.nav>
-            </>
-          ) : null}
+            </motion.nav>
+          </>
         </AnimatePresence>
 
         <div className="hero-content">

@@ -4,6 +4,10 @@ export type ShapeBounds = {
   width: number;
   height: number;
 };
+
+export function menuDefaultsOpenAtViewport(viewportWidth: number): boolean {
+  return viewportWidth > 700;
+}
 export const FRAME_REFERENCE_WIDTH = 1440;
 
 export function frameScaleAtViewport(viewportWidth: number): number {
