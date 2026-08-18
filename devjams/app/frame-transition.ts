@@ -91,7 +91,7 @@ export const FRAME_THREE_EDGE_LOGO_OFFSETS = {
   gemini: -420,
   gear: 420,
 };
-export const HERO_TRACK_ENTRY_DELAYS = [0.5, 0.6, 0.7, 0.8] as const;
+export const HERO_TRACK_ENTRY_DELAYS = [0.15, 0.22, 0.29, 0.36] as const;
 export const FRAME_THREE_LOGO_HEIGHT = 243.7309362924227;
 
 export const FRAME_THREE_LOGOS = {
