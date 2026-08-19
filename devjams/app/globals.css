@@ -632,6 +632,16 @@ body {
   outline: none;
 }
 
+@media (min-width: 701px) {
+  .hero-track-icons {
+    margin-top: 36px;
+  }
+
+  .hero-idea-button {
+    margin-top: 48px;
+  }
+}
+
 @media (max-width: 700px) {
   .hero-content {
     transform: translateY(28px);

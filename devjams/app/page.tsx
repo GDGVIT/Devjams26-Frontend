@@ -1006,7 +1006,7 @@ export default function Home() {
             boxShadow: "0 0 35px rgba(255,255,255,0.45)",
           }}
           whileTap={{ scale: 0.94 }}
-          className="cursor-pointer bg-white text-black font-bold text-lg rounded-full flex items-center justify-center transition-shadow shadow-[0_0_20px_rgba(255,255,255,0.25)] relative z-30"
+          className="hero-idea-button cursor-pointer bg-white text-black font-bold text-lg rounded-full flex items-center justify-center transition-shadow shadow-[0_0_20px_rgba(255,255,255,0.25)] relative z-30"
           style={{
             width: "min(243px, calc(100vw - 32px))",
             height: "55px",

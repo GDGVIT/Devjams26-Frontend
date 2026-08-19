@@ -276,16 +276,16 @@ test("Frame 4 uses the requested left-side logo order and mirrored bounds", () =
   assert.deepEqual(FRAME_FOUR_LOGO_ORDER, ["gear", "gemini", "cloud"]);
   assert.deepEqual(FRAME_FOUR_SHAPES, {
     gear: {
-      x: 119.3134,
-      y: 30.4502,
-      width: 453.8907,
-      height: 453.8907,
+      x: 101.157772,
+      y: 12.294572,
+      width: 490.201956,
+      height: 490.201956,
     },
     gemini: {
-      x: 164.7314,
-      y: 347.2815,
-      width: 364.106,
-      height: 464.3671,
+      x: 153.80822,
+      y: 333.350487,
+      width: 385.95236,
+      height: 492.229126,
     },
     cloud: {
       x: 112.373,
