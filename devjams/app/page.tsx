@@ -15,12 +15,12 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, typ
 import {
   FRAME_FOUR_CONTENT_ENTER_OFFSET,
   FRAME_FOUR_MOBILE_SHAPES,
-  FRAME_FOUR_LOGO_Z_INDEX,
   FRAME_FOUR_SHAPES,
   FRAME_ONE_ANIMATION_START_PROGRESS,
   FRAME_REFERENCE_WIDTH,
   FRAME_THREE_EDGE_LOGO_OFFSETS,
   FRAME_THREE_MOBILE_SHAPES,
+  FRAME_THREE_MOBILE_GEAR_SOURCE,
   FRAME_THREE_LOGOS,
   FRAME_TWO_LOGO_CENTER_X,
   FRAME_TWO_MAPS_LEFT,
@@ -30,7 +30,6 @@ import {
   HERO_TRACK_ENTRY_DELAYS,
   alignShapeBoundsX,
   frameFourContentOffsetAt,
-  frameFourSharedLogoTransformAt,
   frameScaleAtViewport,
   frameTwoMapEntryTransformAt,
   frameTwoMapsOpacityAt,
@@ -163,7 +162,8 @@ export default function Home() {
   const frameThreeWebOpacity = useMotionValue(1);
   const frameFourCloudX = useMotionValue(0);
   const frameFourCloudY = useMotionValue(0);
-  const frameFourCloudScale = useMotionValue(1);
+  const frameFourCloudScaleX = useMotionValue(1);
+  const frameFourCloudScaleY = useMotionValue(1);
   const frameFourCloudOpacity = useMotionValue(0);
   const frameFourAboutOpacity = useMotionValue(0);
   const frameFourAboutX = useMotionValue<number>(FRAME_FOUR_CONTENT_ENTER_OFFSET.x);
@@ -220,13 +220,14 @@ export default function Home() {
       );
       const clampedProgress = smoothScrollProgressAt(transitionProgress);
       const heroTrackScale = geometry.heroTrackScale || 1;
+      const transformAt = uniformShapeTransformAt;
 
       (Object.keys(shapeMotionValues) as ShapeKey[]).forEach((key) => {
         const start = shapeStartRef.current[key];
         const target = shapeTargetRef.current[key];
         if (!start || !target) return;
 
-        const transform = uniformShapeTransformAt(
+        const transform = transformAt(
           start,
           target,
           clampedProgress,
@@ -306,13 +307,14 @@ export default function Home() {
         frameThreeGearOpacity.set(0);
         return;
       }
+      const transformAt = uniformShapeTransformAt;
 
       const webBounds = interpolateShapeBounds(
         geometry.frameTwoWeb,
         geometry.frameThreeWeb,
         transitionProgress,
       );
-      const webTransform = uniformShapeTransformAt(
+      const webTransform = transformAt(
         geometry.heroWeb,
         webBounds,
         1,
@@ -328,7 +330,7 @@ export default function Home() {
         geometry.frameThreeMaps,
         transitionProgress,
       );
-      const mapsTransform = uniformShapeTransformAt(
+      const mapsTransform = transformAt(
         geometry.frameTwoMaps,
         mapsBounds,
         1,
@@ -435,8 +437,11 @@ export default function Home() {
               geometry.frameFourScale,
             );
 
+      const transformAt = uniformShapeTransformAt;
       const sourceGear = absoluteBounds(
-        FRAME_THREE_LOGOS.gear,
+        geometry.isMobile
+          ? FRAME_THREE_MOBILE_GEAR_SOURCE
+          : FRAME_THREE_LOGOS.gear,
         geometry.frameThreePageLeft,
         geometry.frameThreePageTop,
         geometry.frameThreeScale,
@@ -446,7 +451,7 @@ export default function Home() {
         geometry.frameFourPageLeft,
         geometry.frameFourPageTop,
       );
-      const gearTransform = frameFourSharedLogoTransformAt(
+      const gearTransform = transformAt(
         sourceGear,
         targetGear,
         progress,
@@ -469,7 +474,7 @@ export default function Home() {
         geometry.frameFourPageLeft,
         geometry.frameFourPageTop,
       );
-      const geminiTransform = frameFourSharedLogoTransformAt(
+      const geminiTransform = transformAt(
         sourceGemini,
         targetGemini,
         progress,
@@ -492,14 +497,15 @@ export default function Home() {
         geometry.frameFourPageLeft,
         geometry.frameFourPageTop,
       );
-      const cloudTransform = uniformShapeTransformAt(
+      const cloudTransform = transformAt(
         cloudStart,
         cloudTarget,
         progress,
       );
       frameFourCloudX.set(cloudTransform.x);
       frameFourCloudY.set(cloudTransform.y);
-      frameFourCloudScale.set(cloudTransform.scaleX);
+      frameFourCloudScaleX.set(cloudTransform.scaleX);
+      frameFourCloudScaleY.set(cloudTransform.scaleY);
       frameFourCloudOpacity.set(progress);
       frameFourAboutOpacity.set(progress);
 
@@ -513,8 +519,8 @@ export default function Home() {
     [
       frameFourAboutX,
       frameFourAboutY,
-      frameFourCloudOpacity,
-      frameFourCloudScale,
+      frameFourCloudScaleX,
+      frameFourCloudScaleY,
       frameFourCloudX,
       frameFourCloudY,
       frameThreeGeminiOpacity,
@@ -1114,7 +1120,8 @@ export default function Home() {
             style={{
               x: frameFourCloudX,
               y: frameFourCloudY,
-              scale: frameFourCloudScale,
+              scaleX: frameFourCloudScaleX,
+              scaleY: frameFourCloudScaleY,
               opacity: frameFourCloudOpacity,
             }}
           >

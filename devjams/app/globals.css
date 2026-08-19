@@ -368,17 +368,17 @@ body {
   }
 
   .frame-three__logo--gemini {
-    left: calc(444px * var(--frame-scale));
+    left: calc(447.65px * var(--frame-scale));
     top: calc(32.05px * var(--frame-scale));
-    width: calc(290px * var(--frame-scale));
-    height: calc(290px * var(--frame-scale));
+    width: calc(261px * var(--frame-scale));
+    height: calc(261px * var(--frame-scale));
   }
 
   .frame-three__logo--gear {
-    left: calc(686px * var(--frame-scale));
-    top: calc(32.05px * var(--frame-scale));
-    width: calc(275px * var(--frame-scale));
-    height: calc(290px * var(--frame-scale));
+    left: calc(633.2px * var(--frame-scale));
+    top: calc(10.5px * var(--frame-scale));
+    width: calc(312px * var(--frame-scale));
+    height: calc(312px * var(--frame-scale));
   }
 
   .frame-three__logo {
@@ -404,7 +404,7 @@ body {
   .frame-four {
     height: 100svh;
     overflow: hidden;
-    z-index: 1;
+    z-index: 3;
   }
 }
 

@@ -68,13 +68,15 @@ test("shape bounds scaling preserves zero and identity behavior", () => {
   assert.deepEqual(scaleShapeBounds(bounds, 1), bounds);
 });
 
-test("Frame 4 mobile artwork fills the left edge and full frame height", () => {
+test("Frame 4 mobile logos crop 40 percent from the left", () => {
   assert.equal(mobileFrameScaleAtViewport(375), 1);
   assert.equal(mobileFrameScaleAtViewport(320), 320 / 375);
   assert.equal(mobileFrameVerticalScaleAtViewport(812), 1);
 
   const shapes = Object.values(FRAME_FOUR_MOBILE_SHAPES);
-  assert.ok(shapes.every((shape) => shape.x >= -20));
+  assert.ok(
+    shapes.every((shape) => Math.abs(shape.x / shape.width + 0.4) < 1e-6),
+  );
   assert.ok(shapes.every((shape) => shape.x + shape.width <= 375));
   assert.ok(Math.min(...shapes.map((shape) => shape.y)) <= 0);
   assert.ok(Math.max(...shapes.map((shape) => shape.y + shape.height)) >= 812);
@@ -82,15 +84,50 @@ test("Frame 4 mobile artwork fills the left edge and full frame height", () => {
   assert.ok(shapes[1].y < shapes[2].y);
 });
 
-test("Frame 2 mobile artwork fills the right edge and full frame height", () => {
-  const shapes = Object.values(FRAME_TWO_MOBILE_SHAPES);
+test("mobile Frame 4 targets preserve source logo aspect ratios", () => {
+  assert.ok(
+    Math.abs(
+      FRAME_FOUR_MOBILE_SHAPES.gear.width /
+        FRAME_FOUR_MOBILE_SHAPES.gear.height -
+        247.5 / 261,
+    ) < 1e-6,
+  );
+  assert.equal(
+    FRAME_FOUR_MOBILE_SHAPES.gemini.width /
+      FRAME_FOUR_MOBILE_SHAPES.gemini.height,
+    1,
+  );
+  assert.ok(
+    Math.abs(
+      FRAME_FOUR_MOBILE_SHAPES.cloud.width /
+        FRAME_FOUR_MOBILE_SHAPES.cloud.height -
+        278 / 203,
+    ) < 1e-6,
+  );
+});
 
-  assert.ok(shapes.every((shape) => shape.x >= 0));
-  assert.ok(shapes.every((shape) => shape.x + shape.width <= 375));
+test("Frame 2 mobile logos share a right-side vertical axis", () => {
+  const shapes = Object.values(FRAME_TWO_MOBILE_SHAPES);
+  const centers = shapes.map((shape) => shape.x + shape.width / 2);
+
+  assert.ok(centers.every((center) => Math.abs(center - 350) < 1e-6));
+  assert.ok(
+    shapes.every((shape) => {
+      const visibleWidth = Math.max(0, 375 - shape.x);
+      const visibleRatio = visibleWidth / shape.width;
+      return visibleRatio > 0.55 && visibleRatio < 0.61;
+    }),
+  );
   assert.ok(Math.min(...shapes.map((shape) => shape.y)) <= 0);
   assert.ok(Math.max(...shapes.map((shape) => shape.y + shape.height)) >= 812);
-  assert.ok(shapes[0].y < shapes[1].y);
-  assert.ok(shapes[1].y < shapes[2].y);
+});
+
+test("Frame 3 mobile logos share one horizontal row", () => {
+  const shapes = Object.values(FRAME_THREE_MOBILE_SHAPES);
+  const rowY = shapes[0].y;
+
+  assert.ok(shapes.every((shape) => shape.y === rowY));
+  assert.ok(shapes.every((shape) => shape.height === shapes[0].height));
 });
 
 test("mobile shape bounds keep horizontal and vertical frame scales separate", () => {
@@ -109,14 +146,12 @@ test("mobile shape bounds keep horizontal and vertical frame scales separate", (
   );
 });
 
-test("mobile Web handoff aligns with the Frame 3 four-logo row", () => {
+test("mobile Web keeps its aspect ratio in the Frame 3 row", () => {
   const web = FRAME_THREE_MOBILE_SHAPES.web;
-  const frameScale = 375 / FRAME_REFERENCE_WIDTH;
-  const frameThreeWeb = FRAME_THREE_LOGOS.web;
 
-  assert.ok(Math.abs(web.x - frameThreeWeb.x * frameScale) < 1e-6);
-  assert.ok(Math.abs(web.y - frameThreeWeb.y * frameScale) < 1e-6);
-  assert.ok(Math.abs(web.width - frameThreeWeb.width * frameScale) < 1e-6);
+  assert.equal(web.width, web.height);
+  assert.equal(web.height, FRAME_THREE_MOBILE_SHAPES.maps.height);
+  assert.ok(web.x >= 0);
   assert.ok(web.x + web.width <= 375);
   assert.ok(web.y + web.height <= 812);
 });

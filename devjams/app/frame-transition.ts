@@ -54,50 +54,58 @@ export function scaleMobileShapeBoundsAtViewport(
 
 export const FRAME_TWO_MOBILE_SHAPES = {
   web: {
-    x: 125,
-    y: -20,
+    x: 225,
+    y: -5,
     width: 250,
-    height: 280,
+    height: 250,
   },
   maps: {
-    x: 75,
+    x: 200,
     y: 220,
     width: 300,
     height: 390,
   },
   android: {
-    x: 10,
-    y: 610,
+    x: 167.5,
+    y: 599.4519231,
     width: 365,
-    height: 202,
+    height: 223.0961538,
   },
 } as const satisfies Record<string, ShapeBounds>;
 
 export const FRAME_FOUR_MOBILE_SHAPES = {
   gear: {
-    x: -20,
+    x: -120,
     y: -20,
-    width: 250,
-    height: 280,
+    width: 300,
+    height: 316.3636364,
   },
   gemini: {
-    x: -20,
+    x: -120,
     y: 220,
     width: 300,
-    height: 390,
+    height: 300,
   },
   cloud: {
-    x: -20,
+    x: -120,
     y: 610,
-    width: 365,
-    height: 202,
+    width: 300,
+    height: 219.0647482,
   },
 } as const satisfies Record<string, ShapeBounds>;
+
+export const FRAME_THREE_MOBILE_GEAR_SOURCE = {
+  x: 872.7,
+  y: 308.45,
+  width: 312,
+  height: 312,
+} as const satisfies ShapeBounds;
+
 export const FRAME_THREE_MOBILE_SHAPES = {
   web: {
-    x: 74.8828125,
+    x: 71.3671875,
     y: 85.9375,
-    width: 60.9375,
+    width: 67.96875,
     height: 67.96875,
   },
   maps: {
