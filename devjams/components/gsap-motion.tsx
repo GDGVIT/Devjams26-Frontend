@@ -1,6 +1,7 @@
 "use client";
 
 import gsap from "gsap";
+import { useLenis } from "lenis/react";
 import {
   createElement,
   forwardRef,
@@ -8,6 +9,7 @@ import {
   useEffect,
   useImperativeHandle,
   useLayoutEffect,
+  useCallback,
   useRef,
   useState,
   type CSSProperties,
@@ -134,43 +136,123 @@ function offsetPoint(element: HTMLElement, point: string, viewportHeight: number
 export function useScroll(options?: { target?: RefObject<HTMLElement | null>; offset?: string[] }) {
   const scrollY = useMotionValue(0);
   const scrollYProgress = useMotionValue(0);
+  const targetOption = options?.target;
+  const offsetStart = options?.offset?.[0] ?? "start end";
+  const offsetEnd = options?.offset?.[1] ?? "end start";
+  const targetRef = useRef<HTMLElement | null>(null);
+  const offsetsRef = useRef(options?.offset ?? ["start end", "end start"]);
+  const rangeRef = useRef<{ element: HTMLElement; start: number; end: number } | null>(null);
+
+  const refreshRange = useCallback(() => {
+    const target = targetRef.current;
+    if (!target) {
+      rangeRef.current = null;
+      return;
+    }
+
+    const offsets = offsetsRef.current;
+    rangeRef.current = {
+      element: target,
+      start: offsetPoint(target, offsets[0], window.innerHeight),
+      end: offsetPoint(target, offsets[1], window.innerHeight),
+    };
+  }, []);
+
+  const updateFromLenis = useCallback((lenis: { scroll: number }) => {
+    const currentScroll = lenis.scroll;
+    scrollY.set(currentScroll);
+
+    const target = targetRef.current;
+    if (!target) {
+      scrollYProgress.set(
+        currentScroll /
+          Math.max(1, document.documentElement.scrollHeight - window.innerHeight),
+      );
+      return;
+    }
+
+    if (rangeRef.current?.element !== target) refreshRange();
+    const range = rangeRef.current;
+    if (!range) return;
+    scrollYProgress.set(
+      clamp((currentScroll - range.start) / Math.max(1, range.end - range.start)),
+    );
+  }, [refreshRange, scrollY, scrollYProgress]);
+
+  // Read Lenis directly so scroll-linked values update on the same frame as smooth scrolling.
+  useLenis(updateFromLenis, []);
 
   useEffect(() => {
-    let ticking = false;
-
-    const compute = () => {
-      const currentScroll = window.scrollY;
-      scrollY.set(currentScroll);
-      const target = options?.target?.current;
-      if (!target) {
-        scrollYProgress.set(currentScroll / Math.max(1, document.documentElement.scrollHeight - window.innerHeight));
-        ticking = false;
-        return;
-      }
-      const offsets = options?.offset ?? ["start end", "end start"];
-      const start = offsetPoint(target, offsets[0], window.innerHeight);
-      const end = offsetPoint(target, offsets[1], window.innerHeight);
-      scrollYProgress.set(clamp((currentScroll - start) / Math.max(1, end - start)));
-      ticking = false;
-    };
-
-    const update = () => {
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(compute);
-      }
-    };
-
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
+    targetRef.current = targetOption?.current ?? null;
+    offsetsRef.current = [offsetStart, offsetEnd];
+    refreshRange();
+    window.addEventListener("resize", refreshRange);
+    const fontsReady = document.fonts?.ready.then(refreshRange);
     return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
+      window.removeEventListener("resize", refreshRange);
+      void fontsReady;
     };
-  }, [options?.target, options?.offset, scrollY, scrollYProgress]);
+  }, [targetOption, offsetStart, offsetEnd, refreshRange]);
 
   return { scrollY, scrollYProgress };
+}
+
+type PendingMotionUpdate = {
+  styles: Record<string, unknown>;
+  attributes: Record<string, unknown>;
+};
+
+const pendingMotionUpdates = new Map<HTMLElement, PendingMotionUpdate>();
+let motionFlushQueued = false;
+
+function flushMotionUpdates() {
+  motionFlushQueued = false;
+  pendingMotionUpdates.forEach(({ styles, attributes }, element) => {
+    if (Object.keys(styles).length > 0) gsap.set(element, { ...styles, force3D: true });
+    Object.entries(attributes).forEach(([key, value]) => element.setAttribute(key, String(value)));
+  });
+  pendingMotionUpdates.clear();
+}
+
+// Flush on a microtask instead of the next rAF: Lenis already runs inside the
+// GSAP ticker's rAF, so this applies scroll-linked styles in the same frame
+// instead of one frame late (which reads as lag while smooth scrolling).
+function scheduleMotionFlush() {
+  if (motionFlushQueued) return;
+  motionFlushQueued = true;
+  if (typeof queueMicrotask === "function") {
+    queueMicrotask(flushMotionUpdates);
+  } else {
+    Promise.resolve().then(flushMotionUpdates);
+  }
+}
+
+function queueMotionStyle(element: HTMLElement, key: string, value: unknown) {
+  const pending = pendingMotionUpdates.get(element) ?? { styles: {}, attributes: {} };
+  pending.styles[key] = value;
+  pendingMotionUpdates.set(element, pending);
+  scheduleMotionFlush();
+}
+
+function queueMotionAttribute(element: HTMLElement, key: string, value: unknown) {
+  const pending = pendingMotionUpdates.get(element) ?? { styles: {}, attributes: {} };
+  pending.attributes[key] = value;
+  pendingMotionUpdates.set(element, pending);
+  scheduleMotionFlush();
+}
+
+function cancelMotionStyles(element: HTMLElement) {
+  const pending = pendingMotionUpdates.get(element);
+  if (!pending) return;
+  pending.styles = {};
+  if (Object.keys(pending.attributes).length === 0) pendingMotionUpdates.delete(element);
+}
+
+function cancelMotionAttributes(element: HTMLElement) {
+  const pending = pendingMotionUpdates.get(element);
+  if (!pending) return;
+  pending.attributes = {};
+  if (Object.keys(pending.styles).length === 0) pendingMotionUpdates.delete(element);
 }
 
 function isMotionValue(value: unknown): value is MotionValue<unknown> {
@@ -331,33 +413,18 @@ function MotionElement({ as, ...props }: MotionProps & { as: string }) {
     const element = elementRef.current;
     if (!element || !style) return;
 
-    let pendingUpdates: Record<string, unknown> = {};
-    let rafScheduled = false;
-
-    const flushUpdates = () => {
-      if (Object.keys(pendingUpdates).length > 0) {
-        gsap.set(element, { ...pendingUpdates, force3D: true });
-        pendingUpdates = {};
-      }
-      rafScheduled = false;
-    };
-
     const subscriptions = Object.entries(style)
       .filter(([, value]) => isMotionValue(value))
       .map(([key, value]) =>
         (value as MotionValue<unknown>).on("change", (next) => {
-          pendingUpdates[key] = next;
-          if (!rafScheduled) {
-            rafScheduled = true;
-            requestAnimationFrame(flushUpdates);
-          }
+          queueMotionStyle(element, key, next);
         })
       );
 
     gsap.set(element, { ...gsapTarget(style as AnimationTarget), force3D: true });
     return () => {
       subscriptions.forEach((unsubscribe) => unsubscribe());
-      if (rafScheduled) flushUpdates();
+      cancelMotionStyles(element);
     };
   }, [style]);
 
@@ -368,10 +435,13 @@ function MotionElement({ as, ...props }: MotionProps & { as: string }) {
       .filter(([, value]) => isMotionValue(value))
       .map(([key, value]) =>
         (value as MotionValue<unknown>).on("change", (next) => {
-          element.setAttribute(key, String(next));
+          queueMotionAttribute(element, key, next);
         })
       );
-    return () => subscriptions.forEach((unsubscribe) => unsubscribe());
+    return () => {
+      subscriptions.forEach((unsubscribe) => unsubscribe());
+      cancelMotionAttributes(element);
+    };
   }, [domProps]);
 
   const renderedProps = Object.fromEntries(

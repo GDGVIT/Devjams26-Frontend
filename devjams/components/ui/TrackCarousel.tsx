@@ -25,6 +25,7 @@ export function TrackCarousel({ tracks, scrollProgress, sectionRef }: TrackCarou
   const mobileTargetFloatRef = useRef(0);
   const mobileCurrentFloatRef = useRef(0);
   const mobileRafIdRef = useRef<number | null>(null);
+  const ensureMobileLoopRef = useRef<() => void>(() => {});
 
   const touchStartXRef = useRef(0);
   const isDraggingMobileRef = useRef(false);
@@ -35,39 +36,43 @@ export function TrackCarousel({ tracks, scrollProgress, sectionRef }: TrackCarou
   const desktopCurrentFloatRef = useRef(0);
   const desktopRafIdRef = useRef<number | null>(null);
 
-  // 1. Desktop RAF loop for smooth momentum
+  // 1. Desktop RAF loop for smooth momentum (runs only while values change)
   useEffect(() => {
     if (!scrollProgress) return;
 
     const updateTarget = (latest: number) => {
       desktopTargetFloatRef.current = latest * (tracks.length - 1);
+      if (desktopRafIdRef.current === null) {
+        desktopRafIdRef.current = requestAnimationFrame(lerpLoop);
+      }
     };
-
-    const initial = scrollProgress.get();
-    desktopTargetFloatRef.current = initial * (tracks.length - 1);
-    desktopCurrentFloatRef.current = initial * (tracks.length - 1);
-    setDesktopSmoothedFloat(initial * (tracks.length - 1));
-
-    const unsubscribe = scrollProgress.on("change", updateTarget);
 
     const lerpLoop = () => {
       const diff = desktopTargetFloatRef.current - desktopCurrentFloatRef.current;
       if (Math.abs(diff) > 0.0005) {
         desktopCurrentFloatRef.current += diff * 0.14;
         setDesktopSmoothedFloat(desktopCurrentFloatRef.current);
-      } else if (desktopCurrentFloatRef.current !== desktopTargetFloatRef.current) {
-        desktopCurrentFloatRef.current = desktopTargetFloatRef.current;
-        setDesktopSmoothedFloat(desktopCurrentFloatRef.current);
+        desktopRafIdRef.current = requestAnimationFrame(lerpLoop);
+      } else {
+        if (desktopCurrentFloatRef.current !== desktopTargetFloatRef.current) {
+          desktopCurrentFloatRef.current = desktopTargetFloatRef.current;
+          setDesktopSmoothedFloat(desktopCurrentFloatRef.current);
+        }
+        desktopRafIdRef.current = null;
       }
-      desktopRafIdRef.current = requestAnimationFrame(lerpLoop);
     };
 
-    desktopRafIdRef.current = requestAnimationFrame(lerpLoop);
+    const unsubscribe = scrollProgress.on("change", updateTarget);
+    updateTarget(scrollProgress.get());
+    if (desktopRafIdRef.current === null) {
+      desktopRafIdRef.current = requestAnimationFrame(lerpLoop);
+    }
 
     return () => {
       unsubscribe();
       if (desktopRafIdRef.current) {
         cancelAnimationFrame(desktopRafIdRef.current);
+        desktopRafIdRef.current = null;
       }
     };
   }, [scrollProgress, tracks.length]);
@@ -79,18 +84,26 @@ export function TrackCarousel({ tracks, scrollProgress, sectionRef }: TrackCarou
       if (Math.abs(diff) > 0.0005) {
         mobileCurrentFloatRef.current += diff * 0.16;
         setMobileSmoothedFloat(mobileCurrentFloatRef.current);
-      } else if (mobileCurrentFloatRef.current !== mobileTargetFloatRef.current) {
-        mobileCurrentFloatRef.current = mobileTargetFloatRef.current;
-        setMobileSmoothedFloat(mobileCurrentFloatRef.current);
+        mobileRafIdRef.current = requestAnimationFrame(lerpLoop);
+      } else {
+        if (mobileCurrentFloatRef.current !== mobileTargetFloatRef.current) {
+          mobileCurrentFloatRef.current = mobileTargetFloatRef.current;
+          setMobileSmoothedFloat(mobileCurrentFloatRef.current);
+        }
+        mobileRafIdRef.current = null;
       }
-      mobileRafIdRef.current = requestAnimationFrame(lerpLoop);
     };
 
-    mobileRafIdRef.current = requestAnimationFrame(lerpLoop);
+    ensureMobileLoopRef.current = () => {
+      if (mobileRafIdRef.current === null) {
+        mobileRafIdRef.current = requestAnimationFrame(lerpLoop);
+      }
+    };
 
     return () => {
       if (mobileRafIdRef.current) {
         cancelAnimationFrame(mobileRafIdRef.current);
+        mobileRafIdRef.current = null;
       }
     };
   }, []);
@@ -101,26 +114,25 @@ export function TrackCarousel({ tracks, scrollProgress, sectionRef }: TrackCarou
       const clamped = Math.max(0, Math.min(tracks.length - 1, index));
       setMobileActiveIndex(clamped);
       mobileTargetFloatRef.current = clamped;
+      ensureMobileLoopRef.current();
     },
     [tracks.length]
   );
 
   // Mobile navigation handlers
   const handleMobileNext = useCallback(() => {
-    setMobileActiveIndex((prev) => {
-      const next = (prev + 1) % tracks.length;
-      mobileTargetFloatRef.current = next;
-      return next;
-    });
-  }, [tracks.length]);
+    const next = (mobileActiveIndex + 1) % tracks.length;
+    setMobileActiveIndex(next);
+    mobileTargetFloatRef.current = next;
+    ensureMobileLoopRef.current();
+  }, [tracks.length, mobileActiveIndex]);
 
   const handleMobilePrev = useCallback(() => {
-    setMobileActiveIndex((prev) => {
-      const prevIdx = (prev - 1 + tracks.length) % tracks.length;
-      mobileTargetFloatRef.current = prevIdx;
-      return prevIdx;
-    });
-  }, [tracks.length]);
+    const prevIdx = (mobileActiveIndex - 1 + tracks.length) % tracks.length;
+    setMobileActiveIndex(prevIdx);
+    mobileTargetFloatRef.current = prevIdx;
+    ensureMobileLoopRef.current();
+  }, [tracks.length, mobileActiveIndex]);
 
   // Desktop dot click -> smooth window scroll to matching track percentage
   const handleDesktopSelectDot = useCallback(
@@ -151,6 +163,7 @@ export function TrackCarousel({ tracks, scrollProgress, sectionRef }: TrackCarou
     // Real-time 3D drag interpolation
     const newTarget = mobileActiveIndex - delta / 180;
     mobileTargetFloatRef.current = Math.max(-0.5, Math.min(tracks.length - 0.5, newTarget));
+    ensureMobileLoopRef.current();
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
@@ -164,6 +177,7 @@ export function TrackCarousel({ tracks, scrollProgress, sectionRef }: TrackCarou
       handleMobilePrev();
     } else {
       mobileTargetFloatRef.current = mobileActiveIndex;
+      ensureMobileLoopRef.current();
     }
   };
 
@@ -331,7 +345,7 @@ export function TrackCarousel({ tracks, scrollProgress, sectionRef }: TrackCarou
                 <div
                   key={track.id}
                   onClick={() => setMobileIndex(index)}
-                  className="absolute left-1/2 top-1/2 w-[185px] h-[185px] sm:w-[210px] sm:h-[210px] rounded-[24px] sm:rounded-[28px] flex flex-col items-center justify-between p-5 sm:p-6 border border-white/25 will-change-transform"
+                  className="absolute left-1/2 top-1/2 w-[185px] h-[185px] sm:w-[210px] sm:h-[210px] rounded-[24px] sm:rounded-[28px] flex flex-col items-center justify-between p-5 sm:p-6 border border-white/25"
                   style={{
                     background: `linear-gradient(135deg, ${track.colorFrom} 0%, ${track.colorTo} 100%)`,
                     transform: styles.transform,
@@ -446,7 +460,7 @@ export function TrackCarousel({ tracks, scrollProgress, sectionRef }: TrackCarou
               <div
                 key={track.id}
                 onClick={() => handleDesktopSelectDot(index)}
-                className="absolute left-1/2 top-1/2 w-[270px] h-[270px] md:w-[300px] md:h-[300px] lg:w-[330px] lg:h-[330px] rounded-[32px] md:rounded-[38px] flex flex-col items-center justify-between p-7 md:p-9 border border-white/25 will-change-transform"
+                className="absolute left-1/2 top-1/2 w-[270px] h-[270px] md:w-[300px] md:h-[300px] lg:w-[330px] lg:h-[330px] rounded-[32px] md:rounded-[38px] flex flex-col items-center justify-between p-7 md:p-9 border border-white/25"
                 style={{
                   background: `linear-gradient(135deg, ${track.colorFrom} 0%, ${track.colorTo} 100%)`,
                   transform: styles.transform,

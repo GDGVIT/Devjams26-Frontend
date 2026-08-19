@@ -31,8 +31,13 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
     gsap.ticker.add(update);
     gsap.ticker.lagSmoothing(0);
 
+    const refresh = () => ScrollTrigger.refresh();
+    window.addEventListener("load", refresh, { once: true });
+    void document.fonts?.ready.then(refresh);
+
     return () => {
       gsap.ticker.remove(update);
+      window.removeEventListener("load", refresh);
       if (lenis) {
         lenis.off("scroll", ScrollTrigger.update);
       }
@@ -45,7 +50,7 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
       ref={lenisRef}
       options={{
         autoRaf: false,
-        duration: 1.2,
+        duration: 0.8,
         easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
       }}

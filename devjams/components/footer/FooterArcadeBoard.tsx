@@ -59,13 +59,13 @@ export function FooterArcadeBoard() {
     const container = containerRef.current;
     if (!container) return;
 
-    let animationFrameId: number;
+    let animationFrameId = 0;
     let lastTime = performance.now();
     const EAT_THRESHOLD = 0.016;
 
     const updateSimulation = (now: number) => {
       if (!simRef.current.isVisible) {
-        animationFrameId = requestAnimationFrame(updateSimulation);
+        animationFrameId = 0;
         lastTime = now;
         return;
       }
@@ -168,6 +168,12 @@ export function FooterArcadeBoard() {
       simRef.current.isVisible = entry.isIntersecting;
       if (entry.isIntersecting) {
         lastTime = performance.now();
+        if (animationFrameId === 0) {
+          animationFrameId = requestAnimationFrame(updateSimulation);
+        }
+      } else if (animationFrameId !== 0) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = 0;
       }
     }, { threshold: 0.05 });
 
@@ -457,7 +463,7 @@ export function FooterArcadeBoard() {
       {/* 1. Pac-Man */}
       <div
         ref={pacmanRef}
-        className="absolute w-4 h-4 min-[400px]:w-5 min-[400px]:h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 z-20 pointer-events-none will-change-transform"
+        className="absolute w-4 h-4 min-[400px]:w-5 min-[400px]:h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 z-20 pointer-events-none"
         style={{
           left: "5%",
           top: "7.5%",
@@ -480,7 +486,7 @@ export function FooterArcadeBoard() {
           ref={(el) => {
             ghostRefs.current[id] = el;
           }}
-          className="absolute w-4 h-4 min-[400px]:w-5 min-[400px]:h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 z-20 pointer-events-none will-change-transform"
+          className="absolute w-4 h-4 min-[400px]:w-5 min-[400px]:h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 z-20 pointer-events-none"
           style={{
             left: id === 0 ? "45%" : id === 1 ? "95%" : "45%",
             top: id === 0 ? "7.5%" : id === 1 ? "45%" : "90.5%",
