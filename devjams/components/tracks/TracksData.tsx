@@ -32,8 +32,8 @@ export const TRACKS_DATA: TrackData[] = [
   {
     id: "openinnovation",
     title: "Open Innovation",
-    colorFrom: "#E85B69",
-    colorTo: "#CF404E",
+    colorFrom: "#E2574C",
+    colorTo: "#B84A88",
     iconSrc: "/assets/logo/openinnovation.svg",
   },
   {
