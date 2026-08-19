@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import ResponsiveSvg from "../ResponsiveSvg";
 import { motion } from "../gsap-motion";
 
 export function FAQsHeader() {
@@ -23,7 +23,7 @@ export function FAQsHeader() {
             zIndex: 10,
           }}
         >
-          <Image
+          <ResponsiveSvg
             src="/assets/android.svg"
             alt="Android Track"
             fill
@@ -39,7 +39,7 @@ export function FAQsHeader() {
             zIndex: 20,
           }}
         >
-          <Image
+          <ResponsiveSvg
             src="/assets/web.svg"
             alt="Web Track"
             fill
@@ -77,7 +77,7 @@ export function FAQsHeader() {
             zIndex: 20,
           }}
         >
-          <Image
+          <ResponsiveSvg
             src="/assets/gemini.svg"
             alt="Gemini Track"
             fill
@@ -93,7 +93,7 @@ export function FAQsHeader() {
             zIndex: 10,
           }}
         >
-          <Image
+          <ResponsiveSvg
             src="/assets/cloud.svg"
             alt="Cloud Track"
             fill
