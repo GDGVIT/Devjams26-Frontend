@@ -1,8 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { motion } from "../gsap-motion";
-
+import ResponsiveSvg from "../ResponsiveSvg";
 export interface TrackIcon {
   src: string;
   alt: string;
@@ -41,7 +40,7 @@ export function HeroTrackIcons() {
               ease: "easeInOut",
             }}
           >
-            <Image
+            <ResponsiveSvg
               src={icon.src}
               alt={icon.alt}
               width={icon.width}

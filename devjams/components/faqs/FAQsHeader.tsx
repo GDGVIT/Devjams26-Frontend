@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import ResponsiveSvg from "../ResponsiveSvg";
 import { motion } from "../gsap-motion";
 
 export function FAQsHeader() {
@@ -28,9 +28,9 @@ export function FAQsHeader() {
             zIndex: 10,
           }}
         >
-          <Image
-            src="/assets/web.svg"
-            alt="Web Track"
+          <ResponsiveSvg
+            src="/assets/android.svg"
+            alt="Android Track"
             fill
             priority
             className="object-contain"
@@ -45,9 +45,9 @@ export function FAQsHeader() {
             zIndex: 20,
           }}
         >
-          <Image
-            src="/assets/maps.svg"
-            alt="Maps Track"
+          <ResponsiveSvg
+            src="/assets/web.svg"
+            alt="Web Track"
             fill
             priority
             className="object-contain"
@@ -70,6 +70,49 @@ export function FAQsHeader() {
       >
         FAQs
       </motion.h2>
+
+      {/* Right Corner: Gemini + Cloud — flush to right edge (No glow) */}
+      <motion.div
+        initial={{ opacity: 0, x: 30, scale: 0.85 }}
+        whileInView={{ opacity: 1, x: 0, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.65, ease: [0.215, 0.61, 0.355, 1] }}
+        className="flex items-center mix-blend-screen pointer-events-none flex-shrink-0 -mr-2 sm:-mr-4"
+      >
+        <div
+          className="relative"
+          style={{
+            width: "clamp(48px, 9.5vw, 130px)",
+            height: "clamp(48px, 9.5vw, 130px)",
+            marginRight: "clamp(-8px, -1.6vw, -22px)",
+            zIndex: 20,
+          }}
+        >
+          <ResponsiveSvg
+            src="/assets/gemini.svg"
+            alt="Gemini Track"
+            fill
+            priority
+            className="object-contain"
+          />
+        </div>
+        <div
+          className="relative"
+          style={{
+            width: "clamp(42px, 8vw, 110px)",
+            height: "clamp(42px, 8vw, 110px)",
+            zIndex: 10,
+          }}
+        >
+          <ResponsiveSvg
+            src="/assets/cloud.svg"
+            alt="Cloud Track"
+            fill
+            priority
+            className="object-contain"
+          />
+        </div>
+      </motion.div>
     </div>
   );
 }

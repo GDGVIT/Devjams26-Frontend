@@ -12,6 +12,7 @@ import FoldText from "./components/FoldText";
 import SplitText from "./components/SplitText";
 import BorderGlow from "./components/BorderGlow";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import ResponsiveSvg from "../components/ResponsiveSvg";
 import {
   FRAME_FOUR_CONTENT_ENTER_OFFSET,
   FRAME_FOUR_MOBILE_SHAPES,
@@ -789,7 +790,7 @@ export default function Home() {
             aria-pressed={menuOpen}
             onClick={() => setMenuOpen((open) => !open)}
           >
-            <Image
+            <ResponsiveSvg
               src="/assets/dino-menu.svg"
               alt=""
               width={63.955}
@@ -979,7 +980,7 @@ export default function Home() {
                       ease: "easeInOut",
                     }}
                   >
-                    <Image
+                    <ResponsiveSvg
                       src={icon.src}
                       alt={icon.alt}
                       width={icon.width}
@@ -1074,7 +1075,7 @@ export default function Home() {
         }}
         aria-hidden="true"
       >
-        <Image
+        <ResponsiveSvg
           src="/assets/maps.svg"
           alt=""
           width={365}
@@ -1125,7 +1126,7 @@ export default function Home() {
               opacity: frameFourCloudOpacity,
             }}
           >
-            <Image
+            <ResponsiveSvg
               src="/assets/cloud.svg"
               alt="Cloud"
               width={278}
