@@ -3,21 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
-interface CharacterState {
-  x: number;
-  y: number;
-  rotation: number;
-  scale: number;
-}
-
-interface GhostState {
-  id: number;
-  x: number;
-  y: number;
-  color: string;
-  isFleeing: boolean;
-}
-
 interface ScorePopup {
   id: number;
   x: number;
@@ -54,12 +39,9 @@ function getTrackCoord(s: number): { x: number; y: number; rot: number } {
 }
 
 export function FooterArcadeBoard() {
-  const [pacman, setPacman] = useState<CharacterState>({ x: 5, y: 7.5, rotation: 0, scale: 1 });
-  const [ghosts, setGhosts] = useState<GhostState[]>([
-    { id: 0, x: 45, y: 7.5, color: "#F97316", isFleeing: false },
-    { id: 1, x: 95, y: 45, color: "#06B6D4", isFleeing: false },
-    { id: 2, x: 45, y: 90.5, color: "#EF4444", isFleeing: false },
-  ]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const pacmanRef = useRef<HTMLDivElement>(null);
+  const ghostRefs = useRef<Array<HTMLDivElement | null>>([null, null, null]);
   const [popups, setPopups] = useState<ScorePopup[]>([]);
 
   const simRef = useRef({
@@ -70,16 +52,24 @@ export function FooterArcadeBoard() {
       { id: 2, s: 0.85, dir: 1, speed: 0.023, color: "#EF4444", timer: 2 },
     ],
     nextPopupId: 0,
+    isVisible: false,
   });
 
   useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
     let animationFrameId: number;
     let lastTime = performance.now();
-
-    // Exact on-contact collision threshold calibrated to enlarged sprites
     const EAT_THRESHOLD = 0.016;
 
     const updateSimulation = (now: number) => {
+      if (!simRef.current.isVisible) {
+        animationFrameId = requestAnimationFrame(updateSimulation);
+        lastTime = now;
+        return;
+      }
+
       const dt = Math.min((now - lastTime) / 1000, 0.1);
       lastTime = now;
 
@@ -89,26 +79,21 @@ export function FooterArcadeBoard() {
       state.ghosts.forEach((g) => {
         g.timer -= dt;
 
-        // Circular distance from Pac-Man to Ghost
         const dClockwise = (g.s - state.pacman.s + 1) % 1;
         const dCounter = (state.pacman.s - g.s + 1) % 1;
         const distToPac = Math.min(dClockwise, dCounter);
 
-        // If Pac-Man is close, ghost tries to flee
         if (distToPac < 0.18) {
           g.dir = dClockwise <= dCounter ? 1 : -1;
         } else if (g.timer <= 0) {
-          // Change direction periodically
           g.dir = Math.random() < 0.5 ? 1 : -1;
           g.timer = 3 + Math.random() * 4;
         }
 
-        // Advance ghost position
         g.s = ((g.s + g.dir * g.speed * dt) % 1 + 1) % 1;
       });
 
-      // 2. Pac-Man Chase AI: Find closest ghost along track
-      let targetGhost = state.ghosts[0];
+      // 2. Pac-Man Chase AI
       let minDistance = 1;
       let chaseDir = 1;
 
@@ -119,88 +104,84 @@ export function FooterArcadeBoard() {
 
         if (shortest < minDistance) {
           minDistance = shortest;
-          targetGhost = g;
           chaseDir = dClockwise <= dCounter ? 1 : -1;
         }
       });
 
-      // Advance Pac-Man in chase direction
       state.pacman.s = ((state.pacman.s + chaseDir * state.pacman.speed * dt) % 1 + 1) % 1;
 
-      // 3. Check for EATING EVENT: Pac-Man catches ghost
+      // 3. Eating events
       state.ghosts.forEach((g) => {
         const dClockwise = (g.s - state.pacman.s + 1) % 1;
         const dCounter = (state.pacman.s - g.s + 1) % 1;
         const dist = Math.min(dClockwise, dCounter);
 
         if (dist < EAT_THRESHOLD) {
-          // GHOST EATEN!
           state.pacman.eatsCount += 1;
-          // Pac-Man grows with a strict maximum cap (limit growth to 1.3x)
-          const MAX_PACMAN_SCALE = 1.3;
-          state.pacman.scale = Math.min(1 + state.pacman.eatsCount * 0.05, MAX_PACMAN_SCALE);
+          const MAX_PACMAN_SCALE = 1.12;
+          state.pacman.scale = Math.min(1 + state.pacman.eatsCount * 0.03, MAX_PACMAN_SCALE);
 
-          // Get location of eaten ghost for score popup
           const eatenCoord = getTrackCoord(g.s);
           const scoreValue = 200 * Math.min(state.pacman.eatsCount, 8);
           const popupId = state.nextPopupId++;
 
           setPopups((prev) => [
-            ...prev.slice(-4), // keep last 4 popups
+            ...prev.slice(-4),
             { id: popupId, x: eatenCoord.x, y: eatenCoord.y, text: `+${scoreValue}` },
           ]);
 
-          // Auto-remove popup after 900ms
           setTimeout(() => {
             setPopups((prev) => prev.filter((p) => p.id !== popupId));
           }, 900);
 
-          // RESPAWN A NEW GHOST on the opposite side of the track
           g.s = ((state.pacman.s + 0.45 + (Math.random() * 0.1 - 0.05)) % 1 + 1) % 1;
           g.dir = Math.random() < 0.5 ? 1 : -1;
           g.speed = 0.045 + Math.random() * 0.012;
-          // Pick a fresh random color
           g.color = GHOST_COLORS[Math.floor(Math.random() * GHOST_COLORS.length)];
           g.timer = 2 + Math.random() * 3;
         }
       });
 
-      // Visual coordinates calculation
+      // Direct GPU Transform updates
       const pacCoord = getTrackCoord(state.pacman.s);
       const visualRot = chaseDir === 1 ? pacCoord.rot : (pacCoord.rot + 180) % 360;
 
-      const renderedGhosts: GhostState[] = state.ghosts.map((g) => {
-        const coord = getTrackCoord(g.s);
-        const dClockwise = (g.s - state.pacman.s + 1) % 1;
-        const dCounter = (state.pacman.s - g.s + 1) % 1;
-        const dist = Math.min(dClockwise, dCounter);
-        return {
-          id: g.id,
-          x: coord.x,
-          y: coord.y,
-          color: g.color,
-          isFleeing: dist < 0.18,
-        };
-      });
+      if (pacmanRef.current) {
+        pacmanRef.current.style.left = `${pacCoord.x}%`;
+        pacmanRef.current.style.top = `${pacCoord.y}%`;
+        pacmanRef.current.style.transform = `translate3d(-50%, -50%, 0) rotate(${visualRot + 180}deg) scale(${state.pacman.scale})`;
+      }
 
-      setPacman({
-        x: pacCoord.x,
-        y: pacCoord.y,
-        rotation: visualRot,
-        scale: state.pacman.scale,
+      state.ghosts.forEach((g, idx) => {
+        const el = ghostRefs.current[idx];
+        if (el) {
+          const coord = getTrackCoord(g.s);
+          el.style.left = `${coord.x}%`;
+          el.style.top = `${coord.y}%`;
+        }
       });
-
-      setGhosts(renderedGhosts);
 
       animationFrameId = requestAnimationFrame(updateSimulation);
     };
 
+    const observer = new IntersectionObserver(([entry]) => {
+      simRef.current.isVisible = entry.isIntersecting;
+      if (entry.isIntersecting) {
+        lastTime = performance.now();
+      }
+    }, { threshold: 0.05 });
+
+    observer.observe(container);
     animationFrameId = requestAnimationFrame(updateSimulation);
-    return () => cancelAnimationFrame(animationFrameId);
+
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(animationFrameId);
+    };
   }, []);
 
   return (
-    <div className="relative w-full rounded-2xl sm:rounded-3xl bg-[#09090b] border border-white/20 p-4 sm:p-6 md:p-8 overflow-hidden select-none shadow-2xl">
+    <div ref={containerRef} className="relative w-full rounded-2xl sm:rounded-3xl bg-[#09090b] border border-white/20 p-4 sm:p-6 md:p-8 overflow-hidden select-none shadow-2xl">
       {/* Top Dash Pills Row */}
       <div className="w-full flex items-center justify-between gap-1.5 sm:gap-2.5 mb-1.5 sm:mb-2 opacity-30">
         {Array.from({ length: 10 }).map((_, i) => (
@@ -473,13 +454,14 @@ export function FooterArcadeBoard() {
       ))}
 
       {/* --- DYNAMIC ARCADE CHASE & EAT ANIMATION (USING OFFICIAL ASSETS) --- */}
-      {/* 1. Pac-Man (Rendered from official pacman.svg asset with no glow) */}
+      {/* 1. Pac-Man */}
       <div
-        className="absolute w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 z-20 pointer-events-none transition-transform duration-75 ease-out"
+        ref={pacmanRef}
+        className="absolute w-4 h-4 min-[400px]:w-5 min-[400px]:h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 z-20 pointer-events-none will-change-transform"
         style={{
-          left: `${pacman.x}%`,
-          top: `${pacman.y}%`,
-          transform: `translate(-50%, -50%) rotate(${pacman.rotation + 180}deg) scale(${pacman.scale})`,
+          left: "5%",
+          top: "7.5%",
+          transform: "translate3d(-50%, -50%, 0) rotate(180deg) scale(1)",
         }}
       >
         <Image
@@ -491,19 +473,22 @@ export function FooterArcadeBoard() {
         />
       </div>
 
-      {/* 2. Ghosts (Rendered from official ghost.svg & ghost1.svg assets with no glow) */}
-      {ghosts.map((ghost) => (
+      {/* 2. Ghosts */}
+      {[0, 1, 2].map((id) => (
         <div
-          key={ghost.id}
-          className="absolute w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 z-20 pointer-events-none transition-transform duration-75"
+          key={id}
+          ref={(el) => {
+            ghostRefs.current[id] = el;
+          }}
+          className="absolute w-4 h-4 min-[400px]:w-5 min-[400px]:h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 z-20 pointer-events-none will-change-transform"
           style={{
-            left: `${ghost.x}%`,
-            top: `${ghost.y}%`,
-            transform: "translate(-50%, -50%)",
+            left: id === 0 ? "45%" : id === 1 ? "95%" : "45%",
+            top: id === 0 ? "7.5%" : id === 1 ? "45%" : "90.5%",
+            transform: "translate3d(-50%, -50%, 0)",
           }}
         >
           <Image
-            src={ghost.id % 2 === 1 ? "/assets/logo/ghost1.svg" : "/assets/logo/ghost.svg"}
+            src={id % 2 === 1 ? "/assets/logo/ghost1.svg" : "/assets/logo/ghost.svg"}
             alt="Ghost"
             width={47}
             height={47}

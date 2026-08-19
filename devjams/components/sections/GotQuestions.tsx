@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Image from "next/image";
 import { motion, useScroll, useTransform } from "../gsap-motion";
 import { GotQuestionsGraphic } from "../got-questions/GotQuestionsGraphic";
 import { GotQuestionsHeading } from "../got-questions/GotQuestionsHeading";
@@ -17,27 +18,27 @@ export function GotQuestions() {
   const activeCategory =
     FAQ_CATEGORIES.find((cat) => cat.id === activeCategoryId) || FAQ_CATEGORIES[0];
 
-  // Scroll tracking across pinned sticky 450vh viewport
+  // Scroll tracking across pinned sticky viewport
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
   });
 
-  // Stage 1: Triangle apex drops down to bottom edge (0.00 -> 0.42)
-  const apexX = useTransform(scrollYProgress, [0, 0.22, 0.42], [550, 480, 260]);
-  const apexY = useTransform(scrollYProgress, [0, 0.14, 0.28, 0.42], [0, 160, 380, 650]);
+  // Stage 1: Triangle apex drops down to bottom edge (0.00 -> 0.35)
+  const apexX = useTransform(scrollYProgress, [0, 0.18, 0.35], [550, 480, 260]);
+  const apexY = useTransform(scrollYProgress, [0, 0.11, 0.23, 0.35], [0, 160, 380, 650]);
 
-  // Stage 2: Full-screen gradient expansion & line fade (0.48 -> 0.62)
-  const fullGradientOpacity = useTransform(scrollYProgress, [0.48, 0.62], [0, 1]);
-  const linesOpacity = useTransform(scrollYProgress, [0.48, 0.58], [1, 0]);
-  const textOpacity = useTransform(scrollYProgress, [0.52, 0.62], [1, 0]);
+  // Stage 2: Full-screen gradient expansion & line fade (0.37 -> 0.50)
+  const fullGradientOpacity = useTransform(scrollYProgress, [0.37, 0.50], [0, 1]);
+  const linesOpacity = useTransform(scrollYProgress, [0.37, 0.47], [1, 0]);
+  const textOpacity = useTransform(scrollYProgress, [0.39, 0.49], [1, 0]);
 
-  // Stage 3: Complete 180° 3D Card Flip from GotQuestions to FAQs (0.65 -> 0.90)
-  const cardRotateX = useTransform(scrollYProgress, [0.65, 0.90], [0, 180]);
-  const cardScale = useTransform(scrollYProgress, [0.65, 0.775, 0.90], [1, 0.88, 1]);
+  // Stage 3: Complete 180° 3D Card Flip from GotQuestions to FAQs (0.52 -> 0.72)
+  const cardRotateX = useTransform(scrollYProgress, [0.52, 0.72], [0, 180]);
+  const cardScale = useTransform(scrollYProgress, [0.52, 0.62, 0.72], [1, 0.9, 1]);
 
-  // Pointer events management: enable FAQs interaction only once flipped
-  const isFlipped = useTransform(scrollYProgress, (p) => p >= 0.775);
+  // Pointer events management: enable FAQs interaction once flipped
+  const isFlipped = useTransform(scrollYProgress, (p) => p >= 0.62);
 
   // Dynamic clipPath for the text overlay during triangle drop & expansion:
   const clipPath = useTransform([apexX, apexY, fullGradientOpacity], (values: number[]) => {
@@ -59,12 +60,12 @@ export function GotQuestions() {
   });
 
   return (
-    <section 
-      ref={sectionRef} 
-      className="relative w-full h-[450vh] bg-black text-white"
+    <section
+      ref={sectionRef}
+      className="relative w-full h-[150vh] md:h-[200vh] bg-black text-white"
     >
       {/* 3D Perspective Viewport */}
-      <div 
+      <div
         className="sticky top-0 w-full h-screen flex items-center justify-center overflow-hidden bg-black"
         style={{ perspective: "1500px" }}
       >
@@ -87,15 +88,15 @@ export function GotQuestions() {
             className="absolute inset-0 w-full h-full flex items-center justify-center bg-black overflow-hidden"
           >
             {/* Dynamic SVG Graphic Canvas with Expanding Gradient */}
-            <GotQuestionsGraphic 
-              apexX={apexX} 
-              apexY={apexY} 
+            <GotQuestionsGraphic
+              apexX={apexX}
+              apexY={apexY}
               linesOpacity={linesOpacity}
               fullGradientOpacity={fullGradientOpacity}
             />
 
             {/* Text Overlay Container */}
-            <motion.div 
+            <motion.div
               style={{ clipPath, opacity: textOpacity }}
               className="absolute inset-0 pointer-events-none"
             >
@@ -115,13 +116,13 @@ export function GotQuestions() {
               transform: "rotateX(180deg)",
               pointerEvents: isFlipped ? "auto" : "none",
             }}
-            className="absolute inset-0 w-full h-full flex flex-col justify-start overflow-y-auto bg-black py-4 sm:py-6 md:py-8 px-2 sm:px-4"
+            className="absolute inset-0 w-full h-full flex flex-col justify-between overflow-y-auto bg-black py-3 sm:py-5 md:py-6 px-3 sm:px-6 relative"
           >
-            {/* Full-bleed Header */}
+            {/* Top Row: Full-bleed Header with Web + Maps */}
             <FAQsHeader />
 
-            {/* Padded inner container for tabs + content */}
-            <div className="max-w-[1300px] w-full mx-auto px-4 sm:px-8 md:px-12 flex flex-col items-center">
+            {/* Middle Container for Tabs + Generous Centered Content */}
+            <div className="max-w-[1100px] w-full mx-auto px-2 sm:px-6 flex flex-col items-center flex-1 justify-center z-10 my-auto">
               {/* Tab Switcher */}
               <FAQsTabs
                 categories={FAQ_CATEGORIES}
@@ -129,8 +130,47 @@ export function GotQuestions() {
                 onSelectCategory={setActiveCategoryId}
               />
 
-              {/* FAQ Content List */}
+              {/* FAQ Content List (Larger, Centered, Well-Spaced) */}
               <FAQsList category={activeCategory} />
+            </div>
+
+            {/* Bottom-Right Corner Decorative SVGs (Gemini Star + Gear) */}
+            <div className="absolute bottom-1 -right-2 sm:bottom-3 sm:right-1 flex items-center mix-blend-screen pointer-events-none z-20">
+              {/* Gemini Star */}
+              <div
+                className="relative"
+                style={{
+                  width: "clamp(60px, 13vw, 140px)",
+                  height: "clamp(60px, 13vw, 140px)",
+                  marginRight: "clamp(-16px, -3.2vw, -32px)",
+                  zIndex: 20,
+                }}
+              >
+                <Image
+                  src="/assets/gemini.svg"
+                  alt="Gemini Star"
+                  fill
+                  priority
+                  className="object-contain"
+                />
+              </div>
+              {/* Gear */}
+              <div
+                className="relative"
+                style={{
+                  width: "clamp(54px, 12vw, 130px)",
+                  height: "clamp(54px, 12vw, 130px)",
+                  zIndex: 10,
+                }}
+              >
+                <Image
+                  src="/assets/gear.svg"
+                  alt="Gear Track"
+                  fill
+                  priority
+                  className="object-contain"
+                />
+              </div>
             </div>
           </motion.div>
         </motion.div>

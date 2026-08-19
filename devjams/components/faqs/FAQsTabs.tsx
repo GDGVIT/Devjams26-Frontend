@@ -15,8 +15,8 @@ export function FAQsTabs({
   onSelectCategory,
 }: FAQsTabsProps) {
   return (
-    <div className="flex items-center justify-center w-full my-4 sm:my-6 px-2 overflow-x-auto">
-      <div className="inline-flex items-center gap-2 sm:gap-4 p-1.5 rounded-full bg-transparent">
+    <div className="w-full max-w-full my-4 sm:my-6 px-2 flex justify-center overflow-x-auto no-scrollbar">
+      <div className="flex items-center justify-center min-w-max mx-auto gap-2 sm:gap-4 p-1.5 rounded-full bg-transparent">
         {categories.map((cat) => {
           const isActive = cat.id === activeCategoryId;
 
@@ -24,12 +24,12 @@ export function FAQsTabs({
             <button
               key={cat.id}
               onClick={() => onSelectCategory(cat.id)}
-              className={`relative min-w-[150px] sm:min-w-[190px] md:w-[243px] h-[48px] sm:h-[55px] rounded-full flex items-center justify-center transition-colors duration-200 outline-none select-none cursor-pointer whitespace-nowrap px-4 ${
+              className={`relative min-w-[120px] sm:min-w-[170px] md:w-[220px] h-[42px] sm:h-[52px] rounded-full flex items-center justify-center transition-colors duration-200 outline-none select-none cursor-pointer whitespace-nowrap px-4 ${
                 isActive ? "text-black" : "text-white hover:text-white/80"
               }`}
               style={{
                 fontFamily: "var(--font-google-sans), sans-serif",
-                fontSize: "clamp(1.1rem, 2vw, 24px)",
+                fontSize: "clamp(0.95rem, 1.8vw, 22px)",
                 fontWeight: 400,
               }}
             >

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import "lenis/dist/lenis.css";
+import { SmoothScroll } from "@/components/SmoothScroll";
 
 const googleSans = localFont({
   src: [
@@ -65,8 +67,11 @@ export default function RootLayout({
         className="min-h-full flex flex-col bg-background text-foreground font-sans"
         suppressHydrationWarning
       >
-        {children}
+        <SmoothScroll>
+          {children}
+        </SmoothScroll>
       </body>
     </html>
   );
 }
+

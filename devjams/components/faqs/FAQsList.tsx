@@ -12,39 +12,40 @@ export function FAQsList({ category }: FAQsListProps) {
     <AnimatePresence mode="wait">
       <motion.div
         key={category.id}
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
-        className="w-full flex flex-col items-start text-left mt-2 sm:mt-4"
+        exit={{ opacity: 0, y: -12 }}
+        transition={{ duration: 0.35, ease: "easeOut" }}
+        className="w-full max-w-full flex flex-col items-start text-left mt-3 sm:mt-5 overflow-hidden px-1 sm:px-2"
       >
-        {/* Active Category Title (e.g. General:) */}
-        <h3
-          className="font-medium font-[500] text-white mb-2 sm:mb-3 md:mb-4 tracking-tight leading-tight"
-          style={{ fontSize: "clamp(28px, 3.8vw, 48px)" }}
-        >
-          {category.name}:
-        </h3>
-
         {/* Question & Answer List */}
-        <div className="w-full flex flex-col gap-3 sm:gap-4 md:gap-5">
+        <div className="w-full flex flex-col gap-6 sm:gap-8 md:gap-10 items-start text-left">
           {category.items.map((item, index) => (
             <motion.div
               key={item.id}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.25, delay: index * 0.04 }}
-              className="flex flex-col items-start text-left w-full border-b border-white/10 pb-2.5 sm:pb-3.5 last:border-b-0"
+              transition={{ duration: 0.28, delay: index * 0.05 }}
+              className="flex flex-col items-start text-left w-full max-w-full sm:max-w-[620px] md:max-w-[800px]"
             >
+              {/* Question */}
               <h4
-                className="font-normal font-[400] text-white mb-1 leading-snug break-words"
-                style={{ fontSize: "clamp(20px, 2.7vw, 36px)" }}
+                className="font-medium font-[500] text-white mb-1.5 sm:mb-2 leading-snug break-words"
+                style={{
+                  fontFamily: "var(--font-google-sans), sans-serif",
+                  fontSize: "clamp(2rem, 3.5vw, 36px)",
+                }}
               >
                 {item.question}
               </h4>
+
+              {/* Answer */}
               <p
-                className="font-normal font-[400] text-gray-300 leading-relaxed w-full max-w-full break-words"
-                style={{ fontSize: "clamp(15px, 1.8vw, 24px)" }}
+                className="font-normal text-gray-300 leading-relaxed w-full break-words opacity-90"
+                style={{
+                  fontFamily: "var(--font-google-sans), sans-serif",
+                  fontSize: "clamp(1rem, 2.5vw, 24px)",
+                }}
               >
                 {item.answer}
               </p>
