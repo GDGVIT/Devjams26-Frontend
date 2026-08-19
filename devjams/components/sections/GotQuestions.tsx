@@ -62,6 +62,7 @@ export function GotQuestions() {
   return (
     <section
       ref={sectionRef}
+      id="faqs"
       className="relative w-full h-[150vh] md:h-[200vh] bg-black text-white"
     >
       {/* 3D Perspective Viewport */}
@@ -116,13 +117,13 @@ export function GotQuestions() {
               transform: "rotateX(180deg)",
               pointerEvents: isFlipped ? "auto" : "none",
             }}
-            className="absolute inset-0 w-full h-full flex flex-col justify-between overflow-y-auto bg-black py-3 sm:py-5 md:py-6 px-3 sm:px-6 relative"
+            className="absolute inset-0 w-full h-full flex flex-col items-center justify-start overflow-y-auto no-scrollbar bg-black py-5 sm:py-7 md:py-9 px-4 sm:px-8 relative"
           >
-            {/* Top Row: Full-bleed Header with Web + Maps */}
+            {/* Top Row: Full-bleed Header with Web + Maps at top-left and Centered FAQs Title */}
             <FAQsHeader />
 
-            {/* Middle Container for Tabs + Generous Centered Content */}
-            <div className="max-w-[1100px] w-full mx-auto px-2 sm:px-6 flex flex-col items-center flex-1 justify-center z-10 my-auto">
+            {/* Middle Container for Tabs + Generous Content utilizing whitespace */}
+            <div className="max-w-[960px] w-full mx-auto px-2 sm:px-4 flex flex-col items-center z-10 pb-16 sm:pb-20">
               {/* Tab Switcher */}
               <FAQsTabs
                 categories={FAQ_CATEGORIES}
@@ -130,19 +131,25 @@ export function GotQuestions() {
                 onSelectCategory={setActiveCategoryId}
               />
 
-              {/* FAQ Content List (Larger, Centered, Well-Spaced) */}
+              {/* FAQ Content List */}
               <FAQsList category={activeCategory} />
             </div>
 
             {/* Bottom-Right Corner Decorative SVGs (Gemini Star + Gear) */}
-            <div className="absolute bottom-1 -right-2 sm:bottom-3 sm:right-1 flex items-center mix-blend-screen pointer-events-none z-20">
+            <div
+              className="absolute flex items-center mix-blend-screen pointer-events-none z-10"
+              style={{
+                right: "clamp(-45px, -6vw, -25px)",
+                bottom: "clamp(-40px, -5vw, -20px)",
+              }}
+            >
               {/* Gemini Star */}
               <div
                 className="relative"
                 style={{
-                  width: "clamp(60px, 13vw, 140px)",
-                  height: "clamp(60px, 13vw, 140px)",
-                  marginRight: "clamp(-16px, -3.2vw, -32px)",
+                  width: "clamp(105px, 22vw, 210px)",
+                  height: "clamp(105px, 22vw, 210px)",
+                  marginRight: "clamp(-26px, -5.5vw, -50px)",
                   zIndex: 20,
                 }}
               >
@@ -158,8 +165,8 @@ export function GotQuestions() {
               <div
                 className="relative"
                 style={{
-                  width: "clamp(54px, 12vw, 130px)",
-                  height: "clamp(54px, 12vw, 130px)",
+                  width: "clamp(100px, 20vw, 195px)",
+                  height: "clamp(100px, 20vw, 195px)",
                   zIndex: 10,
                 }}
               >

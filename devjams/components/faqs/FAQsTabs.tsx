@@ -15,8 +15,8 @@ export function FAQsTabs({
   onSelectCategory,
 }: FAQsTabsProps) {
   return (
-    <div className="w-full max-w-full my-4 sm:my-6 px-2 flex justify-center overflow-x-auto no-scrollbar">
-      <div className="flex items-center justify-center min-w-max mx-auto gap-2 sm:gap-4 p-1.5 rounded-full bg-transparent">
+    <div className="w-full flex justify-center mt-3 sm:mt-4 mb-8 sm:mb-11 md:mb-14 px-2 select-none z-20">
+      <div className="inline-flex items-center justify-center gap-3 sm:gap-6 p-1 rounded-full bg-transparent">
         {categories.map((cat) => {
           const isActive = cat.id === activeCategoryId;
 
@@ -24,20 +24,20 @@ export function FAQsTabs({
             <button
               key={cat.id}
               onClick={() => onSelectCategory(cat.id)}
-              className={`relative min-w-[120px] sm:min-w-[170px] md:w-[220px] h-[42px] sm:h-[52px] rounded-full flex items-center justify-center transition-colors duration-200 outline-none select-none cursor-pointer whitespace-nowrap px-4 ${
-                isActive ? "text-black" : "text-white hover:text-white/80"
+              className={`relative px-7 sm:px-9 py-2.5 sm:py-3 rounded-full flex items-center justify-center transition-colors duration-200 outline-none cursor-pointer whitespace-nowrap ${
+                isActive ? "text-black" : "text-white/90 hover:text-white"
               }`}
               style={{
                 fontFamily: "var(--font-google-sans), sans-serif",
-                fontSize: "clamp(0.95rem, 1.8vw, 22px)",
-                fontWeight: 400,
+                fontSize: "clamp(1.02rem, 1.6vw, 1.25rem)",
+                fontWeight: isActive ? 500 : 400,
               }}
             >
               {isActive && (
                 <motion.div
                   layoutId="activeFaqTab"
-                  className="absolute inset-0 bg-white rounded-full shadow-lg z-0"
-                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  className="absolute inset-0 bg-white rounded-full shadow-[0_2px_14px_rgba(255,255,255,0.2)] z-0"
+                  transition={{ type: "spring", stiffness: 420, damping: 32 }}
                 />
               )}
               <span className="relative z-10">{cat.name}</span>
@@ -48,3 +48,5 @@ export function FAQsTabs({
     </div>
   );
 }
+
+

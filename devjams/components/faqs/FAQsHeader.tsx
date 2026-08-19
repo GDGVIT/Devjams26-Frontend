@@ -5,22 +5,26 @@ import { motion } from "../gsap-motion";
 
 export function FAQsHeader() {
   return (
-    <div className="relative w-full flex items-center justify-between mb-3 sm:mb-5 select-none overflow-hidden py-1">
-      {/* Left Corner: Web + Maps Pin — matches mockups */}
+    <div className="relative w-full flex items-center justify-center pt-2 sm:pt-4 mb-2 sm:mb-4 select-none">
+      {/* Top-Left Corner: Web Globe + Maps Pin (bleeding off top-left edge without overlapping text) */}
       <motion.div
-        initial={{ opacity: 0, x: -30, scale: 0.85 }}
+        initial={{ opacity: 0, x: -25, scale: 0.9 }}
         whileInView={{ opacity: 1, x: 0, scale: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.65, ease: [0.215, 0.61, 0.355, 1] }}
-        className="flex items-center mix-blend-screen pointer-events-none flex-shrink-0 -ml-2 sm:-ml-3"
+        className="absolute flex items-center mix-blend-screen pointer-events-none z-10"
+        style={{
+          left: "clamp(-45px, -6vw, -25px)",
+          top: "clamp(-35px, -5vw, -20px)",
+        }}
       >
         {/* Web Globe */}
         <div
           className="relative"
           style={{
-            width: "clamp(56px, 12vw, 120px)",
-            height: "clamp(56px, 12vw, 120px)",
-            marginRight: "clamp(-14px, -3vw, -28px)",
+            width: "clamp(95px, 20vw, 175px)",
+            height: "clamp(95px, 20vw, 175px)",
+            marginRight: "clamp(-24px, -5vw, -45px)",
             zIndex: 10,
           }}
         >
@@ -36,8 +40,8 @@ export function FAQsHeader() {
         <div
           className="relative"
           style={{
-            width: "clamp(58px, 13vw, 130px)",
-            height: "clamp(58px, 13vw, 130px)",
+            width: "clamp(100px, 22vw, 190px)",
+            height: "clamp(100px, 22vw, 190px)",
             zIndex: 20,
           }}
         >
@@ -57,53 +61,16 @@ export function FAQsHeader() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="absolute left-1/2 -translate-x-1/2 font-extrabold text-white tracking-tight text-center whitespace-nowrap z-30 text-3xl sm:text-4xl md:text-5xl lg:text-6xl"
+        className="font-bold text-white tracking-tight text-center whitespace-nowrap z-30"
+        style={{
+          fontFamily: "var(--font-google-sans), sans-serif",
+          fontSize: "clamp(2.2rem, 5.5vw, 3.75rem)",
+          fontWeight: 700,
+        }}
       >
         FAQs
       </motion.h2>
-
-      {/* Right Corner (Desktop only) */}
-      <motion.div
-        initial={{ opacity: 0, x: 30, scale: 0.85 }}
-        whileInView={{ opacity: 1, x: 0, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.65, ease: [0.215, 0.61, 0.355, 1] }}
-        className="hidden md:flex items-center mix-blend-screen pointer-events-none flex-shrink-0 -mr-2 sm:-mr-4"
-      >
-        <div
-          className="relative"
-          style={{
-            width: "clamp(48px, 9.5vw, 130px)",
-            height: "clamp(48px, 9.5vw, 130px)",
-            marginRight: "clamp(-8px, -1.6vw, -22px)",
-            zIndex: 20,
-          }}
-        >
-          <Image
-            src="/assets/gemini.svg"
-            alt="Gemini Track"
-            fill
-            priority
-            className="object-contain"
-          />
-        </div>
-        <div
-          className="relative"
-          style={{
-            width: "clamp(42px, 8vw, 110px)",
-            height: "clamp(42px, 8vw, 110px)",
-            zIndex: 10,
-          }}
-        >
-          <Image
-            src="/assets/cloud.svg"
-            alt="Cloud Track"
-            fill
-            priority
-            className="object-contain"
-          />
-        </div>
-      </motion.div>
     </div>
   );
 }
+
