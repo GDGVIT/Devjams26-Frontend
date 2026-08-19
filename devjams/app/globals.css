@@ -648,7 +648,7 @@ body {
 
 @media (min-width: 701px) {
   .hero-track-icons {
-    margin-top: 48px;
+    margin-top: -18px;
   }
 
   .hero-idea-button {
