@@ -244,7 +244,7 @@ export const FRAME_FOUR_LOGO_Z_INDEX = 20;
 export const FRAME_FOUR_LOGO_ORDER = ["gear", "gemini", "cloud"] as const;
 export const FRAME_FOUR_SHAPES = {
   gear: {
-    x: 80,
+    x: 75,
     y: 12.294572,
     width: 514.7120538,
     height: 514.7120538,
