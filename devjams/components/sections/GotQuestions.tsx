@@ -30,6 +30,29 @@ export function GotQuestions() {
   const fullGradientOpacity = useTransform(scrollYProgress, [0.37, 0.5], [0, 1]);
   const linesOpacity = useTransform(scrollYProgress, [0.37, 0.47], [1, 0]);
 
+  // Text is clipped to the expanding colorful triangle, so it stays hidden
+  // until the cover reveals it.
+  const clipPath = useTransform(
+    [apexX, apexY, fullGradientOpacity],
+    (values: number[]) => {
+      const full = values[2] ?? 0;
+      if (full >= 0.99) {
+        return "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)";
+      }
+      const xVal = values[0] ?? 550;
+      const yVal = values[1] ?? 0;
+      const xPct = (xVal / 10).toFixed(2);
+      const yPct = (yVal / 6.5).toFixed(2);
+
+      if (full > 0) {
+        const leftX = (Number(xPct) * (1 - full)).toFixed(2);
+        const rightX = (Number(xPct) + (100 - Number(xPct)) * full).toFixed(2);
+        return `polygon(0% 0%, 100% 0%, ${rightX}% 100%, ${leftX}% 100%)`;
+      }
+      return `polygon(0% 0%, 100% 0%, ${xPct}% ${yPct}%)`;
+    },
+  );
+
   // Stage 3: screen is fully colorful -> fade to black (0.45 -> 0.85)
   const graphicOpacity = useTransform(scrollYProgress, [0.45, 0.85], [1, 0]);
   const textOpacity = useTransform(scrollYProgress, [0.45, 0.78], [1, 0]);
@@ -53,7 +76,7 @@ export function GotQuestions() {
 
           <motion.div
             className="absolute inset-0 pointer-events-none"
-            style={{ opacity: textOpacity }}
+            style={{ clipPath, opacity: textOpacity }}
           >
             <GotQuestionsHeading />
             <GotQuestionsSubHeading />
