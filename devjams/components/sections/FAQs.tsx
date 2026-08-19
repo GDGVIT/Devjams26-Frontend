@@ -58,14 +58,20 @@ export function FAQs() {
         </div>
 
         {/* Bottom-Right Corner Decorative SVGs (Gemini Star + Gear) */}
-        <div className="absolute -bottom-4 -right-4 sm:-bottom-8 sm:-right-8 flex items-center mix-blend-screen pointer-events-none z-20">
+        <div
+          className="absolute flex items-center mix-blend-screen pointer-events-none z-10"
+          style={{
+            right: "clamp(-45px, -6vw, -25px)",
+            bottom: "clamp(-40px, -5vw, -20px)",
+          }}
+        >
           {/* Gemini Star */}
           <div
             className="relative"
             style={{
-              width: "clamp(130px, 26vw, 250px)",
-              height: "clamp(130px, 26vw, 250px)",
-              marginRight: "clamp(-32px, -6.5vw, -60px)",
+              width: "clamp(105px, 22vw, 210px)",
+              height: "clamp(105px, 22vw, 210px)",
+              marginRight: "clamp(-26px, -5.5vw, -50px)",
               zIndex: 20,
             }}
           >
@@ -81,8 +87,8 @@ export function FAQs() {
           <div
             className="relative"
             style={{
-              width: "clamp(120px, 24vw, 230px)",
-              height: "clamp(120px, 24vw, 230px)",
+              width: "clamp(100px, 20vw, 195px)",
+              height: "clamp(100px, 20vw, 195px)",
               zIndex: 10,
             }}
           >
