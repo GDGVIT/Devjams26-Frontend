@@ -15,8 +15,8 @@ export function FAQsTabs({
   onSelectCategory,
 }: FAQsTabsProps) {
   return (
-    <div className="flex items-center justify-center w-full my-4 sm:my-6 px-2 overflow-x-auto">
-      <div className="inline-flex items-center gap-2 sm:gap-4 p-1.5 rounded-full bg-transparent">
+    <div className="w-full flex justify-center mt-1 sm:mt-2 mb-4 sm:mb-6 md:mb-7 px-2 select-none z-20">
+      <div className="inline-flex items-center justify-center gap-2 sm:gap-4 p-1 rounded-full bg-transparent">
         {categories.map((cat) => {
           const isActive = cat.id === activeCategoryId;
 
@@ -24,20 +24,19 @@ export function FAQsTabs({
             <button
               key={cat.id}
               onClick={() => onSelectCategory(cat.id)}
-              className={`relative min-w-[150px] sm:min-w-[190px] md:w-[243px] h-[48px] sm:h-[55px] rounded-full flex items-center justify-center transition-colors duration-200 outline-none select-none cursor-pointer whitespace-nowrap px-4 ${
-                isActive ? "text-black" : "text-white hover:text-white/80"
+              className={`relative px-6 sm:px-8 py-2.5 sm:py-3 rounded-full flex items-center justify-center transition-colors duration-200 outline-none cursor-pointer whitespace-nowrap text-[18px] sm:text-[18.5px] md:text-[clamp(1.02rem,1.25vw,1.18rem)] ${
+                isActive ? "text-black" : "text-white/90 hover:text-white"
               }`}
               style={{
                 fontFamily: "var(--font-google-sans), sans-serif",
-                fontSize: "clamp(1.1rem, 2vw, 24px)",
-                fontWeight: 400,
+                fontWeight: isActive ? 500 : 400,
               }}
             >
               {isActive && (
                 <motion.div
                   layoutId="activeFaqTab"
-                  className="absolute inset-0 bg-white rounded-full shadow-lg z-0"
-                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  className="absolute inset-0 bg-white rounded-full shadow-[0_2px_14px_rgba(255,255,255,0.2)] z-0"
+                  transition={{ type: "spring", stiffness: 420, damping: 32 }}
                 />
               )}
               <span className="relative z-10">{cat.name}</span>
@@ -48,3 +47,5 @@ export function FAQsTabs({
     </div>
   );
 }
+
+

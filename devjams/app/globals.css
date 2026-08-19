@@ -22,8 +22,12 @@ body {
   overflow-x: hidden;
 }
 
-.responsive-svg {
-  display: contents;
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 
