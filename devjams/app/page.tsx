@@ -10,6 +10,7 @@ import {
 import type { MotionValue } from "../components/gsap-motion";
 import FoldText from "./components/FoldText";
 import SplitText from "./components/SplitText";
+import BorderGlow from "./components/BorderGlow";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import {
   FRAME_FOUR_CONTENT_ENTER_OFFSET,
@@ -990,32 +991,43 @@ export default function Home() {
         </div>
         <h2 className="hero-cta-title">Wham Bam, Lets DevJam!</h2>
         {/* Idea Submission Button */}
-        <motion.button
-          type="button"
-          initial={false}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{
-            duration: 0.5,
-            delay: 1.1,
-            type: "spring",
-            stiffness: 220,
-            damping: 18,
-          }}
-          whileHover={{
-            scale: 1.07,
-            backgroundColor: "#ffffff",
-            boxShadow: "0 0 35px rgba(255,255,255,0.45)",
-          }}
-          whileTap={{ scale: 0.94 }}
-          className="hero-idea-button cursor-pointer bg-white text-black font-bold text-lg rounded-full flex items-center justify-center transition-shadow shadow-[0_0_20px_rgba(255,255,255,0.25)] relative z-30"
-          style={{
-            width: "min(243px, calc(100vw - 32px))",
-            height: "55px",
-            fontFamily: '"Google Sans", var(--font-google-sans), sans-serif',
-          }}
+        <BorderGlow
+          className="hero-idea-border-glow"
+          edgeSensitivity={24}
+          glowColor="210 90 72"
+          backgroundColor="#ffffff"
+          borderRadius={999}
+          glowRadius={18}
+          glowIntensity={1.15}
+          coneSpread={20}
+          animated={false}
+          colors={["#ea4335", "#fbbc04", "#34a853", "#4285f4"]}
+          fillOpacity={0.35}
         >
-          Idea Submission
-        </motion.button>
+          <motion.button
+            type="button"
+            initial={false}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{
+              duration: 0.5,
+              delay: 1.1,
+              type: "spring",
+              stiffness: 220,
+              damping: 18,
+            }}
+            whileHover={{
+              scale: 1.07,
+              backgroundColor: "#ffffff",
+            }}
+            whileTap={{ scale: 0.94 }}
+            className="hero-idea-button cursor-pointer bg-white text-black font-bold text-lg flex items-center justify-center relative"
+            style={{
+              fontFamily: '"Google Sans", var(--font-google-sans), sans-serif',
+            }}
+          >
+            Idea Submission
+          </motion.button>
+        </BorderGlow>
 
 
         </div>
