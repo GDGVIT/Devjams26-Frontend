@@ -414,7 +414,7 @@ export function TrackCarousel({ tracks, scrollProgress, sectionRef }: TrackCarou
           />
           <div className="relative flex items-center gap-3 sm:gap-5 bg-black/95 px-5 sm:px-7 py-2 sm:py-2.5 rounded-full backdrop-blur-md">
             <span className="text-white font-bold text-xs sm:text-sm tracking-wide whitespace-nowrap">
-              Tracks - {mobileActiveIndex}/{tracks.length}
+              Tracks - {mobileActiveIndex + 1}/{tracks.length}
             </span>
             <div className="flex items-center gap-2 sm:gap-2.5">
               {tracks.map((_, idx) => {
@@ -504,7 +504,7 @@ export function TrackCarousel({ tracks, scrollProgress, sectionRef }: TrackCarou
           />
           <div className="relative flex items-center gap-4 md:gap-6 bg-black/95 px-6 md:px-8 py-2.5 md:py-3 rounded-full backdrop-blur-md">
             <span className="text-white font-bold text-sm md:text-base tracking-wide whitespace-nowrap">
-              Tracks - {desktopActiveIndex}/{tracks.length}
+              Tracks - {desktopActiveIndex + 1}/{tracks.length}
             </span>
             <div className="flex items-center gap-2.5 md:gap-3">
               {tracks.map((_, idx) => {
