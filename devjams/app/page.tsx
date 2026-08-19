@@ -10,6 +10,7 @@ import {
 import type { MotionValue } from "../components/gsap-motion";
 import FoldText from "./components/FoldText";
 import SplitText from "./components/SplitText";
+import BorderGlow from "./components/BorderGlow";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import {
   FRAME_FOUR_CONTENT_ENTER_OFFSET,
@@ -19,6 +20,7 @@ import {
   FRAME_REFERENCE_WIDTH,
   FRAME_THREE_EDGE_LOGO_OFFSETS,
   FRAME_THREE_MOBILE_SHAPES,
+  FRAME_THREE_MOBILE_GEAR_SOURCE,
   FRAME_THREE_LOGOS,
   FRAME_TWO_LOGO_CENTER_X,
   FRAME_TWO_MAPS_LEFT,
@@ -28,7 +30,6 @@ import {
   HERO_TRACK_ENTRY_DELAYS,
   alignShapeBoundsX,
   frameFourContentOffsetAt,
-  frameFourSharedLogoTransformAt,
   frameScaleAtViewport,
   frameTwoMapEntryTransformAt,
   frameTwoMapsOpacityAt,
@@ -40,9 +41,11 @@ import {
   scaleMobileShapeBoundsAtViewport,
   scaleShapeBounds,
   heroMenuShouldCollapseAtScroll,
+  menuDefaultsOpenAtViewport,
+  frameThreeMapsShapeAtViewport,
   scrollTransitionProgressAt,
-  smoothScrollProgressAt,
   uniformShapeTransformAt,
+  smoothScrollProgressAt,
   type ShapeBounds,
 } from "./frame-transition";
 type ShapeKey = "web" | "android";
@@ -117,7 +120,10 @@ export default function Home() {
   const shapeStartRef = useRef<Partial<Record<ShapeKey, ShapeBounds>>>({});
   const shapeTargetRef = useRef<Partial<Record<ShapeKey, ShapeBounds>>>({});
   const frameThreeGeometryRef = useRef<FrameThreeGeometry | null>(null);
-  const [menuOpen, setMenuOpen] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
+  useEffect(() => {
+    if (menuDefaultsOpenAtViewport(window.innerWidth)) setMenuOpen(true);
+  }, []);
   const [viewportWidth, setViewportWidth] = useState(FRAME_REFERENCE_WIDTH);
   const [viewportHeight, setViewportHeight] = useState(812);
   useEffect(() => {
@@ -156,7 +162,8 @@ export default function Home() {
   const frameThreeWebOpacity = useMotionValue(1);
   const frameFourCloudX = useMotionValue(0);
   const frameFourCloudY = useMotionValue(0);
-  const frameFourCloudScale = useMotionValue(1);
+  const frameFourCloudScaleX = useMotionValue(1);
+  const frameFourCloudScaleY = useMotionValue(1);
   const frameFourCloudOpacity = useMotionValue(0);
   const frameFourAboutOpacity = useMotionValue(0);
   const frameFourAboutX = useMotionValue<number>(FRAME_FOUR_CONTENT_ENTER_OFFSET.x);
@@ -213,13 +220,14 @@ export default function Home() {
       );
       const clampedProgress = smoothScrollProgressAt(transitionProgress);
       const heroTrackScale = geometry.heroTrackScale || 1;
+      const transformAt = uniformShapeTransformAt;
 
       (Object.keys(shapeMotionValues) as ShapeKey[]).forEach((key) => {
         const start = shapeStartRef.current[key];
         const target = shapeTargetRef.current[key];
         if (!start || !target) return;
 
-        const transform = uniformShapeTransformAt(
+        const transform = transformAt(
           start,
           target,
           clampedProgress,
@@ -299,13 +307,14 @@ export default function Home() {
         frameThreeGearOpacity.set(0);
         return;
       }
+      const transformAt = uniformShapeTransformAt;
 
       const webBounds = interpolateShapeBounds(
         geometry.frameTwoWeb,
         geometry.frameThreeWeb,
         transitionProgress,
       );
-      const webTransform = uniformShapeTransformAt(
+      const webTransform = transformAt(
         geometry.heroWeb,
         webBounds,
         1,
@@ -321,7 +330,7 @@ export default function Home() {
         geometry.frameThreeMaps,
         transitionProgress,
       );
-      const mapsTransform = uniformShapeTransformAt(
+      const mapsTransform = transformAt(
         geometry.frameTwoMaps,
         mapsBounds,
         1,
@@ -378,7 +387,6 @@ export default function Home() {
 
       if (pageScroll < transitionStart) {
         frameFourCloudOpacity.set(0);
-        frameFourAboutOpacity.set(0);
         frameFourAboutX.set(
           isCompactViewport ? 0 : FRAME_FOUR_CONTENT_ENTER_OFFSET.x,
         );
@@ -429,8 +437,11 @@ export default function Home() {
               geometry.frameFourScale,
             );
 
+      const transformAt = uniformShapeTransformAt;
       const sourceGear = absoluteBounds(
-        FRAME_THREE_LOGOS.gear,
+        geometry.isMobile
+          ? FRAME_THREE_MOBILE_GEAR_SOURCE
+          : FRAME_THREE_LOGOS.gear,
         geometry.frameThreePageLeft,
         geometry.frameThreePageTop,
         geometry.frameThreeScale,
@@ -440,7 +451,7 @@ export default function Home() {
         geometry.frameFourPageLeft,
         geometry.frameFourPageTop,
       );
-      const gearTransform = frameFourSharedLogoTransformAt(
+      const gearTransform = transformAt(
         sourceGear,
         targetGear,
         progress,
@@ -463,7 +474,7 @@ export default function Home() {
         geometry.frameFourPageLeft,
         geometry.frameFourPageTop,
       );
-      const geminiTransform = frameFourSharedLogoTransformAt(
+      const geminiTransform = transformAt(
         sourceGemini,
         targetGemini,
         progress,
@@ -486,30 +497,30 @@ export default function Home() {
         geometry.frameFourPageLeft,
         geometry.frameFourPageTop,
       );
-      const cloudTransform = uniformShapeTransformAt(
+      const cloudTransform = transformAt(
         cloudStart,
         cloudTarget,
         progress,
       );
       frameFourCloudX.set(cloudTransform.x);
       frameFourCloudY.set(cloudTransform.y);
-      frameFourCloudScale.set(cloudTransform.scaleX);
+      frameFourCloudScaleX.set(cloudTransform.scaleX);
+      frameFourCloudScaleY.set(cloudTransform.scaleY);
       frameFourCloudOpacity.set(progress);
       frameFourAboutOpacity.set(progress);
 
-      frameThreeWebOpacity.set(1 - progress);
-      mapsOpacity.set(1 - progress);
+      frameThreeWebOpacity.set(Math.max(0.72, 1 - progress));
+      mapsOpacity.set(Math.max(0.72, 1 - progress));
       frameFourAboutX.set(
         isCompactViewport ? 0 : frameFourContentOffsetAt(progress),
       );
       frameFourAboutY.set(36 * (1 - progress));
     },
     [
-      frameFourAboutOpacity,
       frameFourAboutX,
       frameFourAboutY,
-      frameFourCloudOpacity,
-      frameFourCloudScale,
+      frameFourCloudScaleX,
+      frameFourCloudScaleY,
       frameFourCloudX,
       frameFourCloudY,
       frameThreeGeminiOpacity,
@@ -663,10 +674,11 @@ export default function Home() {
           isMobile,
         ),
         frameThreeMaps: targetBounds(
-          FRAME_THREE_LOGOS.maps,
+          frameThreeMapsShapeAtViewport(isMobile),
           frameThreePageLeft,
           frameThreePageTop,
-          frameScale,
+          isMobile ? mobileFrameScale : frameScale,
+          isMobile,
         ),
       };
       syncScrollProgress(scrollY.get());
@@ -802,70 +814,78 @@ export default function Home() {
             </svg>
           </motion.button>
         <AnimatePresence>
-          {menuOpen ? (
-            <>
-              <motion.button
-                type="button"
-                className="hero-nav__backdrop"
-                aria-label="Close navigation"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                onClick={() => setMenuOpen(false)}
-              />
-              <motion.nav
-                id="primary-navigation-sheet"
-                className="hero-nav"
-                initial={isMobileViewport ? { x: "100%", opacity: 0 } : { width: "68px", opacity: 1, x: 0 }}
-                animate={{ width: "var(--hero-nav-open-width)", opacity: 1, x: 0 }}
-                exit={{ x: "100%", opacity: 0 }}
-                transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
-                style={{ transformOrigin: "right center" }}
-                role={isMobileViewport ? "dialog" : undefined}
-                aria-modal={isMobileViewport ? true : undefined}
-                aria-label="Primary navigation"
-              >
-                <div className="hero-nav__sheet-head">
-                  <h2 className="hero-nav__sheet-title">Menu</h2>
-                  <button
-                    type="button"
-                    className="hero-nav__close"
-                    aria-label="Close navigation"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    <span aria-hidden="true">×</span>
-                  </button>
-                </div>
+          <>
+            <motion.button
+              type="button"
+              className="hero-nav__backdrop"
+              aria-label="Close navigation"
+              aria-hidden={!menuOpen}
+              tabIndex={-1}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: menuOpen ? 1 : 0 }}
+              transition={{ duration: 0.2 }}
+              style={{ pointerEvents: menuOpen ? "auto" : "none" }}
+              onClick={() => setMenuOpen(false)}
+            />
+            <motion.nav
+              id="primary-navigation-sheet"
+              className="hero-nav"
+              initial={isMobileViewport ? { x: "100%", opacity: 0 } : { width: "68px", opacity: 0 }}
+              animate={
+                isMobileViewport
+                  ? { x: menuOpen ? 0 : "100%", opacity: menuOpen ? 1 : 0 }
+                  : {
+                      width: menuOpen ? "var(--hero-nav-open-width)" : "68px",
+                      opacity: menuOpen ? 1 : 0,
+                      x: 0,
+                    }
+              }
+              transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
+              style={{ transformOrigin: "right center", pointerEvents: menuOpen ? "auto" : "none" }}
+              role={isMobileViewport ? "dialog" : undefined}
+              aria-modal={isMobileViewport && menuOpen ? true : undefined}
+              aria-hidden={!menuOpen}
+              aria-label="Primary navigation"
+            >
+              <div className="hero-nav__sheet-head">
+                <h2 className="hero-nav__sheet-title">Menu</h2>
+                <button
+                  type="button"
+                  className="hero-nav__close"
+                  aria-label="Close navigation"
+                  tabIndex={menuOpen ? 0 : -1}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
               <motion.div
                 className="hero-nav__links"
                 initial={{ opacity: 0, x: 28 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 28 }}
-                transition={{ duration: 0.22, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                animate={{ opacity: menuOpen ? 1 : 0, x: menuOpen ? 0 : 28 }}
+                transition={{ duration: 0.22, delay: menuOpen ? 0.1 : 0, ease: [0.16, 1, 0.3, 1] }}
               >
-                <a className="hero-nav__link hero-nav__link--active" href="#home" onClick={() => setMenuOpen(false)}>
+                <a className="hero-nav__link hero-nav__link--active" href="#home" tabIndex={menuOpen ? 0 : -1} onClick={() => setMenuOpen(false)}>
                   Home
                 </a>
-                <a className="hero-nav__link" href="#about" onClick={() => setMenuOpen(false)}>
+                <a className="hero-nav__link" href="#about" tabIndex={menuOpen ? 0 : -1} onClick={() => setMenuOpen(false)}>
                   About
                 </a>
-                <a className="hero-nav__link" href="#tracks" onClick={() => setMenuOpen(false)}>
+                <a className="hero-nav__link" href="#tracks" tabIndex={menuOpen ? 0 : -1} onClick={() => setMenuOpen(false)}>
                   Tracks
                 </a>
-                <a className="hero-nav__link" href="#gallery" onClick={() => setMenuOpen(false)}>
+                <a className="hero-nav__link" href="#gallery" tabIndex={menuOpen ? 0 : -1} onClick={() => setMenuOpen(false)}>
                   Gallery
                 </a>
-                <a className="hero-nav__link" href="#faqs" onClick={() => setMenuOpen(false)}>
+                <a className="hero-nav__link" href="#faqs" tabIndex={menuOpen ? 0 : -1} onClick={() => setMenuOpen(false)}>
                   FAQs
                 </a>
-                <a className="hero-nav__link" href="#contact" onClick={() => setMenuOpen(false)}>
+                <a className="hero-nav__link" href="#contact" tabIndex={menuOpen ? 0 : -1} onClick={() => setMenuOpen(false)}>
                   Contact
                 </a>
               </motion.div>
-              </motion.nav>
-            </>
-          ) : null}
+            </motion.nav>
+          </>
         </AnimatePresence>
 
         <div className="hero-content">
@@ -973,33 +993,45 @@ export default function Home() {
             );
           })}
         </div>
+        <h2 className="hero-cta-title">Wham Bam, Lets DevJam!</h2>
         {/* Idea Submission Button */}
-        <motion.button
-          type="button"
-          initial={false}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{
-            duration: 0.5,
-            delay: 1.1,
-            type: "spring",
-            stiffness: 220,
-            damping: 18,
-          }}
-          whileHover={{
-            scale: 1.07,
-            backgroundColor: "#ffffff",
-            boxShadow: "0 0 35px rgba(255,255,255,0.45)",
-          }}
-          whileTap={{ scale: 0.94 }}
-          className="cursor-pointer bg-white text-black font-bold text-lg rounded-full flex items-center justify-center transition-shadow shadow-[0_0_20px_rgba(255,255,255,0.25)] relative z-30"
-          style={{
-            width: "min(243px, calc(100vw - 32px))",
-            height: "55px",
-            fontFamily: '"Google Sans", var(--font-google-sans), sans-serif',
-          }}
+        <BorderGlow
+          className="hero-idea-border-glow"
+          edgeSensitivity={24}
+          glowColor="210 90 72"
+          backgroundColor="#ffffff"
+          borderRadius={999}
+          glowRadius={18}
+          glowIntensity={1.15}
+          coneSpread={20}
+          animated={false}
+          colors={["#ea4335", "#fbbc04", "#34a853", "#4285f4"]}
+          fillOpacity={0.35}
         >
-          Idea Submission
-        </motion.button>
+          <motion.button
+            type="button"
+            initial={false}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{
+              duration: 0.5,
+              delay: 1.1,
+              type: "spring",
+              stiffness: 220,
+              damping: 18,
+            }}
+            whileHover={{
+              scale: 1.07,
+              backgroundColor: "#ffffff",
+            }}
+            whileTap={{ scale: 0.94 }}
+            className="hero-idea-button cursor-pointer bg-white text-black font-bold text-lg flex items-center justify-center relative"
+            style={{
+              fontFamily: '"Google Sans", var(--font-google-sans), sans-serif',
+            }}
+          >
+            Idea Submission
+          </motion.button>
+        </BorderGlow>
 
 
         </div>
@@ -1084,6 +1116,24 @@ export default function Home() {
         />
         <div className="frame-three__logos" aria-label="GDG tracks">
           <motion.div
+            className="frame-three__logo frame-three__logo--cloud"
+            style={{
+              x: frameFourCloudX,
+              y: frameFourCloudY,
+              scaleX: frameFourCloudScaleX,
+              scaleY: frameFourCloudScaleY,
+              opacity: frameFourCloudOpacity,
+            }}
+          >
+            <Image
+              src="/assets/cloud.svg"
+              alt="Cloud"
+              width={278}
+              height={203}
+              className="frame-three__logo-image"
+            />
+          </motion.div>
+          <motion.div
             className="frame-three__logo frame-three__logo--gemini"
             style={{
               x: frameThreeGeminiX,
@@ -1139,29 +1189,6 @@ export default function Home() {
           </p>
         </motion.div>
 
-        <div className="frame-four__logos" aria-label="VIT tracks">
-          <motion.div
-            className="frame-four__logo frame-four__logo--cloud"
-            style={{
-              left: FRAME_FOUR_START_SHAPES.cloud.x * frameScale,
-              top: FRAME_FOUR_START_SHAPES.cloud.y * frameScale,
-              width: FRAME_FOUR_START_SHAPES.cloud.width * frameScale,
-              height: FRAME_FOUR_START_SHAPES.cloud.height * frameScale,
-              x: frameFourCloudX,
-              y: frameFourCloudY,
-              scale: frameFourCloudScale,
-              opacity: frameFourCloudOpacity,
-            }}
-          >
-            <Image
-              src="/assets/cloud.svg"
-              alt="Cloud"
-              width={278}
-              height={203}
-              className="frame-four__logo-image"
-            />
-          </motion.div>
-        </div>
       </section>
       {/* Remaining site sections */}
       <Tracks />

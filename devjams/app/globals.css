@@ -92,7 +92,8 @@ body {
   padding: 0;
   pointer-events: none;
   user-select: none;
-  mix-blend-mode: screen;
+  mix-blend-mode: plus-lighter;
+  filter: brightness(1.12) saturate(1.05);
   transform-origin: center center;
   will-change: transform, opacity;
 }
@@ -103,7 +104,7 @@ body {
   width: 364.106px;
   height: 464.3671px;
   z-index: 2;
-  mix-blend-mode: screen;
+  mix-blend-mode: plus-lighter;
 }
 
 .about-devjams__shape > img,
@@ -122,6 +123,7 @@ body {
   height: 1024px;
   background: #000;
   overflow: visible;
+  z-index: 2;
 }
 
 .frame-three__title {
@@ -179,7 +181,8 @@ body {
   display: block;
   transform-origin: center center;
   will-change: transform, opacity;
-  mix-blend-mode: screen;
+  mix-blend-mode: plus-lighter;
+  filter: brightness(1.12) saturate(1.05);
 }
 
 .frame-three__logo-image {
@@ -208,12 +211,27 @@ body {
   transform: scale(1);
 }
 
+.frame-three__logo--cloud {
+  left: calc((1480px - 239.5px) * var(--frame-scale));
+  top: calc((1024px + 739.2776px - 297.95px) * var(--frame-scale));
+  width: calc(278px * var(--frame-scale));
+  height: calc(203px * var(--frame-scale));
+  z-index: 0;
+}
+
+.frame-three__logo--gemini {
+  z-index: 1;
+}
+
+.frame-three__logo--gear {
+  z-index: 2;
+}
 .frame-four {
   position: relative;
   width: min(1440px, 100vw);
   height: 1024px;
-  background: #000;
-  overflow: hidden;
+  background: transparent;
+  overflow: visible;
 }
 
 .frame-four__content {
@@ -263,28 +281,6 @@ body {
   text-align: center;
 }
 
-.frame-four__logos {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-}
-
-.frame-four__logo {
-  position: absolute;
-  display: block;
-  transform-origin: center center;
-  will-change: transform, opacity;
-  mix-blend-mode: screen;
-}
-
-.frame-four__logo-image {
-  display: block;
-  width: 100%;
-  height: 100%;
-  max-width: none;
-  object-fit: contain;
-}
 
 @media (max-width: 1024px) {
   .about-devjams {
@@ -380,27 +376,43 @@ body {
   }
 
   .frame-three__logo--gemini {
-    left: calc(444px * var(--frame-scale));
+    left: calc(447.65px * var(--frame-scale));
     top: calc(32.05px * var(--frame-scale));
-    width: calc(290px * var(--frame-scale));
-    height: calc(290px * var(--frame-scale));
+    width: calc(261px * var(--frame-scale));
+    height: calc(261px * var(--frame-scale));
   }
 
   .frame-three__logo--gear {
-    left: calc(686px * var(--frame-scale));
-    top: calc(32.05px * var(--frame-scale));
-    width: calc(275px * var(--frame-scale));
-    height: calc(290px * var(--frame-scale));
+    left: calc(633.2px * var(--frame-scale));
+    top: calc(10.5px * var(--frame-scale));
+    width: calc(312px * var(--frame-scale));
+    height: calc(312px * var(--frame-scale));
   }
 
   .frame-three__logo {
     z-index: 20;
   }
 
+  .frame-three__logo--cloud {
+    left: calc((1480px - 239.5px) * var(--frame-scale));
+    top: calc(100svh + ((739.2776px - 297.95px) * var(--frame-scale)));
+    width: calc(278px * var(--frame-scale));
+    height: calc(203px * var(--frame-scale));
+    z-index: 0;
+  }
+
+  .frame-three__logo--gemini {
+    z-index: 1;
+  }
+
+  .frame-three__logo--gear {
+    z-index: 2;
+  }
+
   .frame-four {
     height: 100svh;
     overflow: hidden;
-    z-index: 1;
+    z-index: 3;
   }
 }
 
@@ -640,9 +652,75 @@ body {
   outline: none;
 }
 
+.hero-cta-title {
+  width: 546px;
+  height: 61px;
+  margin: 32px 0 0;
+  position: relative;
+  top: -70px;
+  z-index: 40;
+  color: #fff;
+  font-family: "Google Sans", sans-serif;
+  font-size: 48px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  text-align: center;
+}
+
+.hero-track-icons > div {
+  mix-blend-mode: plus-lighter;
+  filter: brightness(1.12) saturate(1.05);
+}
+
+.hero-idea-border-glow {
+  position: relative;
+  top: -20px;
+  z-index: 30;
+  width: min(243px, calc(100vw - 32px));
+  height: 55px;
+  border-radius: 999px;
+}
+
+.hero-idea-button {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 999px;
+}
+
+@media (min-width: 701px) {
+  .hero-track-icons {
+    margin-top: -86px;
+  }
+
+  .hero-idea-button {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 700px) {
+  .hero-cta-title {
+    width: calc(100% - 32px);
+    height: auto;
+    margin-top: 24px;
+    top: -90px;
+    font-size: clamp(28px, 8vw, 48px);
+  }
+
+  .hero-idea-button {
+    margin-top: 0;
+  }
+}
+
 @media (max-width: 700px) {
   .hero-content {
     transform: translateY(28px);
+  }
+
+  .hero-track-icons {
+    margin-top: -150px;
   }
 }
 @media (max-width: 700px) {
