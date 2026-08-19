@@ -648,7 +648,7 @@ body {
 
 @media (min-width: 701px) {
   .hero-track-icons {
-    margin-top: -18px;
+    margin-top: -36px;
   }
 
   .hero-idea-button {
@@ -672,6 +672,10 @@ body {
 @media (max-width: 700px) {
   .hero-content {
     transform: translateY(28px);
+  }
+
+  .hero-track-icons {
+    margin-top: -132px;
   }
 }
 @media (max-width: 700px) {
