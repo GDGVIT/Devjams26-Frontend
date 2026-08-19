@@ -5,8 +5,8 @@ import { motion } from "../gsap-motion";
 
 export function FAQsHeader() {
   return (
-    <div className="relative w-full flex items-center justify-center pt-2 sm:pt-4 mb-2 sm:mb-4 select-none">
-      {/* Top-Left Corner: Web Globe + Maps Pin (bleeding off top-left edge without overlapping text) */}
+    <div className="relative w-full flex flex-col items-center justify-center pt-2 sm:pt-4 mb-2 sm:mb-4 select-none">
+      {/* Top-Left Corner: Web Globe + Maps Pin */}
       <motion.div
         initial={{ opacity: 0, x: -25, scale: 0.9 }}
         whileInView={{ opacity: 1, x: 0, scale: 1 }}
@@ -22,9 +22,9 @@ export function FAQsHeader() {
         <div
           className="relative"
           style={{
-            width: "clamp(95px, 20vw, 175px)",
-            height: "clamp(95px, 20vw, 175px)",
-            marginRight: "clamp(-24px, -5vw, -45px)",
+            width: "clamp(80px, 16vw, 150px)",
+            height: "clamp(80px, 16vw, 150px)",
+            marginRight: "clamp(-20px, -4vw, -38px)",
             zIndex: 10,
           }}
         >
@@ -40,8 +40,8 @@ export function FAQsHeader() {
         <div
           className="relative"
           style={{
-            width: "clamp(100px, 22vw, 190px)",
-            height: "clamp(100px, 22vw, 190px)",
+            width: "clamp(85px, 18vw, 160px)",
+            height: "clamp(85px, 18vw, 160px)",
             zIndex: 20,
           }}
         >
@@ -55,16 +55,16 @@ export function FAQsHeader() {
         </div>
       </motion.div>
 
-      {/* Main Title: FAQs */}
+      {/* Main Title: FAQs (positioned below the SVGs with increased font size) */}
       <motion.h2
         initial={{ opacity: 0, y: -15 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="font-bold text-white tracking-tight text-center whitespace-nowrap z-30"
+        className="font-bold text-white tracking-tight text-center whitespace-nowrap z-30 mt-12 sm:mt-16 md:mt-20"
         style={{
           fontFamily: "var(--font-google-sans), sans-serif",
-          fontSize: "clamp(2.2rem, 5.5vw, 3.75rem)",
+          fontSize: "clamp(3.2rem, 6.2vw, 5.2rem)",
           fontWeight: 700,
         }}
       >

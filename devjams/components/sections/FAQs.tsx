@@ -45,7 +45,7 @@ export function FAQs() {
         <FAQsHeader />
 
         {/* Padded inner container for tabs + content */}
-        <div className="max-w-[960px] w-full mx-auto px-4 sm:px-8 flex flex-col items-center z-10 pb-16 sm:pb-20">
+        <div className="max-w-[960px] w-full mx-auto px-4 sm:px-8 flex flex-col items-center z-10 pb-8 sm:pb-12">
           {/* Tab Switcher */}
           <FAQsTabs
             categories={FAQ_CATEGORIES}

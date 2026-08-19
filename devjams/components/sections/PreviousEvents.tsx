@@ -34,7 +34,7 @@ function EventRow({
     <div
       className={`w-full flex ${
         isEven ? "md:justify-start" : "md:justify-end"
-      } justify-center pl-10 sm:pl-14 md:pl-0 pr-2 md:pr-0 relative`}
+      } justify-start pl-10 sm:pl-14 md:pl-0 pr-2 md:pr-0 relative`}
     >
       {/* Decorative Background SVGs (Triangle, Circles, Flower on Desktop) */}
       <PreviousEventsDecorations index={index} />
@@ -42,7 +42,7 @@ function EventRow({
       {/* Composable Event Card */}
       <motion.div
         style={{ opacity, scale, y }}
-        className="w-full md:w-[45%] flex justify-center md:block relative z-10"
+        className="w-full md:w-[45%] flex justify-start md:block relative z-10"
       >
         <EventCard
           title={event.title}

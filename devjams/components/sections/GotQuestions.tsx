@@ -63,7 +63,7 @@ export function GotQuestions() {
     <section
       ref={sectionRef}
       id="faqs"
-      className="relative w-full h-[150vh] md:h-[200vh] bg-black text-white"
+      className="relative w-full h-[220vh] md:h-[260vh] bg-black text-white"
     >
       {/* 3D Perspective Viewport */}
       <div
@@ -117,13 +117,13 @@ export function GotQuestions() {
               transform: "rotateX(180deg)",
               pointerEvents: isFlipped ? "auto" : "none",
             }}
-            className="absolute inset-0 w-full h-full flex flex-col items-center justify-start overflow-y-auto no-scrollbar bg-black py-5 sm:py-7 md:py-9 px-4 sm:px-8 relative"
+            className="absolute inset-0 w-full h-full flex flex-col items-center justify-start overflow-y-auto no-scrollbar bg-black py-4 sm:py-6 md:py-8 px-4 sm:px-8"
           >
             {/* Top Row: Full-bleed Header with Web + Maps at top-left and Centered FAQs Title */}
             <FAQsHeader />
 
-            {/* Middle Container for Tabs + Generous Content utilizing whitespace */}
-            <div className="max-w-[960px] w-full mx-auto px-2 sm:px-4 flex flex-col items-center z-10 pb-16 sm:pb-20">
+            {/* Middle Container for Tabs + Generous Content */}
+            <div className="max-w-[960px] w-full mx-auto px-2 sm:px-4 flex flex-col items-center z-10 pb-8 sm:pb-12">
               {/* Tab Switcher */}
               <FAQsTabs
                 categories={FAQ_CATEGORIES}

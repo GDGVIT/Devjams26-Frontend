@@ -181,13 +181,13 @@ export function FooterArcadeBoard() {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative w-full rounded-2xl sm:rounded-3xl bg-[#09090b] border border-white/20 p-4 sm:p-6 md:p-8 overflow-hidden select-none shadow-2xl">
+    <div ref={containerRef} className="relative w-full rounded-2xl sm:rounded-3xl bg-[#09090b] border border-white/20 p-4 sm:p-5 md:p-6 overflow-hidden select-none shadow-2xl">
       {/* Top Dash Pills Row */}
       <div className="w-full flex items-center justify-between gap-1.5 sm:gap-2.5 mb-1.5 sm:mb-2 opacity-30">
         {Array.from({ length: 10 }).map((_, i) => (
           <div
             key={i}
-            className="flex-1 h-1 sm:h-2 rounded-full border border-white/40"
+            className="flex-1 h-1 sm:h-1.5 rounded-full border border-white/40"
           />
         ))}
       </div>
@@ -203,10 +203,10 @@ export function FooterArcadeBoard() {
       />
 
       {/* Central DevJams '26 Gradient SVG Logo with dedicated padding to prevent text overlap */}
-      <div className="relative z-10 w-full max-w-full flex items-center justify-center py-6 sm:py-8 md:py-10 px-8 sm:px-12 md:px-16 pointer-events-none">
+      <div className="relative z-10 w-full max-w-full flex items-center justify-center py-3 sm:py-4 md:py-6 px-6 sm:px-10 md:px-14 pointer-events-none">
         <svg
           viewBox="0 0 960 180"
-          className="w-full h-auto max-w-[1150px] drop-shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+          className="w-full h-auto max-w-[1100px] drop-shadow-[0_0_20px_rgba(255,255,255,0.1)]"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >

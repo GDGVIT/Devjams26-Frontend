@@ -6,13 +6,13 @@ import { FooterArcadeBoard } from "../footer/FooterArcadeBoard";
 
 export function Footer() {
   return (
-    <footer className="relative w-full py-6 sm:py-8 md:py-10 bg-black text-white px-3 sm:px-4 md:px-6 lg:px-8 overflow-hidden border-t border-white/10 flex flex-col justify-start md:justify-between md:min-h-screen">
-      <div className="w-full flex-1 flex flex-col justify-start md:justify-between max-w-[1600px] mx-auto gap-5 sm:gap-7 md:gap-8">
+    <footer className="relative w-full pt-16 sm:pt-20 md:pt-24 pb-8 sm:pb-10 md:pb-12 bg-black text-white px-4 sm:px-6 md:px-8 lg:px-12 border-t border-white/10 flex flex-col justify-start">
+      <div className="w-full flex flex-col max-w-[1600px] mx-auto gap-6 sm:gap-8 md:gap-9">
         {/* Header, Socials, and Contact Us */}
         <FooterHeader />
 
         {/* Arcade Section: HUD + Board */}
-        <div className="w-full flex flex-col mt-2 sm:mt-4 md:mt-auto pt-1">
+        <div className="w-full flex flex-col pt-1">
           <FooterArcadeHUD />
           <FooterArcadeBoard />
         </div>

@@ -18,8 +18,8 @@ export function FAQsList({ category }: FAQsListProps) {
         transition={{ duration: 0.35, ease: "easeOut" }}
         className="w-full max-w-[920px] mx-auto flex flex-col items-start text-left px-2 sm:px-4 z-10"
       >
-        {/* Question & Answer List with generous whitespace and larger bold font */}
-        <div className="w-full flex flex-col gap-9 sm:gap-12 md:gap-16 items-start text-left">
+        {/* Question & Answer List */}
+        <div className="w-full flex flex-col gap-5 sm:gap-7 md:gap-8 items-start text-left">
           {category.items.map((item, index) => (
             <motion.div
               key={item.id}
@@ -30,10 +30,9 @@ export function FAQsList({ category }: FAQsListProps) {
             >
               {/* Question */}
               <h3
-                className="font-medium text-white mb-3 sm:mb-3.5 leading-snug break-words tracking-normal text-left"
+                className="font-medium text-white mb-2 sm:mb-2.5 leading-snug break-words tracking-normal text-left text-[30px] sm:text-[30px] md:text-[clamp(1.4rem,1.9vw,1.75rem)]"
                 style={{
                   fontFamily: "var(--font-google-sans), sans-serif",
-                  fontSize: "clamp(1.75rem, 3.8vw, 2.75rem)",
                   fontWeight: 500,
                 }}
               >
@@ -42,11 +41,10 @@ export function FAQsList({ category }: FAQsListProps) {
 
               {/* Answer */}
               <p
-                className="font-normal text-gray-300 leading-relaxed max-w-[880px] break-words text-left opacity-95"
+                className="font-normal text-gray-300 leading-relaxed max-w-[880px] break-words text-left opacity-90 text-[18px] sm:text-[18px] md:text-[clamp(1.08rem,1.28vw,1.22rem)]"
                 style={{
                   fontFamily: "var(--font-google-sans), sans-serif",
-                  fontSize: "clamp(1.18rem, 2.4vw, 1.6rem)",
-                  lineHeight: "1.65",
+                  lineHeight: "1.6",
                   fontWeight: 400,
                 }}
               >
