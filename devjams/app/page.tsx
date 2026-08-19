@@ -503,8 +503,8 @@ export default function Home() {
       frameFourCloudOpacity.set(progress);
       frameFourAboutOpacity.set(progress);
 
-      frameThreeWebOpacity.set(1 - progress);
-      mapsOpacity.set(1 - progress);
+      frameThreeWebOpacity.set(Math.max(0.72, 1 - progress));
+      mapsOpacity.set(Math.max(0.72, 1 - progress));
       frameFourAboutX.set(
         isCompactViewport ? 0 : frameFourContentOffsetAt(progress),
       );
