@@ -385,7 +385,6 @@ export default function Home() {
 
       if (pageScroll < transitionStart) {
         frameFourCloudOpacity.set(0);
-        frameFourAboutOpacity.set(0);
         frameFourAboutX.set(
           isCompactViewport ? 0 : FRAME_FOUR_CONTENT_ENTER_OFFSET.x,
         );
@@ -512,7 +511,6 @@ export default function Home() {
       frameFourAboutY.set(36 * (1 - progress));
     },
     [
-      frameFourAboutOpacity,
       frameFourAboutX,
       frameFourAboutY,
       frameFourCloudOpacity,
@@ -1112,6 +1110,23 @@ export default function Home() {
         />
         <div className="frame-three__logos" aria-label="GDG tracks">
           <motion.div
+            className="frame-three__logo frame-three__logo--cloud"
+            style={{
+              x: frameFourCloudX,
+              y: frameFourCloudY,
+              scale: frameFourCloudScale,
+              opacity: frameFourCloudOpacity,
+            }}
+          >
+            <Image
+              src="/assets/cloud.svg"
+              alt="Cloud"
+              width={278}
+              height={203}
+              className="frame-three__logo-image"
+            />
+          </motion.div>
+          <motion.div
             className="frame-three__logo frame-three__logo--gemini"
             style={{
               x: frameThreeGeminiX,
@@ -1167,33 +1182,6 @@ export default function Home() {
           </p>
         </motion.div>
 
-        <div
-          className="frame-four__logos"
-          aria-label="VIT tracks"
-          style={{ zIndex: FRAME_FOUR_LOGO_Z_INDEX }}
-        >
-          <motion.div
-            className="frame-four__logo frame-four__logo--cloud"
-            style={{
-              left: FRAME_FOUR_START_SHAPES.cloud.x * frameScale,
-              top: FRAME_FOUR_START_SHAPES.cloud.y * frameScale,
-              width: FRAME_FOUR_START_SHAPES.cloud.width * frameScale,
-              height: FRAME_FOUR_START_SHAPES.cloud.height * frameScale,
-              x: frameFourCloudX,
-              y: frameFourCloudY,
-              scale: frameFourCloudScale,
-              opacity: frameFourCloudOpacity,
-            }}
-          >
-            <Image
-              src="/assets/cloud.svg"
-              alt="Cloud"
-              width={278}
-              height={203}
-              className="frame-four__logo-image"
-            />
-          </motion.div>
-        </div>
       </section>
       {/* Remaining site sections */}
       <Tracks />
