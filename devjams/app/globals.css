@@ -22,6 +22,10 @@ body {
   overflow-x: hidden;
 }
 
+.responsive-svg {
+  display: contents;
+}
+
 
 .about-devjams {
   position: relative;
