@@ -635,7 +635,10 @@ body {
 .hero-cta-title {
   width: 546px;
   height: 61px;
-  margin: 16px 0 0;
+  margin: 32px 0 0;
+  position: relative;
+  top: -70px;
+  z-index: 40;
   color: #fff;
   font-family: "Google Sans", sans-serif;
   font-size: 48px;
@@ -646,9 +649,14 @@ body {
   text-align: center;
 }
 
+.hero-track-icons > div {
+  mix-blend-mode: plus-lighter;
+  filter: brightness(1.12) saturate(1.05);
+}
+
 @media (min-width: 701px) {
   .hero-track-icons {
-    margin-top: -63px;
+    margin-top: -86px;
   }
 
   .hero-idea-button {
@@ -660,7 +668,8 @@ body {
   .hero-cta-title {
     width: calc(100% - 32px);
     height: auto;
-    margin-top: 16px;
+    margin-top: 24px;
+    top: -90px;
     font-size: clamp(28px, 8vw, 48px);
   }
 
@@ -675,7 +684,7 @@ body {
   }
 
   .hero-track-icons {
-    margin-top: -142px;
+    margin-top: -150px;
   }
 }
 @media (max-width: 700px) {
