@@ -632,13 +632,40 @@ body {
   outline: none;
 }
 
+.hero-cta-title {
+  width: 546px;
+  height: 61px;
+  margin: 16px 0 0;
+  color: #fff;
+  font-family: "Google Sans", sans-serif;
+  font-size: 48px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  text-align: center;
+}
+
 @media (min-width: 701px) {
   .hero-track-icons {
-    margin-top: 16px;
+    margin-top: 36px;
   }
 
   .hero-idea-button {
-    margin-top: 48px;
+    margin-top: 32px;
+  }
+}
+
+@media (max-width: 700px) {
+  .hero-cta-title {
+    width: calc(100% - 32px);
+    height: auto;
+    margin-top: 16px;
+    font-size: clamp(28px, 8vw, 48px);
+  }
+
+  .hero-idea-button {
+    margin-top: 24px;
   }
 }
 

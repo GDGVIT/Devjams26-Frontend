@@ -988,6 +988,7 @@ export default function Home() {
             );
           })}
         </div>
+        <h2 className="hero-cta-title">Wham Bam, Lets DevJam!</h2>
         {/* Idea Submission Button */}
         <motion.button
           type="button"
