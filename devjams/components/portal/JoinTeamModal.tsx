@@ -69,9 +69,6 @@ export function JoinTeamModal({ isOpen, onClose }: JoinTeamModalProps) {
         </button>
 
         <div className="text-center mb-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-medium mb-3">
-            Join Team
-          </div>
           <h3 className="text-2xl font-bold tracking-tight text-white">
             Enter Team Code
           </h3>

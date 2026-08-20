@@ -65,9 +65,6 @@ export function CreateTeamModal({ isOpen, onClose }: CreateTeamModalProps) {
         </button>
 
         <div className="text-center mb-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium mb-3">
-            Create Team
-          </div>
           <h3 className="text-2xl font-bold tracking-tight text-white">
             Create Your Hackathon Team
           </h3>

@@ -1,15 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "../gsap-motion";
 import { DashboardGraphic } from "./DashboardGraphic";
-import { JoinTeamModal } from "./JoinTeamModal";
-import { CreateTeamModal } from "./CreateTeamModal";
 
 export function TeamChoiceView() {
-  const [joinModalOpen, setJoinModalOpen] = useState(false);
-  const [createModalOpen, setCreateModalOpen] = useState(false);
-
   return (
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-center overflow-hidden px-4 py-8 select-none">
       {/* Ambient background glows */}
@@ -51,7 +45,6 @@ export function TeamChoiceView() {
           {/* Continue To Join */}
           <motion.button
             type="button"
-            onClick={() => setJoinModalOpen(true)}
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
             className="group w-full sm:w-auto min-w-[280px] sm:min-w-[340px] md:min-w-[380px] h-[60px] sm:h-[66px] px-8 sm:px-12 rounded-full bg-[#2A2A2E]/90 hover:bg-white text-white hover:text-black border border-white/10 hover:border-transparent font-semibold text-base sm:text-lg md:text-[21px] flex items-center justify-center gap-3 sm:gap-4 transition-colors duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer select-none"
@@ -78,7 +71,6 @@ export function TeamChoiceView() {
           {/* Continue To Create */}
           <motion.button
             type="button"
-            onClick={() => setCreateModalOpen(true)}
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
             className="group w-full sm:w-auto min-w-[280px] sm:min-w-[340px] md:min-w-[380px] h-[60px] sm:h-[66px] px-8 sm:px-12 rounded-full bg-[#2A2A2E]/90 hover:bg-white text-white hover:text-black border border-white/10 hover:border-transparent font-semibold text-base sm:text-lg md:text-[21px] flex items-center justify-center gap-3 sm:gap-4 transition-colors duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer select-none"
@@ -98,16 +90,6 @@ export function TeamChoiceView() {
           </motion.button>
         </motion.div>
       </div>
-
-      {/* Modals */}
-      <JoinTeamModal
-        isOpen={joinModalOpen}
-        onClose={() => setJoinModalOpen(false)}
-      />
-      <CreateTeamModal
-        isOpen={createModalOpen}
-        onClose={() => setCreateModalOpen(false)}
-      />
     </main>
   );
 }
