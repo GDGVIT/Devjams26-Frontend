@@ -11,11 +11,25 @@ import { FAQsHeader } from "../faqs/FAQsHeader";
 import { FAQsTabs } from "../faqs/FAQsTabs";
 import { FAQsList } from "../faqs/FAQsList";
 
-export function GotQuestions() {
-  const introRef = useRef<HTMLDivElement>(null);
+function FAQContent() {
   const [activeCategoryId, setActiveCategoryId] = useState("general");
   const activeCategory =
     FAQ_CATEGORIES.find((category) => category.id === activeCategoryId) ?? FAQ_CATEGORIES[0];
+
+  return (
+    <div className="relative z-10 max-w-[960px] w-full mx-auto px-2 sm:px-4 flex flex-col items-center pb-8 sm:pb-12">
+      <FAQsTabs
+        categories={FAQ_CATEGORIES}
+        activeCategoryId={activeCategoryId}
+        onSelectCategory={setActiveCategoryId}
+      />
+      <FAQsList category={activeCategory} />
+    </div>
+  );
+}
+
+export function GotQuestions() {
+  const introRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
     target: introRef,
@@ -86,18 +100,10 @@ export function GotQuestions() {
 
       <div className="relative min-h-screen overflow-hidden bg-black py-4 sm:py-6 md:py-8 px-4 sm:px-8">
         <FAQsHeader />
-
-        <div className="relative z-10 max-w-[960px] w-full mx-auto px-2 sm:px-4 flex flex-col items-center pb-8 sm:pb-12">
-          <FAQsTabs
-            categories={FAQ_CATEGORIES}
-            activeCategoryId={activeCategoryId}
-            onSelectCategory={setActiveCategoryId}
-          />
-          <FAQsList category={activeCategory} />
-        </div>
+        <FAQContent />
 
         <div
-          className="absolute flex items-center mix-blend-screen pointer-events-none z-10"
+          className="absolute flex items-center mix-blend-screen pointer-events-none z-10 md:hidden"
           style={{ right: "clamp(-45px, -6vw, -25px)", bottom: "clamp(-40px, -5vw, -20px)" }}
           aria-hidden="true"
         >
