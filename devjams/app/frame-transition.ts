@@ -464,6 +464,47 @@ export function halfVisibleScrollAt(
   return sectionTop + sectionHeight / 2 - viewportHeight;
 }
 
+/**
+ * How long the assembled About composition holds before the morph starts, in
+ * viewports. Everything after it is morph, so this is the only gap in the
+ * section where nothing is moving — keep it short.
+ */
+export const FRAME_THREE_DWELL_VIEWPORTS = 0.15;
+
+/**
+ * This window used to fall out of section geometry:
+ *
+ *   start = frameTwoTop + max(H x 0.35, H - V x 0.65)
+ *   end   = frameThreeTop + H/2 - V
+ *
+ * which left the morph 197px of scroll on a 1440x900 desktop and 111px on a
+ * 740px phone — a fraction of a single flick, so the About composition and the
+ * About GDG row ended up on screen together mid-flight. Worse, it degenerates:
+ * as section height approaches viewport height the two ends collapse toward
+ * each other, and raising the section height does not help because both ends
+ * scale with it.
+ *
+ * Most of that 197px figure was not a short section — it was the old start
+ * point sitting 439px into a 1024px section, burning most of the available
+ * scroll on a dwell before the morph even began. So the morph now simply spans
+ * the section: it starts a short beat after the About composition assembles and
+ * still ends exactly where it always did, with frame three half in view. That
+ * needs no extra page height on desktop, which is what keeps the section from
+ * turning into a long stretch of empty black.
+ */
+export function frameThreeTransitionWindowAt(geometry: {
+  frameTwoTop: number;
+  frameThreeTop: number;
+  frameThreeHeight: number;
+  viewportHeight: number;
+}): { start: number; end: number } {
+  const { frameTwoTop, frameThreeTop, frameThreeHeight, viewportHeight } = geometry;
+  const end = halfVisibleScrollAt(frameThreeTop, frameThreeHeight, viewportHeight);
+  const start = frameTwoTop + viewportHeight * FRAME_THREE_DWELL_VIEWPORTS;
+
+  return { start: Math.min(start, end), end };
+}
+
 export function sectionProgressAt(
   sectionTop: number,
   sectionHeight: number,

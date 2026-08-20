@@ -22,6 +22,14 @@ type SplitTextProps = {
   threshold?: number;
   rootMargin?: string;
   textAlign?: CSSProperties["textAlign"];
+  /**
+   * Ceiling on the whole stagger window, in seconds. `delay` is per target, so
+   * without a cap the reveal grows with the length of the copy — the About GDG
+   * paragraph is 169 characters, which at 35ms each took 6.7s to finish and
+   * read as a slow typewriter you scroll past mid-animation. The stagger is
+   * compressed to fit this budget instead.
+   */
+  maxStaggerWindow?: number;
   onLetterAnimationComplete?: () => void;
 };
 
@@ -42,6 +50,7 @@ export default function SplitText({
   rootMargin = "-100px",
   textAlign = "center",
   tag = "p",
+  maxStaggerWindow = 0.5,
   onLetterAnimationComplete,
 }: SplitTextProps) {
   const ref = useRef<SplitElement>(null);
@@ -112,6 +121,20 @@ export default function SplitText({
         reduceWhiteSpace: false,
         onSplit: (instance) => {
           assignTargets(instance);
+
+          // Someone scrolling past should see the copy resolve, not watch it
+          // type itself out. Skip straight to the resting state when the reader
+          // has asked for less motion.
+          if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            gsap.set(targets, { ...to, clearProps: "willChange" });
+            animationCompletedRef.current = true;
+            onCompleteRef.current?.();
+            return undefined;
+          }
+
+          const steps = Math.max(1, targets.length - 1);
+          const stagger = Math.min(delay / 1000, maxStaggerWindow / steps);
+
           return gsap.fromTo(
             targets,
             { ...from },
@@ -119,7 +142,7 @@ export default function SplitText({
               ...to,
               duration,
               ease,
-              stagger: delay / 1000,
+              stagger,
               scrollTrigger: {
                 trigger: element,
                 start,
@@ -159,6 +182,7 @@ export default function SplitText({
         JSON.stringify(to),
         threshold,
         rootMargin,
+        maxStaggerWindow,
         fontsLoaded,
       ],
       scope: ref,

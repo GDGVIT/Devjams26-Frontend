@@ -11,6 +11,7 @@ import {
   useLayoutEffect,
   useCallback,
   useRef,
+  useMemo,
   useState,
   type CSSProperties,
   type PropsWithChildren,
@@ -69,6 +70,46 @@ function clamp(value: number) {
   return Math.min(1, Math.max(0, value));
 }
 
+const motionValueIds = new WeakMap<object, number>();
+let nextMotionValueId = 0;
+
+/**
+ * Serialises a prop into a signature that changes only when its contents do.
+ * Motion values are identified rather than read, so their live value never
+ * leaks into the key. Functions collapse to a single token — nothing in this
+ * codebase passes one inside an animation target, and inline handlers would
+ * otherwise invalidate the key on every render.
+ */
+function stableKey(value: unknown): string {
+  if (value === null || value === undefined) return String(value);
+  if (typeof value === "function") return "fn";
+  if (typeof value !== "object") return `${typeof value}:${String(value)}`;
+  if (isMotionValue(value)) {
+    let id = motionValueIds.get(value as object);
+    if (id === undefined) {
+      id = nextMotionValueId += 1;
+      motionValueIds.set(value as object, id);
+    }
+    return `mv:${id}`;
+  }
+  if (Array.isArray(value)) return `[${value.map(stableKey).join(",")}]`;
+  return `{${Object.entries(value as Record<string, unknown>)
+    .map(([key, entry]) => `${key}:${stableKey(entry)}`)
+    .join(",")}}`;
+}
+
+/**
+ * Returns a reference that only changes when the value structurally changes.
+ * Callers pass inline literals for `animate`, `style`, `transition` and the
+ * rest, so plain reference equality fails on every render — which would restart
+ * in-flight tweens and rebuild every motion value subscription.
+ */
+function useStable<T>(value: T): T {
+  const key = stableKey(value);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return useMemo(() => value, [key]);
+}
+
 function mapRange(value: number, input: number[], output: Array<number | string>) {
   if (input.length < 2 || output.length < 2) return output[0] ?? value;
   if (value <= input[0]) return output[0];
@@ -90,6 +131,18 @@ function mapRange(value: number, input: number[], output: Array<number | string>
   return output[output.length - 1];
 }
 
+function computeTransform<TInput>(
+  sources: MotionValue<TInput>[],
+  inputOrMapper: number[] | ((value: never) => unknown),
+  output?: Array<number | string>,
+): unknown {
+  if (Array.isArray(inputOrMapper)) {
+    return mapRange(sources[0].get() as number, inputOrMapper, output ?? []);
+  }
+  const mapper = inputOrMapper as (value: unknown | unknown[]) => unknown;
+  return mapper(sources.length === 1 ? sources[0].get() : sources.map((item) => item.get()));
+}
+
 export function useTransform<T, R>(value: MotionValue<T>, mapper: (value: T) => R): MotionValue<R>;
 export function useTransform<T, R>(values: MotionValue<T>[], mapper: (values: T[]) => R): MotionValue<R>;
 export function useTransform(value: MotionValue<number>, input: number[], output: number[]): MotionValue<number>;
@@ -99,23 +152,27 @@ export function useTransform<TInput>(
   inputOrMapper: number[] | ((value: never) => unknown),
   output?: Array<number | string>,
 ): MotionValue<unknown> {
-  const sourceValues = Array.isArray(source) ? source : [source];
-  const derive = () => {
-    if (Array.isArray(inputOrMapper)) {
-      return mapRange(sourceValues[0].get() as number, inputOrMapper, output ?? []);
-    }
-    const mapper = inputOrMapper as (value: unknown | unknown[]) => unknown;
-    return mapper(sourceValues.length === 1 ? sourceValues[0].get() : sourceValues.map((item) => item.get()));
-  };
-  const derived = useMotionValue(derive());
+  const sourceValues = useStable(Array.isArray(source) ? source : [source]);
+  const derived = useMotionValue(computeTransform(sourceValues, inputOrMapper, output));
+
+  // Callers pass inline arrays and arrow functions, so the mapping config is a
+  // new reference on every render. Holding it aside keeps the subscription
+  // below keyed on the source values alone, instead of tearing down and
+  // rebuilding every listener each time the parent renders.
+  const configRef = useRef({ inputOrMapper, output });
+  useEffect(() => {
+    configRef.current = { inputOrMapper, output };
+  });
 
   useEffect(() => {
-    const update = () => derived.set(derive());
+    const update = () => {
+      const config = configRef.current;
+      derived.set(computeTransform(sourceValues, config.inputOrMapper, config.output));
+    };
     const cleanups = sourceValues.map((item) => item.on("change", update));
     update();
     return () => cleanups.forEach((cleanup) => cleanup());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [derived, inputOrMapper, output, sourceValues]);
+  }, [derived, sourceValues]);
 
   return derived;
 }
@@ -142,8 +199,18 @@ export function useScroll(options?: { target?: RefObject<HTMLElement | null>; of
   const targetRef = useRef<HTMLElement | null>(null);
   const offsetsRef = useRef(options?.offset ?? ["start end", "end start"]);
   const rangeRef = useRef<{ element: HTMLElement; start: number; end: number } | null>(null);
+  const maxScrollRef = useRef(1);
 
   const refreshRange = useCallback(() => {
+    // Reading scrollHeight forces a synchronous layout. Doing it once here —
+    // on mount, resize, font load and document resize — keeps it off the
+    // per-frame scroll path, where styles are always dirty from the previous
+    // frame's transform writes and every read triggered a full recalc.
+    maxScrollRef.current = Math.max(
+      1,
+      document.documentElement.scrollHeight - window.innerHeight,
+    );
+
     const target = targetRef.current;
     if (!target) {
       rangeRef.current = null;
@@ -164,10 +231,7 @@ export function useScroll(options?: { target?: RefObject<HTMLElement | null>; of
 
     const target = targetRef.current;
     if (!target) {
-      scrollYProgress.set(
-        currentScroll /
-          Math.max(1, document.documentElement.scrollHeight - window.innerHeight),
-      );
+      scrollYProgress.set(currentScroll / maxScrollRef.current);
       return;
     }
 
@@ -187,9 +251,14 @@ export function useScroll(options?: { target?: RefObject<HTMLElement | null>; of
     offsetsRef.current = [offsetStart, offsetEnd];
     refreshRange();
     window.addEventListener("resize", refreshRange);
+    // Keeps the cached document height honest as images decode and sections
+    // settle, without paying for a layout read every frame.
+    const documentObserver = new ResizeObserver(refreshRange);
+    documentObserver.observe(document.body);
     const fontsReady = document.fonts?.ready.then(refreshRange);
     return () => {
       window.removeEventListener("resize", refreshRange);
+      documentObserver.disconnect();
       void fontsReady;
     };
   }, [targetOption, offsetStart, offsetEnd, refreshRange]);
@@ -312,8 +381,42 @@ function gsapTransition(transition?: Record<string, unknown>) {
 
 function MotionElement({ as, ...props }: MotionProps & { as: string }) {
   const elementRef = useRef<HTMLElement | null>(null);
-  const { ref, initial, animate, exit, whileInView, whileHover, whileTap, variants, viewport, transition, style, layoutId, children, ...domProps } = props;
+  const {
+    ref,
+    initial: rawInitial,
+    animate: rawAnimate,
+    exit: rawExit,
+    whileInView: rawWhileInView,
+    whileHover: rawWhileHover,
+    whileTap: rawWhileTap,
+    variants: rawVariants,
+    viewport: rawViewport,
+    transition: rawTransition,
+    style: rawStyle,
+    layoutId,
+    children,
+    ...domProps
+  } = props;
   useImperativeHandle(ref as Ref<HTMLElement>, () => elementRef.current as HTMLElement);
+
+  // Every one of these arrives as an inline literal, so without this the layout
+  // effects below re-run on each render — restarting in-flight GSAP tweens and
+  // resubscribing every motion value listener.
+  const initial = useStable(rawInitial);
+  const animate = useStable(rawAnimate);
+  const exit = useStable(rawExit);
+  const whileInView = useStable(rawWhileInView);
+  const whileHover = useStable(rawWhileHover);
+  const whileTap = useStable(rawWhileTap);
+  const variants = useStable(rawVariants);
+  const viewport = useStable(rawViewport);
+  const transition = useStable(rawTransition);
+  const style = useStable(rawStyle);
+  // Only the motion-value entries drive the attribute subscription; event
+  // handlers and other props change identity constantly and are read at render.
+  const motionAttributeEntries = useStable(
+    Object.entries(domProps).filter(([, value]) => isMotionValue(value)),
+  );
 
   useLayoutEffect(() => {
     const element = elementRef.current;
@@ -389,6 +492,24 @@ function MotionElement({ as, ...props }: MotionProps & { as: string }) {
       run();
     }
 
+    // An infinitely repeating decorative tween (the hero icon float) otherwise
+    // keeps repainting for the whole session, including while it is scrolled
+    // far out of view — and these particular elements carry a blend mode and a
+    // filter, so each repaint is expensive. Only floating elements pay for the
+    // observer.
+    let repeatObserver: IntersectionObserver | undefined;
+    const repeatCount =
+      activeAnimation && typeof activeAnimation.repeat === "function"
+        ? activeAnimation.repeat()
+        : 0;
+    if (repeatCount === -1) {
+      repeatObserver = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) activeAnimation?.resume();
+        else activeAnimation?.pause();
+      });
+      repeatObserver.observe(element);
+    }
+
     const hoverTarget = whileHover ? gsapTarget(whileHover) : null;
     const tapTarget = whileTap ? gsapTarget(whileTap) : null;
     const onEnter = hoverTarget ? () => gsap.to(element, { ...hoverTarget, duration: 0.2, force3D: true }) : undefined;
@@ -402,6 +523,7 @@ function MotionElement({ as, ...props }: MotionProps & { as: string }) {
     return () => {
       activeAnimation?.kill();
       observer?.disconnect();
+      repeatObserver?.disconnect();
       if (onEnter) element.removeEventListener("pointerenter", onEnter);
       if (onLeave) element.removeEventListener("pointerleave", onLeave);
       if (onPointerDown) element.removeEventListener("pointerdown", onPointerDown);
@@ -431,18 +553,16 @@ function MotionElement({ as, ...props }: MotionProps & { as: string }) {
   useLayoutEffect(() => {
     const element = elementRef.current;
     if (!element) return;
-    const subscriptions = Object.entries(domProps)
-      .filter(([, value]) => isMotionValue(value))
-      .map(([key, value]) =>
-        (value as MotionValue<unknown>).on("change", (next) => {
-          queueMotionAttribute(element, key, next);
-        })
-      );
+    const subscriptions = motionAttributeEntries.map(([key, value]) =>
+      (value as MotionValue<unknown>).on("change", (next) => {
+        queueMotionAttribute(element, key, next);
+      })
+    );
     return () => {
       subscriptions.forEach((unsubscribe) => unsubscribe());
       cancelMotionAttributes(element);
     };
-  }, [domProps]);
+  }, [motionAttributeEntries]);
 
   const renderedProps = Object.fromEntries(
     Object.entries(domProps).map(([key, value]) => [key, isMotionValue(value) ? value.get() : value]),
@@ -469,8 +589,21 @@ function createMotionComponent(tag: string) {
   return component;
 }
 
+// Memoised per tag. React identifies elements by their component reference, so
+// handing back a fresh function on every `motion.div` access would make every
+// render a full unmount/remount of the subtree — restarting entry animations,
+// re-running layout effects and rebuilding <img> nodes each time.
+const motionComponentCache = new Map<string, ReturnType<typeof createMotionComponent>>();
+
 export const motion = new Proxy({} as Record<string, typeof MotionComponent>, {
-  get: (_, tag: string) => createMotionComponent(tag),
+  get: (_, tag: string) => {
+    let component = motionComponentCache.get(tag);
+    if (!component) {
+      component = createMotionComponent(tag);
+      motionComponentCache.set(tag, component);
+    }
+    return component;
+  },
 });
 
 export function useMotionValueEvent<T>(value: MotionValue<T>, event: "change", callback: (latest: T) => void) {

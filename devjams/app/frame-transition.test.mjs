@@ -36,6 +36,8 @@ import {
   scaleMobileShapeBoundsAtViewport,
   geminiOpacityAt,
   halfVisibleScrollAt,
+  frameThreeTransitionWindowAt,
+  FRAME_THREE_DWELL_VIEWPORTS,
   alignShapeBoundsX,
   alignShapeBoundsY,
   frameTwoMapEntryTransformAt,
@@ -459,4 +461,82 @@ test("hero menu collapses after scrolling and never auto-expands", () => {
   assert.equal(heroMenuShouldCollapseAtScroll(0), false);
   assert.equal(heroMenuShouldCollapseAtScroll(1), true);
   assert.equal(heroMenuShouldCollapseAtScroll(640), true);
+});
+
+test("mobile gets a real scroll distance for the About -> About GDG morph", () => {
+  // A 390x740 phone: frames are 100svh, About is 125svh (globals.css).
+  const viewportHeight = 740;
+  const frameTwoTop = 740;
+  const frameThreeTop = frameTwoTop + Math.max(viewportHeight * 1.25, 750);
+
+  const window = frameThreeTransitionWindowAt({
+    frameTwoTop,
+    frameThreeTop,
+    frameThreeHeight: viewportHeight,
+    viewportHeight,
+  });
+
+  const distance = window.end - window.start;
+  // The old section-derived window collapsed to 0.15 x viewport — 111px here.
+  assert.ok(
+    distance > viewportHeight * 0.5,
+    `expected more than half a viewport of scroll, got ${distance}px`,
+  );
+  // And it never begins before the About composition has assembled.
+  assert.ok(window.start >= frameTwoTop);
+});
+
+test("the morph holds briefly on the assembled About before starting", () => {
+  const viewportHeight = 640;
+  const frameTwoTop = 640;
+  const frameThreeTop = frameTwoTop + Math.max(viewportHeight * 1.25, 750);
+
+  const window = frameThreeTransitionWindowAt({
+    frameTwoTop,
+    frameThreeTop,
+    frameThreeHeight: viewportHeight,
+    viewportHeight,
+  });
+
+  assert.equal(
+    window.start,
+    frameTwoTop + viewportHeight * FRAME_THREE_DWELL_VIEWPORTS,
+  );
+  assert.ok(window.start < window.end);
+});
+
+test("desktop spans its existing section without extra page height", () => {
+  // A 1440x900 desktop: every frame stays 1024px, as it always was.
+  const viewportHeight = 900;
+  const frameTwoTop = 900;
+  const frameThreeTop = frameTwoTop + 1024;
+
+  const window = frameThreeTransitionWindowAt({
+    frameTwoTop,
+    frameThreeTop,
+    frameThreeHeight: 1024,
+    viewportHeight,
+  });
+
+  // Was 197px, because the old start point sat 439px into the section.
+  assert.ok(
+    window.end - window.start > viewportHeight * 0.5,
+    `expected more than half a viewport of scroll, got ${window.end - window.start}px`,
+  );
+  // The morph still lands exactly where it always did.
+  assert.equal(window.end, halfVisibleScrollAt(frameThreeTop, 1024, viewportHeight));
+  // The dwell is the only stretch where nothing moves; keep it short.
+  assert.ok(window.start - frameTwoTop <= viewportHeight * 0.2);
+});
+
+test("the window never inverts on a very short viewport", () => {
+  const viewportHeight = 300;
+  const frameTwoTop = 300;
+  const window = frameThreeTransitionWindowAt({
+    frameTwoTop,
+    frameThreeTop: frameTwoTop + 400,
+    frameThreeHeight: 300,
+    viewportHeight,
+  });
+  assert.ok(window.start <= window.end);
 });

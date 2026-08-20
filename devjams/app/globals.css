@@ -589,6 +589,15 @@ body {
     min-height: 600px;
   }
 
+  /* Desktop fits the morph inside the existing 1024px section, but a mobile
+     section is only one viewport tall, which leaves it too little room. This is
+     the smallest bump that gives the morph a readable pace — keeping it tight
+     matters, because any height beyond the morph reads as empty black. */
+  .about-devjams {
+    height: 125svh;
+    min-height: 750px;
+  }
+
   /* About DevJams: content takes the left 70%, right 30% stays open */
   .about-devjams__content {
     left: 0;
@@ -1007,6 +1016,14 @@ body {
     border: 0;
     padding: 0;
     background: rgba(0, 0, 0, 0.68);
+  }
+
+  /* This element is always in the DOM and only fades out, so an unconditional
+     backdrop-filter would keep a full-viewport blur layer alive for the whole
+     session — one of the more expensive things to hand a phone GPU. Scoped to
+     the open state via the aria-hidden the button already sets, so the fade
+     still plays. */
+  .hero-nav__backdrop[aria-hidden="false"] {
     backdrop-filter: blur(4px);
   }
 

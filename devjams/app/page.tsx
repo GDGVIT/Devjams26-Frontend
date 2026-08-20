@@ -13,7 +13,7 @@ import FoldText from "./components/FoldText";
 import SplitText from "./components/SplitText";
 import BorderGlow from "./components/BorderGlow";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
-import ResponsiveSvg from "../components/ResponsiveSvg";
+import AssetImage from "../components/AssetImage";
 import {
   FRAME_FOUR_CONTENT_ENTER_OFFSET,
   FRAME_FOUR_MOBILE_ROTATIONS,
@@ -37,7 +37,7 @@ import {
   frameTwoMapEntryTransformAt,
   frameTwoMapsOpacityAt,
   geminiOpacityAt,
-  halfVisibleScrollAt,
+  frameThreeTransitionWindowAt,
   interpolateShapeBounds,
   mobileFrameScaleAtViewport,
   mobileFrameVerticalScaleAtViewport,
@@ -641,6 +641,12 @@ export default function Home() {
           isMobile,
         ),
       };
+      const frameThreeWindow = frameThreeTransitionWindowAt({
+        frameTwoTop: framePageTop,
+        frameThreeTop: frameThreePageTop,
+        frameThreeHeight: frameThreeRect.height,
+        viewportHeight: currentViewportHeight,
+      });
       frameThreeGeometryRef.current = {
         heroStart: heroPageTop,
         heroHeight: heroRect.height,
@@ -658,17 +664,8 @@ export default function Home() {
         frameFourMobileScale: mobileFrameScale,
         isMobile,
         viewportHeight: window.innerHeight,
-        frameTwoLoadEnd:
-          framePageTop +
-          Math.max(
-            frameRect.height * 0.35,
-            frameRect.height - window.innerHeight * 0.65,
-          ),
-        frameThreeTransitionEnd: halfVisibleScrollAt(
-          frameThreePageTop,
-          frameThreeRect.height,
-          window.innerHeight,
-        ),
+        frameTwoLoadEnd: frameThreeWindow.start,
+        frameThreeTransitionEnd: frameThreeWindow.end,
         heroWeb: shapeStartRef.current.web!,
         frameTwoWeb: shapeTargetRef.current.web!,
         frameTwoMaps: readNaturalBounds(maps),
@@ -692,7 +689,20 @@ export default function Home() {
       syncFrameFourScroll(scrollY.get());
     };
     measureTransition();
-    const resizeObserver = new ResizeObserver(measureTransition);
+
+    // measureTransition forces layout three times over (readNaturalBounds
+    // toggles each shape's transform off to read its rect) and observing five
+    // elements means the observer fires five times for one reflow. Coalescing
+    // into a single frame collapses that burst into one measure pass.
+    let measureFrame = 0;
+    const scheduleMeasure = () => {
+      if (measureFrame) return;
+      measureFrame = requestAnimationFrame(() => {
+        measureFrame = 0;
+        measureTransition();
+      });
+    };
+    const resizeObserver = new ResizeObserver(scheduleMeasure);
     if (heroRef.current) resizeObserver.observe(heroRef.current);
     if (frameTwoRef.current) resizeObserver.observe(frameTwoRef.current);
     if (frameThreeRef.current) resizeObserver.observe(frameThreeRef.current);
@@ -702,14 +712,20 @@ export default function Home() {
       syncScrollProgress(pageScroll);
       syncFrameThreeScroll(pageScroll);
       syncFrameFourScroll(pageScroll);
-      if (heroMenuShouldCollapseAtScroll(pageScroll)) setMenuOpen(false);
+      // Returning the current value lets React bail out without scheduling a
+      // render. This fires on every scroll frame, and a re-render here rebuilds
+      // the transform subscriptions mid-transition.
+      if (heroMenuShouldCollapseAtScroll(pageScroll)) {
+        setMenuOpen((open) => (open ? false : open));
+      }
     };
-    window.addEventListener("resize", measureTransition);
+    window.addEventListener("resize", scheduleMeasure);
     const unsubscribeScroll = scrollY.on("change", handleScroll);
 
     return () => {
       resizeObserver.disconnect();
-      window.removeEventListener("resize", measureTransition);
+      if (measureFrame) cancelAnimationFrame(measureFrame);
+      window.removeEventListener("resize", scheduleMeasure);
       unsubscribeScroll();
     };
   }, [
@@ -733,11 +749,16 @@ export default function Home() {
     { src: "/assets/logo/6.svg", alt: "6", left: 844.59, top: 0, width: 110.67, height: 170.86, zIndex: 1 },
   ];
 
+  // `sizes` is pinned to the widest each icon reaches once the scroll
+  // transition scales it into the About / Frame Four layout. That growth is a
+  // transform, so the browser never re-requests a larger candidate on its own —
+  // without this the optimizer would size for the hero box and the icons would
+  // be upscaled and soft at the end of the transition.
   const trackIcons = [
-    { src: "/assets/android.svg", alt: "Android Track", width: 260, height: 159, className: "w-[210px] sm:w-[260px] -mr-8 sm:-mr-12 z-10" },
-    { src: "/assets/web.svg", alt: "Web Track", width: 288, height: 288, className: "w-[220px] sm:w-[280px] -mr-8 sm:-mr-12 z-20" },
-    { src: "/assets/gemini.svg", alt: "Gemini Track", width: 301, height: 301, className: "w-[230px] sm:w-[290px] -mr-8 sm:-mr-12 z-30" },
-    { src: "/assets/cloud.svg", alt: "Cloud Track", width: 278, height: 203, className: "w-[220px] sm:w-[275px] z-40" },
+    { src: "/assets/android.svg", alt: "Android Track", width: 260, height: 159, sizes: "468px", className: "w-[210px] sm:w-[260px] -mr-8 sm:-mr-12 z-10" },
+    { src: "/assets/web.svg", alt: "Web Track", width: 288, height: 288, sizes: "454px", className: "w-[220px] sm:w-[280px] -mr-8 sm:-mr-12 z-20" },
+    { src: "/assets/gemini.svg", alt: "Gemini Track", width: 301, height: 301, sizes: "301px", className: "w-[230px] sm:w-[290px] -mr-8 sm:-mr-12 z-30" },
+    { src: "/assets/cloud.svg", alt: "Cloud Track", width: 278, height: 203, sizes: "468px", className: "w-[220px] sm:w-[275px] z-40" },
   ];
 
   return (
@@ -797,7 +818,7 @@ export default function Home() {
             aria-pressed={menuOpen}
             onClick={() => setMenuOpen((open) => !open)}
           >
-            <ResponsiveSvg
+            <AssetImage
               src="/assets/dino-menu.svg"
               alt=""
               width={63.955}
@@ -898,7 +919,7 @@ export default function Home() {
 
         <div className="hero-content">
         {/* DevJams '26 Logo Container - Placed ON TOP (z-30) */}
-        <div className="hero-logo-canvas relative z-30 w-[955.5px] h-[170.98px] max-w-full scale-[0.36] min-[440px]:scale-[0.52] sm:scale-[0.72] md:scale-[0.88] lg:scale-100 transition-all origin-center">
+        <div className="hero-logo-canvas relative z-30 w-[955.5px] h-[170.98px] max-w-full scale-[0.36] min-[440px]:scale-[0.52] sm:scale-[0.72] md:scale-[0.88] lg:scale-100 transition-transform origin-center">
           {logoLetters.map((letter, index) => (
             <motion.div
               key={index}
@@ -983,11 +1004,12 @@ export default function Home() {
                       ease: "easeInOut",
                     }}
                   >
-                    <ResponsiveSvg
+                    <AssetImage
                       src={icon.src}
                       alt={icon.alt}
                       width={icon.width}
                       height={icon.height}
+                      sizes={icon.sizes}
                       priority
                       className="object-contain"
                     />
@@ -1079,7 +1101,7 @@ export default function Home() {
           }}
           aria-hidden="true"
         >
-          <ResponsiveSvg
+          <AssetImage
             src="/assets/maps.svg"
             alt=""
             width={365}
@@ -1118,14 +1140,18 @@ export default function Home() {
             tag="p"
             text="Fueled by curiosity and a bit of chaos, we are a community of coders who love to push limits, designers who bring ideas to life, and managers who turn vision into reality. We build crazy things that matter."
             className="frame-three__description"
-            delay={35}
-            duration={0.8}
+            delay={26}
+            duration={0.5}
             ease="power3.out"
-            splitType="words, chars"
-            from={{ opacity: 0, y: 40 }}
+            /* Words, not characters: 169 characters at 35ms each took 6.7s to
+               resolve, so the tail of the paragraph was still typing itself out
+               while you scrolled past. 38 words inside the stagger budget lands
+               it in about a second. */
+            splitType="words"
+            from={{ opacity: 0, y: 18 }}
             to={{ opacity: 1, y: 0 }}
-            threshold={0.1}
-            rootMargin="-100px"
+            threshold={0.15}
+            rootMargin="-40px"
             textAlign="center"
           />
         )}
@@ -1140,7 +1166,7 @@ export default function Home() {
               opacity: frameFourCloudOpacity,
             }}
           >
-            <ResponsiveSvg
+            <AssetImage
               src="/assets/cloud.svg"
               alt="Cloud"
               width={278}
