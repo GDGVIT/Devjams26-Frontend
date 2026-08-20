@@ -9,10 +9,10 @@ export default function ProfilePage() {
   const router = useRouter();
 
   return (
-    <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto select-none p-6 md:p-10 pb-20">
+    <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto select-none p-4 sm:p-6 md:p-10 pb-20">
       {/* Top Floating Graphics Banner (Group 1948755625) */}
       <div
-        className="relative pointer-events-none z-10 w-full max-w-[1440px] h-[clamp(110px,16vw,220px)] -mt-[clamp(24px,4vw,60px)] flex items-center justify-between overflow-visible px-4 sm:px-8"
+        className="relative pointer-events-none z-10 w-full max-w-[1440px] h-[clamp(90px,16vw,220px)] -mt-[clamp(16px,4vw,60px)] flex items-center justify-between overflow-visible px-2 sm:px-6 md:px-8"
         aria-hidden="true"
       >
         {/* 1. Left Pair: NotebookLLM + Cursor */}
@@ -134,10 +134,10 @@ export default function ProfilePage() {
       </div>
 
       {/* Main Content Container (Frame 1948755611) */}
-      <div className="w-full max-w-[1072px] flex flex-col items-start gap-[clamp(24px,3.5vh,36px)] mt-2 z-20">
+      <div className="w-full max-w-[1072px] mx-auto flex flex-col items-start gap-[clamp(20px,3.5vh,36px)] mt-2 z-20 px-1 sm:px-3 md:px-0">
         {/* Profile Page Title */}
         <h1
-          className="text-white font-bold tracking-normal leading-[1.2] text-center capitalize m-0 select-none w-full text-[clamp(36px,4.5vw,64px)]"
+          className="text-white font-bold tracking-normal leading-[1.2] text-center capitalize m-0 select-none w-full text-[clamp(32px,5vw,64px)]"
           style={{
             fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
           }}
@@ -146,9 +146,9 @@ export default function ProfilePage() {
         </h1>
 
         {/* Section 1: Contact Details */}
-        <div className="w-full flex flex-col items-start gap-4 sm:gap-6">
+        <div className="w-full flex flex-col items-start gap-3 sm:gap-6">
           <h2
-            className="text-white font-normal capitalize text-[clamp(28px,3.5vw,48px)] leading-[1.3] m-0"
+            className="text-white font-normal capitalize text-[clamp(24px,3.5vw,48px)] leading-[1.3] m-0"
             style={{
               fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
             }}
@@ -169,7 +169,7 @@ export default function ProfilePage() {
                 Name
               </label>
               <div
-                className="w-full bg-[#343434] text-white/60 rounded-[8px] px-6 py-3.5 h-[56px] flex items-center text-[18px] sm:text-[24px] font-normal select-text"
+                className="w-full bg-[#343434] text-white/60 rounded-[8px] px-4 sm:px-6 py-2.5 sm:py-3.5 min-h-[48px] sm:min-h-[56px] flex items-center text-[clamp(16px,1.8vw,24px)] font-normal select-text"
                 style={{
                   fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
                 }}
@@ -189,7 +189,7 @@ export default function ProfilePage() {
                 Email Address
               </label>
               <div
-                className="w-full bg-[#343434] text-white/60 rounded-[8px] px-6 py-3.5 h-[56px] flex items-center text-[18px] sm:text-[24px] font-normal select-text"
+                className="w-full bg-[#343434] text-white/60 rounded-[8px] px-4 sm:px-6 py-2.5 sm:py-3.5 min-h-[48px] sm:min-h-[56px] flex items-center text-[clamp(16px,1.8vw,24px)] font-normal select-text"
                 style={{
                   fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
                 }}
@@ -212,7 +212,7 @@ export default function ProfilePage() {
                 Team Name
               </label>
               <div
-                className="w-full bg-[#343434] text-white/60 rounded-[8px] px-6 py-3.5 h-[56px] flex items-center text-[18px] sm:text-[24px] font-normal select-text"
+                className="w-full bg-[#343434] text-white/60 rounded-[8px] px-4 sm:px-6 py-2.5 sm:py-3.5 min-h-[48px] sm:min-h-[56px] flex items-center text-[clamp(16px,1.8vw,24px)] font-normal select-text"
                 style={{
                   fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
                 }}
@@ -232,7 +232,7 @@ export default function ProfilePage() {
                 Team Code
               </label>
               <div
-                className="w-full bg-[#343434] text-white/60 rounded-[8px] px-6 py-3.5 h-[56px] flex items-center text-[18px] sm:text-[24px] font-normal select-text"
+                className="w-full bg-[#343434] text-white/60 rounded-[8px] px-4 sm:px-6 py-2.5 sm:py-3.5 min-h-[48px] sm:min-h-[56px] flex items-center text-[clamp(16px,1.8vw,24px)] font-normal select-text"
                 style={{
                   fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
                 }}
@@ -244,9 +244,9 @@ export default function ProfilePage() {
         </div>
 
         {/* Section 2: Attendance History (Frame 1948755614) */}
-        <div className="w-full flex flex-col items-start gap-4 sm:gap-5 mt-2">
+        <div className="w-full flex flex-col items-start gap-3 sm:gap-5 mt-1 sm:mt-2">
           <h2
-            className="text-white font-normal capitalize text-[clamp(28px,3.5vw,48px)] leading-[1.3] m-0"
+            className="text-white font-normal capitalize text-[clamp(24px,3.5vw,48px)] leading-[1.3] m-0"
             style={{
               fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
             }}
@@ -258,7 +258,7 @@ export default function ProfilePage() {
           <div className="w-full max-w-[465px] flex flex-col items-start gap-2 sm:gap-2.5">
             {/* 1. Morning Half */}
             <div
-              className="w-full bg-[#343434] text-white/60 rounded-[8px] px-6 py-3.5 h-[56px] flex items-center justify-between text-[18px] sm:text-[24px] font-normal"
+              className="w-full bg-[#343434] text-white/60 rounded-[8px] px-4 sm:px-6 py-2.5 sm:py-3.5 min-h-[48px] sm:min-h-[56px] flex items-center justify-between text-[clamp(16px,1.8vw,24px)] font-normal"
               style={{
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
               }}
@@ -268,7 +268,7 @@ export default function ProfilePage() {
 
             {/* 2. Evening Half */}
             <div
-              className="w-full bg-[#343434] text-white/60 rounded-[8px] px-6 py-3.5 h-[56px] flex items-center justify-between text-[18px] sm:text-[24px] font-normal"
+              className="w-full bg-[#343434] text-white/60 rounded-[8px] px-4 sm:px-6 py-2.5 sm:py-3.5 min-h-[48px] sm:min-h-[56px] flex items-center justify-between text-[clamp(16px,1.8vw,24px)] font-normal"
               style={{
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
               }}
@@ -278,7 +278,7 @@ export default function ProfilePage() {
 
             {/* 3. Overnight */}
             <div
-              className="w-full bg-[#343434] text-white/60 rounded-[8px] px-6 py-3.5 h-[56px] flex items-center justify-between text-[18px] sm:text-[24px] font-normal"
+              className="w-full bg-[#343434] text-white/60 rounded-[8px] px-4 sm:px-6 py-2.5 sm:py-3.5 min-h-[48px] sm:min-h-[56px] flex items-center justify-between text-[clamp(16px,1.8vw,24px)] font-normal"
               style={{
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
               }}
@@ -295,10 +295,10 @@ export default function ProfilePage() {
             onClick={() => router.back()}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="bg-white text-black font-medium text-[clamp(18px,2vw,23px)] rounded-[35px] px-6 py-2 flex items-center justify-center gap-2.5 cursor-pointer border-none shadow-md hover:bg-neutral-100 transition-all"
+            className="bg-white text-black font-medium text-[clamp(16px,1.8vw,23px)] rounded-[35px] px-5 sm:px-6 py-2 flex items-center justify-center gap-2 cursor-pointer border-none shadow-md hover:bg-neutral-100 transition-all"
             style={{
               fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
-              minWidth: "131px",
+              minWidth: "120px",
               height: "44px",
             }}
           >
