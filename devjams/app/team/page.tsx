@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import ResponsiveSvg from "../../components/ResponsiveSvg";
 import { motion } from "../../components/gsap-motion";
 
 type Member = {
@@ -68,6 +69,106 @@ export default function TeamPage() {
             </motion.div>
           </Link>
         </header>
+
+        {/* Group 1948755624 - Top 4 Logos Blend Banner (gear, web, gemini, maps/cursor) */}
+        <div
+          className="absolute pointer-events-none z-10"
+          style={{
+            width: "848.37px",
+            height: "313.6px",
+            left: "calc(50% - 848.37px / 2 + 0.18px)",
+            top: "-135px",
+          }}
+          aria-hidden="true"
+        >
+          {/* 1. Gear Logo (left: 296px in 1440 canvas, width: 313.6px, top: -135px) */}
+          <div
+            className="absolute"
+            style={{
+              width: "313.6px",
+              height: "313.6px",
+              left: "0px",
+              top: "0px",
+              mixBlendMode: "screen",
+              filter: "brightness(1.12) saturate(1.05)",
+            }}
+          >
+            <ResponsiveSvg
+              src="/assets/gear.svg"
+              alt="Gear"
+              width={314}
+              height={314}
+              priority
+              className="w-full h-full object-contain"
+            />
+          </div>
+
+          {/* 2. Web Track Logo (left: 572px in 1440 canvas, width: 231.62px, top: -87px -> local left: 276px, top: 48px) */}
+          <div
+            className="absolute"
+            style={{
+              width: "231.62px",
+              height: "231.62px",
+              left: "276px",
+              top: "48px",
+              mixBlendMode: "screen",
+              filter: "brightness(1.12) saturate(1.05)",
+            }}
+          >
+            <ResponsiveSvg
+              src="/assets/web.svg"
+              alt="Web Track"
+              width={232}
+              height={232}
+              priority
+              className="w-full h-full object-contain"
+            />
+          </div>
+
+          {/* 3. Gemini Track Logo (left: 767px in 1440 canvas, width: 244.16px, top: -98px -> local left: 471px, top: 37px) */}
+          <div
+            className="absolute"
+            style={{
+              width: "244.16px",
+              height: "244.16px",
+              left: "471px",
+              top: "37px",
+              mixBlendMode: "screen",
+              filter: "brightness(1.12) saturate(1.05)",
+            }}
+          >
+            <ResponsiveSvg
+              src="/assets/gemini.svg"
+              alt="Gemini Track"
+              width={244}
+              height={244}
+              priority
+              className="w-full h-full object-contain"
+            />
+          </div>
+
+          {/* 4. Maps / Cursor Logo (left: 974px in 1440 canvas, width: 170.37px, height: 205.22px, top: -62px -> local left: 678px, top: 73px) */}
+          <div
+            className="absolute"
+            style={{
+              width: "170.37px",
+              height: "205.22px",
+              left: "678px",
+              top: "73px",
+              mixBlendMode: "screen",
+              filter: "brightness(1.12) saturate(1.05)",
+            }}
+          >
+            <ResponsiveSvg
+              src="/assets/maps.svg"
+              alt="Maps Cursor"
+              width={170}
+              height={205}
+              priority
+              className="w-full h-full object-contain"
+            />
+          </div>
+        </div>
 
         {/* Team Page Title */}
         <h1
