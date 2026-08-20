@@ -51,28 +51,17 @@ export default function TeamPage() {
   }, [memberToRemove]);
 
   return (
-    <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto select-none pb-16">
-      {/* 1440x1024 Desktop Reference Frame Canvas */}
-      <div className="relative w-full max-w-[1440px] min-h-[1024px] flex-shrink-0">
-        {/* Group 1948755624 - Top 4 Logos Blend Banner (gear, web, gemini, cursor) */}
-        <div
-          className="absolute pointer-events-none z-10"
-          style={{
-            width: "848.37px",
-            height: "313.6px",
-            left: "calc(50% - 848.37px / 2 + 0.18px)",
-            top: "-135px",
-          }}
-          aria-hidden="true"
-        >
-          {/* 1. Gear Logo (left: 296px in 1440 canvas, width: 313.6px, top: -135px) */}
+    <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto select-none p-6 md:p-10 pb-20">
+      {/* Top 4 Logos Blend Banner (Group 1948755624) */}
+      <div
+        className="relative pointer-events-none z-10 w-full max-w-[848px] h-[clamp(140px,22vw,314px)] -mt-[clamp(40px,8vw,135px)] flex items-center justify-center overflow-visible"
+        aria-hidden="true"
+      >
+        <div className="relative w-full h-full flex items-center justify-center">
+          {/* 1. Gear Logo */}
           <div
-            className="absolute"
+            className="absolute left-0 top-0 w-[37%] aspect-square flex items-center justify-center"
             style={{
-              width: "313.6px",
-              height: "313.6px",
-              left: "0px",
-              top: "0px",
               mixBlendMode: "screen",
               filter: "brightness(1.12) saturate(1.05)",
             }}
@@ -87,14 +76,10 @@ export default function TeamPage() {
             />
           </div>
 
-          {/* 2. Web Track Logo (left: 572px in 1440 canvas, width: 231.62px, top: -87px -> local left: 276px, top: 48px) */}
+          {/* 2. Web Track Logo */}
           <div
-            className="absolute"
+            className="absolute left-[32.5%] top-[15%] w-[27.3%] aspect-square flex items-center justify-center"
             style={{
-              width: "231.62px",
-              height: "231.62px",
-              left: "276px",
-              top: "48px",
               mixBlendMode: "screen",
               filter: "brightness(1.12) saturate(1.05)",
             }}
@@ -109,14 +94,10 @@ export default function TeamPage() {
             />
           </div>
 
-          {/* 3. Gemini Track Logo (left: 767px in 1440 canvas, width: 244.16px, top: -98px -> local left: 471px, top: 37px) */}
+          {/* 3. Gemini Track Logo */}
           <div
-            className="absolute"
+            className="absolute left-[55.5%] top-[11.8%] w-[28.8%] aspect-square flex items-center justify-center"
             style={{
-              width: "244.16px",
-              height: "244.16px",
-              left: "471px",
-              top: "37px",
               mixBlendMode: "screen",
               filter: "brightness(1.12) saturate(1.05)",
             }}
@@ -131,14 +112,10 @@ export default function TeamPage() {
             />
           </div>
 
-          {/* 4. Cursor Logo (left: 974px in 1440 canvas, width: 170.37px, height: 205.22px, top: -62px -> local left: 678px, top: 73px) */}
+          {/* 4. Cursor Logo */}
           <div
-            className="absolute"
+            className="absolute left-[80%] top-[23.3%] w-[20%] aspect-[170/205] flex items-center justify-center"
             style={{
-              width: "170.37px",
-              height: "205.22px",
-              left: "678px",
-              top: "73px",
               mixBlendMode: "screen",
               filter: "brightness(1.12) saturate(1.05)",
             }}
@@ -153,212 +130,190 @@ export default function TeamPage() {
             />
           </div>
         </div>
+      </div>
 
+      {/* Main Responsive Content Container (Frame 1948755614) */}
+      <div className="w-full max-w-[1072px] flex flex-col items-start gap-[clamp(24px,3.5vh,36px)] mt-4 z-20">
         {/* Team Page Title */}
         <h1
-          className="absolute text-white font-bold tracking-normal leading-[150%] text-center capitalize m-0 select-none flex items-center justify-center"
+          className="text-white font-bold tracking-normal leading-[1.2] text-center capitalize m-0 select-none w-full text-[clamp(36px,4.5vw,64px)]"
           style={{
-            width: "1072px",
-            height: "99.15px",
-            left: "184px",
-            top: "180px",
             fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
-            fontSize: "64px",
           }}
         >
           Team Page
         </h1>
 
-        {/* Frame 1948755614 - Main Team Content Container */}
-        <div
-          className="absolute flex flex-col items-start gap-[25px]"
-          style={{
-            width: "1072px",
-            height: "609.85px",
-            left: "184px",
-            top: "301px",
-          }}
-        >
-          {/* Frame 1948755611 - Team Details Block */}
-          <div className="flex flex-col items-start w-[1072px] h-[191px]">
-            {/* Team Details Section Heading */}
-            <h2
-              className="text-white font-normal leading-[150%] capitalize m-0 flex items-center w-[1072px] h-[72px]"
-              style={{
-                fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
-                fontSize: "48px",
-              }}
-            >
-              Team Details
-            </h2>
+        {/* Team Details Block (Frame 1948755611) */}
+        <div className="flex flex-col items-start w-full gap-2">
+          {/* Team Details Section Heading */}
+          <h2
+            className="text-white font-normal leading-[1.3] capitalize m-0 flex items-center w-full text-[clamp(28px,3.2vw,48px)]"
+            style={{
+              fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
+            }}
+          >
+            Team Details
+          </h2>
 
-            {/* Frame 1948754746 - Fields Row (Name & Team Code) */}
-            <div className="flex flex-row items-center w-[1072px] h-[119px] gap-[79px]">
-              {/* Group 1948754767 - Name Field */}
-              <div className="relative w-[587px] h-[114.3px]">
-                {/* Name Label */}
+          {/* Fields Row (Name & Team Code) */}
+          <div className="flex flex-col md:flex-row items-stretch md:items-end w-full gap-[clamp(20px,5vw,79px)] mt-2">
+            {/* Name Field */}
+            <div className="flex-1 flex flex-col gap-2">
+              <span
+                className="text-white font-normal leading-normal capitalize text-[clamp(20px,2.2vw,32px)]"
+                style={{
+                  fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
+                }}
+              >
+                Name
+              </span>
+
+              {/* Name Box */}
+              <div className="w-full h-14 bg-[#343434] rounded-lg flex items-center px-6 md:px-7">
                 <span
-                  className="absolute left-0 top-[2.35px] text-white font-normal leading-[150%] capitalize h-[48px] w-[546.75px] flex items-center"
+                  className="text-white/60 font-normal text-[clamp(18px,1.6vw,24px)] leading-none"
                   style={{
                     fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
-                    fontSize: "32px",
                   }}
                 >
-                  Name
+                  {teamName}
                 </span>
-
-                {/* Frame 1948754657 - Name Box */}
-                <div className="absolute left-0 top-[60.65px] w-[587px] h-[56px] bg-[#343434] rounded-[8px] flex flex-row items-center px-[29.05px] py-[5.81px] box-border">
-                  <span
-                    className="text-white/60 font-normal leading-[31px]"
-                    style={{
-                      fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
-                      fontSize: "24px",
-                    }}
-                  >
-                    {teamName}
-                  </span>
-                </div>
               </div>
+            </div>
 
-              {/* Group 1948754769 - Team Code Field */}
-              <div className="relative w-[406px] h-[110.3px]">
-                {/* Team Code Label */}
+            {/* Team Code Field */}
+            <div className="w-full md:w-[clamp(280px,30vw,406px)] flex flex-col gap-2">
+              <span
+                className="text-white font-normal leading-normal capitalize text-[clamp(20px,2.2vw,32px)]"
+                style={{
+                  fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
+                }}
+              >
+                Team Code
+              </span>
+
+              {/* Team Code Box with Copy Clipboard Button */}
+              <div className="w-full h-14 bg-[#343434] rounded-lg flex items-center justify-between px-6 md:px-7">
                 <span
-                  className="absolute left-0 top-[4.35px] text-white font-normal leading-[150%] capitalize h-[48px] w-[378.16px] flex items-center"
+                  className="text-white/60 font-normal text-[clamp(18px,1.6vw,24px)] leading-none"
                   style={{
                     fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
-                    fontSize: "32px",
                   }}
                 >
-                  Team Code
+                  {teamCode}
                 </span>
 
-                {/* Frame 1948754657 - Team Code Box with Copy Clipboard Button */}
-                <div className="absolute left-0 top-[62.65px] w-[406px] h-[52px] bg-[#343434] rounded-[8px] flex flex-row items-center justify-between px-[29.05px] py-[5.81px] box-border">
-                  <span
-                    className="text-white/60 font-normal leading-[31px]"
-                    style={{
-                      fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
-                      fontSize: "24px",
-                    }}
+                {/* Clipboard Icon Button */}
+                <button
+                  type="button"
+                  onClick={copyTeamCode}
+                  aria-label="Copy team code"
+                  className="flex items-center gap-1.5 cursor-pointer bg-transparent border-none p-1 text-white/60 hover:text-white transition-colors"
+                >
+                  {codeCopied ? (
+                    <span className="text-xs text-green-400 font-medium select-none">
+                      Copied!
+                    </span>
+                  ) : null}
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-5 h-5 flex-shrink-0"
                   >
-                    {teamCode}
-                  </span>
-
-                  {/* Clipboard Icon Button */}
-                  <button
-                    type="button"
-                    onClick={copyTeamCode}
-                    aria-label="Copy team code"
-                    className="flex items-center gap-1.5 cursor-pointer bg-transparent border-none p-1 text-white/60 hover:text-white transition-colors"
-                  >
-                    {codeCopied ? (
-                      <span className="text-xs text-green-400 font-medium select-none">
-                        Copied!
-                      </span>
-                    ) : null}
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="w-5 h-5 flex-shrink-0"
-                    >
-                      <path
-                        d="M16 4H18C19.1046 4 20 4.89543 20 6V20C20 21.1046 19.1046 22 18 22H8C6.89543 22 6 21.1046 6 20V18"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      <rect
-                        x="4"
-                        y="2"
-                        width="12"
-                        height="16"
-                        rx="2"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </button>
-                </div>
+                    <path
+                      d="M16 4H18C19.1046 4 20 4.89543 20 6V20C20 21.1046 19.1046 22 18 22H8C6.89543 22 6 21.1046 6 20V18"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <rect
+                      x="4"
+                      y="2"
+                      width="12"
+                      height="16"
+                      rx="2"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Frame 1948755613 - Members Block */}
-          <div className="flex flex-col items-start w-[465px] h-[377px] gap-[15px]">
-            {/* Members Heading */}
-            <h2
-              className="text-white font-normal leading-[150%] capitalize m-0 flex items-center w-[465px] h-[72px]"
-              style={{
-                fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
-                fontSize: "48px",
-              }}
-            >
-              Members
-            </h2>
+        {/* Members Block (Frame 1948755613) */}
+        <div className="flex flex-col items-start w-full max-w-[465px] gap-2">
+          {/* Members Heading */}
+          <h2
+            className="text-white font-normal leading-[1.3] capitalize m-0 flex items-center w-full text-[clamp(28px,3.2vw,48px)]"
+            style={{
+              fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
+            }}
+          >
+            Members
+          </h2>
 
-            {/* Frame 1948755612 - Member Rows */}
-            <div className="flex flex-col items-start w-[465px] h-[290px] gap-[22px]">
-              {members.map((member) => (
-                <div
-                  key={member.id}
-                  className="w-[465px] h-[56px] bg-[#343434] rounded-[8px] flex flex-row justify-between items-center px-[29.05px] py-[5.81px] box-border flex-shrink-0"
+          {/* Member Rows */}
+          <div className="flex flex-col items-start w-full gap-4 mt-2">
+            {members.map((member) => (
+              <div
+                key={member.id}
+                className="w-full h-14 bg-[#343434] rounded-lg flex flex-row justify-between items-center px-6 md:px-7 box-border flex-shrink-0"
+              >
+                <span
+                  className="text-white/60 font-normal text-[clamp(18px,1.6vw,24px)] leading-none"
+                  style={{
+                    fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
+                  }}
                 >
-                  <span
-                    className="text-white/60 font-normal leading-[31px]"
-                    style={{
-                      fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
-                      fontSize: "24px",
-                    }}
-                  >
-                    {member.name}
-                  </span>
+                  {member.name}
+                </span>
 
-                  {/* Remove Button / Cross Icon */}
-                  <button
-                    type="button"
-                    onClick={() => setMemberToRemove(member)}
-                    aria-label={`Remove member ${member.name}`}
-                    className="relative w-[17.68px] h-[17.68px] flex items-center justify-center cursor-pointer bg-transparent border-none p-0 hover:opacity-100 opacity-60 transition-opacity"
+                {/* Remove Button / Cross Icon */}
+                <button
+                  type="button"
+                  onClick={() => setMemberToRemove(member)}
+                  aria-label={`Remove member ${member.name}`}
+                  className="relative w-5 h-5 flex items-center justify-center cursor-pointer bg-transparent border-none p-0 hover:opacity-100 opacity-60 transition-opacity"
+                >
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 18 18"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-[18px] h-[18px]"
                   >
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 18 18"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="w-[18px] h-[18px]"
-                    >
-                      <line
-                        x1="2"
-                        y1="2"
-                        x2="16"
-                        y2="16"
-                        stroke="rgba(255, 255, 255, 0.61)"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      />
-                      <line
-                        x1="16"
-                        y1="2"
-                        x2="2"
-                        y2="16"
-                        stroke="rgba(255, 255, 255, 0.61)"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              ))}
-            </div>
+                    <line
+                      x1="2"
+                      y1="2"
+                      x2="16"
+                      y2="16"
+                      stroke="rgba(255, 255, 255, 0.61)"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1="16"
+                      y1="2"
+                      x2="2"
+                      y2="16"
+                      stroke="rgba(255, 255, 255, 0.61)"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -368,24 +323,13 @@ export default function TeamPage() {
           onClick={handleInvite}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="absolute bg-white text-black rounded-[35px] flex items-center justify-center cursor-pointer border-none shadow-md hover:bg-neutral-100 transition-all"
-          style={{
-            left: "184px",
-            top: "904px",
-            width: "138.32px",
-            height: "44px",
-            padding: "7px 21px 7px 19px",
-            gap: "10px",
-          }}
+          className="bg-white text-black rounded-[35px] flex items-center justify-center cursor-pointer border-none shadow-md hover:bg-neutral-100 transition-all px-8 py-2.5 mt-2"
         >
           <span
+            className="text-[clamp(18px,1.6vw,23px)] leading-none font-medium text-center"
             style={{
               fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
-              fontWeight: 500,
-              fontSize: "23px",
-              lineHeight: "29.79px",
               letterSpacing: "0.02em",
-              textAlign: "center",
             }}
           >
             {inviteCopied ? "Copied!" : "Invite"}

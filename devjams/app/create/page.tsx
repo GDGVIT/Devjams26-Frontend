@@ -20,100 +20,79 @@ export default function CreateTeamPage() {
   };
 
   return (
-    <main className="relative h-screen w-screen bg-black text-white flex items-center justify-center overflow-hidden select-none">
-      {/* 1440x1024 Desktop Reference Frame Canvas - Exact Screen Height Container */}
-      <div className="relative w-full max-w-[1440px] h-screen max-h-screen overflow-hidden flex-shrink-0">
-        {/* Top Left GDG Lockup */}
-        <header className="absolute top-8 left-[94px] z-30" aria-label="Google Developer Groups">
-          <Link href="/" className="cursor-pointer flex items-center">
-            <motion.div
-              className="hero-gdg-lockup"
-              initial={false}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
-            >
+    <main className="relative min-h-screen w-full bg-black text-white flex items-center justify-center overflow-x-hidden overflow-y-auto select-none p-6 md:p-10 lg:p-12">
+      {/* Top Left GDG Lockup */}
+      <header
+        className="absolute top-6 md:top-8 left-6 md:left-12 lg:left-[clamp(40px,6.5vw,94px)] z-30"
+        aria-label="Google Developer Groups"
+      >
+        <Link href="/" className="cursor-pointer flex items-center">
+          <motion.div
+            className="hero-gdg-lockup"
+            initial={false}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <Image
+              src="/assets/gdg-logo-white.svg"
+              alt="GDG Logo"
+              width={46}
+              height={23}
+              priority
+              className="hero-gdg-lockup__icon"
+            />
+            <span className="hero-gdg-lockup__wordmark" aria-hidden="true">
               <Image
-                src="/assets/gdg-logo-white.svg"
-                alt="GDG Logo"
-                width={46}
-                height={23}
+                src="/assets/gdg-lockup-line.png"
+                alt="Google Developer Groups on Campus - VIT Chennai"
+                width={3003}
+                height={300}
                 priority
-                className="hero-gdg-lockup__icon"
+                className="hero-gdg-lockup__wordmark-image"
               />
-              <span className="hero-gdg-lockup__wordmark" aria-hidden="true">
-                <Image
-                  src="/assets/gdg-lockup-line.png"
-                  alt="Google Developer Groups on Campus - VIT Chennai"
-                  width={3003}
-                  height={300}
-                  priority
-                  className="hero-gdg-lockup__wordmark-image"
-                />
-              </span>
-              <span className="hero-gdg-lockup__name">
-                Vellore Institute of Technology
-              </span>
-            </motion.div>
-          </Link>
-        </header>
+            </span>
+            <span className="hero-gdg-lockup__name">
+              Vellore Institute of Technology
+            </span>
+          </motion.div>
+        </Link>
+      </header>
 
-        {/* Group 1948755623 - Left Form Container (Exact Figma Dimensions & Gaps) */}
-        <div
-          className="absolute z-20 flex flex-col"
-          style={{
-            width: "590px",
-            height: "296px",
-            left: "94px",
-            top: "calc(50% - 296px / 2)",
-          }}
-        >
+      {/* Main Responsive 2-Column Desktop Grid Container */}
+      <div className="relative w-full max-w-[1440px] min-h-[calc(100vh-64px)] flex flex-col md:flex-row items-center justify-between gap-8 lg:gap-16 px-4 md:px-8 lg:px-[clamp(24px,5vw,70px)] py-16">
+        {/* Left Form Container (Group 1948755623) */}
+        <div className="flex flex-col justify-center w-full max-w-[590px] z-20">
           {/* Title: Create A Team */}
           <h1
-            className="text-white font-bold tracking-normal leading-none select-none m-0"
+            className="text-white font-bold tracking-normal leading-[1.1] select-none m-0 text-[clamp(36px,4.5vw,64px)]"
             style={{
               fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
-              fontSize: "64px",
-              width: "457.996px",
-              height: "81px",
-              display: "flex",
-              alignItems: "center",
             }}
           >
             Create A Team
           </h1>
 
-          {/* Subtitle / Prompt: Enter Your Team's Name (top: 455, gap: 10px from title bottom 445) */}
+          {/* Subtitle / Prompt: Enter Your Team's Name */}
           <p
-            className="text-white font-normal m-0 select-none"
+            className="text-white font-normal m-0 select-none text-[clamp(18px,1.8vw,24px)] leading-[1.3] mt-[clamp(8px,1.2vh,12px)]"
             style={{
               fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
-              fontSize: "24px",
-              lineHeight: "1.2",
-              width: "561.303px",
-              height: "54px",
-              marginTop: "10px",
-              display: "flex",
-              alignItems: "center",
             }}
           >
             Enter Your Team’s Name
           </p>
 
-          {/* Form with Input (top: 528, gap: 19px from subtitle bottom 509) and Submit Button (top: 612, gap: 25px from input bottom 587) */}
-          <form onSubmit={handleSubmit} className="flex flex-col w-[590px]">
+          {/* Form with Input and Submit Button */}
+          <form onSubmit={handleSubmit} className="flex flex-col w-full mt-[clamp(14px,2.2vh,24px)]">
             {/* Input Field */}
             <input
               type="text"
               value={teamName}
               onChange={(e) => setTeamName(e.target.value)}
               placeholder="Enter team name"
-              className="w-[590px] h-[59px] bg-transparent text-white placeholder-white/40 border border-white/40 focus:border-white focus:outline-none transition-colors"
+              className="w-full h-[clamp(50px,5.8vh,59px)] bg-transparent text-white placeholder-white/40 border border-white/40 focus:border-white focus:outline-none transition-colors rounded-[9.08px] px-[clamp(20px,2.5vw,36px)] py-2 text-[clamp(16px,1.5vw,20px)]"
               style={{
-                marginTop: "19px",
-                borderRadius: "9.08px",
-                padding: "7.26px 36.31px",
                 fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
-                fontSize: "20px",
               }}
               required
             />
@@ -124,26 +103,13 @@ export default function CreateTeamPage() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               disabled={isSubmitting}
-              className="w-[590px] h-[48px] bg-white text-black flex items-center justify-center cursor-pointer hover:bg-neutral-100 transition-all border-none"
-              style={{
-                marginTop: "25px",
-                borderRadius: "35px",
-                padding: "9px 111px",
-                gap: "14px",
-              }}
+              className="w-full h-[clamp(44px,5vh,48px)] bg-white text-black flex items-center justify-center cursor-pointer hover:bg-neutral-100 transition-all border-none rounded-[35px] mt-[clamp(16px,2.6vh,26px)] px-6 md:px-12 gap-[14px]"
             >
               <span
+                className="text-[clamp(16px,1.6vw,24px)] leading-none text-center font-normal whitespace-nowrap"
                 style={{
                   fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
-                  fontWeight: 400,
-                  fontSize: "24px",
-                  lineHeight: "29.79px",
                   letterSpacing: "0.02em",
-                  textAlign: "center",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  whiteSpace: "nowrap",
                 }}
               >
                 {isSubmitting ? "Continuing..." : "Continue To Team Page"}
@@ -154,7 +120,7 @@ export default function CreateTeamPage() {
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-[22px] h-[22px] flex-shrink-0"
+                className="w-5 h-5 md:w-[22px] md:h-[22px] flex-shrink-0"
                 aria-hidden="true"
               >
                 <path
@@ -169,71 +135,67 @@ export default function CreateTeamPage() {
           </form>
         </div>
 
-        {/* Right Side 3 Logos Stack (Exact Figma Coordinates & Dimensions, Web 70% on screen) */}
-        {/* Web Track Logo */}
+        {/* Right Side 3 Logos Stack (Fluid Responsive Desktop Column) */}
         <div
-          className="absolute pointer-events-none z-10"
-          style={{
-            width: "453.8907px",
-            height: "453.8907px",
-            left: "886.8px",
-            top: "-136.17px",
-            mixBlendMode: "screen",
-          }}
+          className="relative pointer-events-none z-10 hidden md:flex flex-col items-center justify-center flex-shrink-0 w-[clamp(280px,32vw,468px)] min-h-[clamp(500px,80vh,880px)] overflow-visible"
           aria-hidden="true"
         >
-          <ResponsiveSvg
-            src="/assets/web.svg"
-            alt="Web Track"
-            width={454}
-            height={454}
-            priority
-            className="w-full h-full object-contain"
-          />
-        </div>
+          {/* Web Track Logo */}
+          <div
+            className="relative w-full flex-shrink-0 flex items-center justify-center"
+            style={{
+              width: "clamp(260px, 30vw, 454px)",
+              height: "clamp(260px, 30vw, 454px)",
+              mixBlendMode: "screen",
+            }}
+          >
+            <ResponsiveSvg
+              src="/assets/web.svg"
+              alt="Web Track"
+              width={454}
+              height={454}
+              priority
+              className="w-full h-full object-contain"
+            />
+          </div>
 
-        {/* Maps Logo */}
-        <div
-          className="absolute pointer-events-none z-10"
-          style={{
-            width: "364.106px",
-            height: "464.3671px",
-            left: "931.16px",
-            top: "250.66px",
-            mixBlendMode: "screen",
-          }}
-          aria-hidden="true"
-        >
-          <ResponsiveSvg
-            src="/assets/maps.svg"
-            alt="Google Maps"
-            width={365}
-            height={465}
-            priority
-            className="w-full h-full object-contain"
-          />
-        </div>
+          {/* Maps Logo (Middle with vertical overlap) */}
+          <div
+            className="relative w-full flex-shrink-0 flex items-center justify-center -mt-[clamp(60px,8vw,110px)]"
+            style={{
+              width: "clamp(210px, 25vw, 364px)",
+              height: "clamp(260px, 31vw, 464px)",
+              mixBlendMode: "screen",
+            }}
+          >
+            <ResponsiveSvg
+              src="/assets/maps.svg"
+              alt="Google Maps"
+              width={365}
+              height={465}
+              priority
+              className="w-full h-full object-contain"
+            />
+          </div>
 
-        {/* Android Track Logo */}
-        <div
-          className="absolute pointer-events-none z-10"
-          style={{
-            width: "467.627px",
-            height: "285.7412px",
-            left: "880px",
-            top: "602.66px",
-            mixBlendMode: "screen",
-          }}
-          aria-hidden="true"
-        >
-          <ResponsiveSvg
-            src="/assets/android.svg"
-            alt="Android Track"
-            width={468}
-            height={286}
-            priority
-            className="w-full h-full object-contain"
-          />
+          {/* Android Track Logo (Bottom with vertical overlap) */}
+          <div
+            className="relative w-full flex-shrink-0 flex items-center justify-center -mt-[clamp(50px,7vw,100px)]"
+            style={{
+              width: "clamp(260px, 31vw, 468px)",
+              height: "clamp(160px, 19vw, 286px)",
+              mixBlendMode: "screen",
+            }}
+          >
+            <ResponsiveSvg
+              src="/assets/android.svg"
+              alt="Android Track"
+              width={468}
+              height={286}
+              priority
+              className="w-full h-full object-contain"
+            />
+          </div>
         </div>
       </div>
     </main>
