@@ -20,167 +20,134 @@ export default function CreateTeamPage() {
   };
 
   return (
-    <main className="relative h-screen w-screen bg-black text-white flex items-center justify-center overflow-hidden select-none">
-      {/* 1440x1024 Desktop Reference Frame Canvas - Exact Screen Height Container */}
-      <div className="relative w-full max-w-[1440px] h-screen max-h-screen overflow-hidden flex-shrink-0">
-        {/* Top Left GDG Lockup */}
-        <header className="absolute top-8 left-[94px] z-30" aria-label="Google Developer Groups">
-          <Link href="/" className="cursor-pointer flex items-center">
-            <motion.div
-              className="hero-gdg-lockup"
-              initial={false}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
-            >
+    <main className="relative h-screen w-screen bg-black text-white overflow-hidden select-none">
+      {/* Top Left GDG Lockup */}
+      <header
+        className="absolute top-6 md:top-8 left-[clamp(24px,6.5vw,94px)] z-30"
+        aria-label="Google Developer Groups"
+      >
+        <Link href="/" className="cursor-pointer flex items-center">
+          <motion.div
+            className="hero-gdg-lockup"
+            initial={false}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <Image
+              src="/assets/gdg-logo-white.svg"
+              alt="GDG Logo"
+              width={46}
+              height={23}
+              priority
+              className="hero-gdg-lockup__icon"
+            />
+            <span className="hero-gdg-lockup__wordmark" aria-hidden="true">
               <Image
-                src="/assets/gdg-logo-white.svg"
-                alt="GDG Logo"
-                width={46}
-                height={23}
+                src="/assets/gdg-lockup-line.png"
+                alt="Google Developer Groups on Campus - VIT Chennai"
+                width={3003}
+                height={300}
                 priority
-                className="hero-gdg-lockup__icon"
+                className="hero-gdg-lockup__wordmark-image"
               />
-              <span className="hero-gdg-lockup__wordmark" aria-hidden="true">
-                <Image
-                  src="/assets/gdg-lockup-line.png"
-                  alt="Google Developer Groups on Campus - VIT Chennai"
-                  width={3003}
-                  height={300}
-                  priority
-                  className="hero-gdg-lockup__wordmark-image"
-                />
-              </span>
-              <span className="hero-gdg-lockup__name">
-                Vellore Institute of Technology
-              </span>
-            </motion.div>
-          </Link>
-        </header>
+            </span>
+            <span className="hero-gdg-lockup__name">
+              Vellore Institute of Technology
+            </span>
+          </motion.div>
+        </Link>
+      </header>
 
-        {/* Group 1948755623 - Left Form Container (Exact Figma Dimensions & Gaps) */}
-        <div
-          className="absolute z-20 flex flex-col"
+      {/* Left Form Container - Vertically Centered with Screen Size */}
+      <div
+        className="absolute left-[clamp(24px,6.5vw,94px)] top-1/2 -translate-y-1/2 z-20 flex flex-col justify-center w-[min(590px,calc(100vw-48px))] max-w-[590px]"
+      >
+        {/* Title: Create A Team */}
+        <h1
+          className="text-white font-bold tracking-tight leading-[1.08] text-4xl sm:text-5xl lg:text-6xl m-0"
           style={{
-            width: "590px",
-            height: "296px",
-            left: "94px",
-            top: "calc(50% - 296px / 2)",
+            fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
           }}
         >
-          {/* Title: Create A Team */}
-          <h1
-            className="text-white font-bold tracking-normal leading-none select-none m-0"
+          Create A Team
+        </h1>
+
+        {/* Subtitle / Prompt: Enter Your Team's Name */}
+        <p
+          className="text-white/70 font-normal m-0 text-lg sm:text-xl lg:text-2xl mt-3 sm:mt-4 leading-normal"
+          style={{
+            fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
+          }}
+        >
+          Enter Your Team’s Name
+        </p>
+
+        {/* Form with Input and Submit Button */}
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5 sm:gap-6 w-full mt-6 sm:mt-8">
+          {/* Input Field */}
+          <input
+            type="text"
+            value={teamName}
+            onChange={(e) => setTeamName(e.target.value)}
+            placeholder="Enter team name"
+            className="w-full h-14 sm:h-[59px] bg-transparent text-white placeholder-white/40 border border-white/40 focus:border-white focus:outline-none transition-colors rounded-[9.08px] px-6 sm:px-9 text-lg sm:text-xl"
             style={{
               fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
-              fontSize: "64px",
-              width: "457.996px",
-              height: "81px",
-              display: "flex",
-              alignItems: "center",
             }}
-          >
-            Create A Team
-          </h1>
-
-          {/* Subtitle / Prompt: Enter Your Team's Name (top: 455, gap: 10px from title bottom 445) */}
-          <p
-            className="text-white font-normal m-0 select-none"
-            style={{
-              fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
-              fontSize: "24px",
-              lineHeight: "1.2",
-              width: "561.303px",
-              height: "54px",
-              marginTop: "10px",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            Enter Your Team’s Name
-          </p>
-
-          {/* Form with Input (top: 528, gap: 19px from subtitle bottom 509) and Submit Button (top: 612, gap: 25px from input bottom 587) */}
-          <form onSubmit={handleSubmit} className="flex flex-col w-[590px]">
-            {/* Input Field */}
-            <input
-              type="text"
-              value={teamName}
-              onChange={(e) => setTeamName(e.target.value)}
-              placeholder="Enter team name"
-              className="w-[590px] h-[59px] bg-transparent text-white placeholder-white/40 border border-white/40 focus:border-white focus:outline-none transition-colors"
-              style={{
-                marginTop: "19px",
-                borderRadius: "9.08px",
-                padding: "7.26px 36.31px",
-                fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
-                fontSize: "20px",
-              }}
-              required
-            />
+            required
+          />
 
             {/* Frame 1948754780 - Submit Button */}
-            <motion.button
-              type="submit"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              disabled={isSubmitting}
-              className="w-[590px] h-[48px] bg-white text-black flex items-center justify-center cursor-pointer hover:bg-neutral-100 transition-all border-none"
+          <motion.button
+            type="submit"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            disabled={isSubmitting}
+            className="w-full h-12 sm:h-[48px] bg-white text-black flex items-center justify-center cursor-pointer hover:bg-neutral-100 transition-all border-none rounded-[35px] shadow-lg px-6 gap-3.5"
+          >
+            <span
+              className="text-lg sm:text-xl font-normal leading-none text-center whitespace-nowrap"
               style={{
-                marginTop: "25px",
-                borderRadius: "35px",
-                padding: "9px 111px",
-                gap: "14px",
+                fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
+                letterSpacing: "0.02em",
               }}
             >
-              <span
-                style={{
-                  fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
-                  fontWeight: 400,
-                  fontSize: "24px",
-                  lineHeight: "29.79px",
-                  letterSpacing: "0.02em",
-                  textAlign: "center",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {isSubmitting ? "Continuing..." : "Continue To Team Page"}
-              </span>
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-[22px] h-[22px] flex-shrink-0"
-                aria-hidden="true"
-              >
-                <path
-                  d="M7 17L17 7M17 7H7M17 7V17"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </motion.button>
-          </form>
-        </div>
+              {isSubmitting ? "Continuing..." : "Continue To Team Page"}
+            </span>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-5 h-5 flex-shrink-0"
+              aria-hidden="true"
+            >
+              <path
+                d="M7 17L17 7M17 7H7M17 7V17"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </motion.button>
+        </form>
+      </div>
 
-        {/* Right Side 3 Logos Stack (Exact Figma Coordinates & Dimensions, Web 70% on screen) */}
-        {/* Web Track Logo */}
+      {/* Right Side 3 Logos Stack - Perfectly Relative Aligned Vertical, 20% Blend with each other, Dynamically Covering 100% Screen Height */}
+      <div
+        className="absolute right-[clamp(16px,4vw,60px)] top-0 bottom-0 h-screen pointer-events-none z-10 hidden md:flex flex-col items-center justify-between py-[1vh] overflow-hidden w-[clamp(280px,32vw,460px)]"
+        aria-hidden="true"
+      >
+        {/* 1. Web Track Logo (Top, 70% visible on screen, 30% shifted up) */}
         <div
-          className="absolute pointer-events-none z-10"
+          className="relative w-full flex-shrink-0 flex items-center justify-center -mt-[11.4vh]"
           style={{
-            width: "453.8907px",
-            height: "453.8907px",
-            left: "886.8px",
-            top: "-136.17px",
+            height: "38vh",
             mixBlendMode: "screen",
+            filter: "brightness(1.12) saturate(1.05)",
           }}
-          aria-hidden="true"
         >
           <ResponsiveSvg
             src="/assets/web.svg"
@@ -188,21 +155,19 @@ export default function CreateTeamPage() {
             width={454}
             height={454}
             priority
-            className="w-full h-full object-contain"
+            className="max-h-full max-w-full object-contain"
           />
         </div>
 
-        {/* Maps Logo */}
+        {/* 2. Maps Logo (Vertically Centered in Screen, Shifted Down by 20%) */}
         <div
-          className="absolute pointer-events-none z-10"
+          className="relative w-full flex-shrink-0 flex items-center justify-center my-auto"
           style={{
-            width: "364.106px",
-            height: "464.3671px",
-            left: "931.16px",
-            top: "250.66px",
+            height: "39vh",
+            transform: "translateY(20%)",
             mixBlendMode: "screen",
+            filter: "brightness(1.12) saturate(1.05)",
           }}
-          aria-hidden="true"
         >
           <ResponsiveSvg
             src="/assets/maps.svg"
@@ -210,21 +175,18 @@ export default function CreateTeamPage() {
             width={365}
             height={465}
             priority
-            className="w-full h-full object-contain"
+            className="max-h-full max-w-full object-contain"
           />
         </div>
 
-        {/* Android Track Logo */}
+        {/* 3. Android Track Logo (Bottom, dynamically scaled in vh) */}
         <div
-          className="absolute pointer-events-none z-10"
+          className="relative w-full flex-shrink-0 flex items-center justify-center"
           style={{
-            width: "467.627px",
-            height: "285.7412px",
-            left: "880px",
-            top: "602.66px",
+            height: "31vh",
             mixBlendMode: "screen",
+            filter: "brightness(1.12) saturate(1.05)",
           }}
-          aria-hidden="true"
         >
           <ResponsiveSvg
             src="/assets/android.svg"
@@ -232,7 +194,7 @@ export default function CreateTeamPage() {
             width={468}
             height={286}
             priority
-            className="w-full h-full object-contain"
+            className="max-h-full max-w-full object-contain"
           />
         </div>
       </div>
