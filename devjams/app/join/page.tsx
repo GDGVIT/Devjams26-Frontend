@@ -159,11 +159,12 @@ export default function JoinPage() {
           />
         </div>
 
-        {/* 2. Maps Logo (Vertically Centered in Screen) */}
+        {/* 2. Maps Logo (Vertically Centered in Screen, Shifted Down by 20%) */}
         <div
           className="relative w-full flex-shrink-0 flex items-center justify-center my-auto"
           style={{
             height: "39vh",
+            transform: "translateY(20%)",
             mixBlendMode: "screen",
             filter: "brightness(1.12) saturate(1.05)",
           }}
