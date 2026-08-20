@@ -416,14 +416,9 @@ export default function Home() {
         sectionTop: number,
       ): ShapeBounds => ({
         x: sectionLeft + shape.x * geometry.frameFourMobileScale,
-        y:
-          sectionTop +
-          shape.y *
-            mobileFrameVerticalScaleAtViewport(geometry.viewportHeight),
+        y: sectionTop + shape.y * geometry.frameFourMobileScale,
         width: shape.width * geometry.frameFourMobileScale,
-        height:
-          shape.height *
-          mobileFrameVerticalScaleAtViewport(geometry.viewportHeight),
+        height: shape.height * geometry.frameFourMobileScale,
       });
       const frameFourShapes = geometry.isMobile
         ? FRAME_FOUR_MOBILE_SHAPES
@@ -510,14 +505,13 @@ export default function Home() {
             x: geometry.frameFourPageLeft + 375 * geometry.frameFourMobileScale,
             y:
               geometry.frameFourPageTop +
-              FRAME_FOUR_MOBILE_SHAPES.cloud.y *
-                mobileFrameVerticalScaleAtViewport(geometry.viewportHeight),
+              FRAME_FOUR_MOBILE_SHAPES.cloud.y * geometry.frameFourMobileScale,
             width:
               FRAME_FOUR_MOBILE_SHAPES.cloud.width *
               geometry.frameFourMobileScale,
             height:
               FRAME_FOUR_MOBILE_SHAPES.cloud.height *
-              mobileFrameVerticalScaleAtViewport(geometry.viewportHeight),
+              geometry.frameFourMobileScale,
           }
         : absoluteBounds(
             FRAME_FOUR_START_SHAPES.cloud,
@@ -705,14 +699,14 @@ export default function Home() {
           frameThreePageLeft,
           frameThreePageTop,
           isMobile ? mobileFrameScale : frameScale,
-          isMobile,
+          false,
         ),
         frameThreeMaps: targetBounds(
           frameThreeMapsShapeAtViewport(isMobile),
           frameThreePageLeft,
           frameThreePageTop,
           isMobile ? mobileFrameScale : frameScale,
-          isMobile,
+          false,
         ),
       };
       syncScrollProgress(scrollY.get());

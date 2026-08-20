@@ -3,7 +3,12 @@ import assert from "node:assert/strict";
 import {
   FRAME_THREE_LOGO_HEIGHT,
   FRAME_THREE_LOGOS,
+  FRAME_THREE_RAW_LOGOS,
+  FRAME_THREE_ROW_Y,
+  FRAME_THREE_ROW_CENTER_Y,
   FRAME_THREE_MOBILE_SHAPES,
+  FRAME_THREE_MOBILE_RAW_SHAPES,
+  FRAME_THREE_MOBILE_ROW_Y,
   FRAME_ONE_ANIMATION_START_PROGRESS,
   FRAME_REFERENCE_WIDTH,
   FRAME_TWO_MOBILE_SHAPES,
@@ -18,8 +23,11 @@ import {
   FRAME_FOUR_LOGO_Z_INDEX,
   FRAME_FOUR_SHAPES,
   FRAME_FOUR_LOGO_CENTER_X,
+  FRAME_FOUR_MOBILE_RAW_SHAPES,
+  FRAME_FOUR_MOBILE_LOGO_CENTER_X,
   FRAME_FOUR_MOBILE_SHAPES,
   FRAME_FOUR_MOBILE_ROTATIONS,
+  FRAME_TWO_MOBILE_RAW_SHAPES,
   frameFourContentOffsetAt,
   frameFourSharedLogoTransformAt,
   frameScaleAtViewport,
@@ -29,6 +37,7 @@ import {
   geminiOpacityAt,
   halfVisibleScrollAt,
   alignShapeBoundsX,
+  alignShapeBoundsY,
   frameTwoMapEntryTransformAt,
   frameTwoMapsOpacityAt,
   interpolateShapeBounds,
@@ -72,34 +81,52 @@ test("shape bounds scaling preserves zero and identity behavior", () => {
   assert.deepEqual(scaleShapeBounds(bounds, 1), bounds);
 });
 
-test("Frame 4 mobile logos match Figma dimensions and rotation", () => {
+test("Frame 4 mobile logos match scaled dimensions, shifted gear/gemini up, and cloud way down with 10% increased size", () => {
   assert.equal(mobileFrameScaleAtViewport(375), 1);
   assert.equal(mobileFrameScaleAtViewport(320), 320 / 375);
   assert.equal(mobileFrameVerticalScaleAtViewport(812), 1);
 
-  assert.equal(FRAME_FOUR_MOBILE_SHAPES.gemini.width, 358.481);
-  assert.equal(FRAME_FOUR_MOBILE_SHAPES.gemini.height, 358.481);
-  assert.equal(FRAME_FOUR_MOBILE_SHAPES.cloud.width, 383.611);
-  assert.equal(FRAME_FOUR_MOBILE_SHAPES.cloud.height, 280.09);
-  assert.equal(FRAME_FOUR_MOBILE_SHAPES.gear.width, 467.447);
-  assert.equal(FRAME_FOUR_MOBILE_SHAPES.gear.height, 467.448);
+  assert.ok(Math.abs(FRAME_FOUR_MOBILE_SHAPES.gemini.width - 358.481 * 0.8) < 1e-4);
+  assert.ok(Math.abs(FRAME_FOUR_MOBILE_SHAPES.gemini.height - 358.481 * 0.8) < 1e-4);
+  assert.ok(Math.abs(FRAME_FOUR_MOBILE_SHAPES.cloud.width - 270.0621) < 1e-4);
+  assert.ok(Math.abs(FRAME_FOUR_MOBILE_SHAPES.cloud.height - 197.1834) < 1e-4);
+  assert.ok(Math.abs(FRAME_FOUR_MOBILE_SHAPES.gear.width - 467.447 * 0.8) < 1e-4);
+  assert.ok(Math.abs(FRAME_FOUR_MOBILE_SHAPES.gear.height - 467.448 * 0.8) < 1e-4);
   assert.equal(FRAME_FOUR_MOBILE_ROTATIONS.gear, 15.364);
 
   const shapes = Object.values(FRAME_FOUR_MOBILE_SHAPES);
   assert.ok(shapes.every((shape) => shape.x + shape.width <= 375));
   assert.ok(Math.min(...shapes.map((shape) => shape.y)) <= 0);
-  assert.ok(Math.max(...shapes.map((shape) => shape.y + shape.height)) >= 800);
-  assert.ok(shapes[0].y < shapes[1].y);
-  assert.ok(shapes[1].y < shapes[2].y);
+  // Cloud is placed down at the bottom of the frame (y >= 1100)
+  assert.ok(FRAME_FOUR_MOBILE_SHAPES.cloud.y >= 1100);
+  // Order: gear (top) < gemini (middle) < cloud (bottom)
+  assert.ok(FRAME_FOUR_MOBILE_SHAPES.gear.y < FRAME_FOUR_MOBILE_SHAPES.gemini.y);
+  assert.ok(FRAME_FOUR_MOBILE_SHAPES.gemini.y < FRAME_FOUR_MOBILE_SHAPES.cloud.y);
 });
 
-test("Frame 2 mobile logos share a right-side vertical axis with balanced visual size", () => {
+test("Frame 4 mobile logos share a unified vertical center axis", () => {
+  const shapes = Object.values(FRAME_FOUR_MOBILE_SHAPES);
+  const centers = shapes.map((shape) => shape.x + shape.width / 2);
+  assert.ok(
+    centers.every(
+      (center) => Math.abs(center - FRAME_FOUR_MOBILE_LOGO_CENTER_X) < 1e-6,
+    ),
+  );
+});
+
+test("Frame 2 mobile logos share a right-side vertical axis with balanced visual size and overlap", () => {
   const shapes = Object.values(FRAME_TWO_MOBILE_SHAPES);
   const centers = shapes.map((shape) => shape.x + shape.width / 2);
 
   assert.ok(centers.every((center) => Math.abs(center - 350) < 1e-6));
   assert.ok(Math.min(...shapes.map((shape) => shape.y)) <= 0);
   assert.ok(Math.max(...shapes.map((shape) => shape.y + shape.height)) >= 800);
+
+  const webBottom = FRAME_TWO_MOBILE_SHAPES.web.y + FRAME_TWO_MOBILE_SHAPES.web.height;
+  assert.ok(webBottom > FRAME_TWO_MOBILE_SHAPES.maps.y, "web and maps must overlap vertically");
+
+  const mapsBottom = FRAME_TWO_MOBILE_SHAPES.maps.y + FRAME_TWO_MOBILE_SHAPES.maps.height;
+  assert.ok(mapsBottom > FRAME_TWO_MOBILE_SHAPES.android.y, "maps and android must overlap vertically");
 });
 
 test("Frame 3 mobile logos match Figma dimensions and chain horizontally aligned on center row", () => {
@@ -232,6 +259,47 @@ test("Frame 3 icons share one rendered height", () => {
   }
 });
 
+test("Frame 3 all 4 logos maintain exact horizontal center row alignment across multiple viewports", () => {
+  const viewports = [
+    { w: 320, h: 568 },
+    { w: 360, h: 640 },
+    { w: 375, h: 667 },
+    { w: 375, h: 812 },
+    { w: 390, h: 844 },
+    { w: 412, h: 915 },
+    { w: 414, h: 896 },
+    { w: 430, h: 932 },
+    { w: 480, h: 800 },
+    { w: 540, h: 720 },
+    { w: 600, h: 960 },
+    { w: 700, h: 1000 },
+    { w: 768, h: 1024 },
+    { w: 834, h: 1194 },
+    { w: 1024, h: 768 },
+    { w: 1280, h: 800 },
+    { w: 1440, h: 900 },
+    { w: 1920, h: 1080 },
+    { w: 2560, h: 1440 },
+  ];
+
+  for (const { w, h } of viewports) {
+    const isMobile = w <= 700;
+    const frameScale = frameScaleAtViewport(w);
+    const mobileScale = mobileFrameScaleAtViewport(w);
+    const scale = isMobile ? mobileScale : frameScale;
+
+    const shapes = isMobile
+      ? Object.values(FRAME_THREE_MOBILE_SHAPES)
+      : Object.values(FRAME_THREE_LOGOS);
+    const centers = shapes.map((s) => (s.y + s.height / 2) * scale);
+    const maxDiff = Math.max(...centers) - Math.min(...centers);
+    assert.ok(
+      maxDiff < 1e-3,
+      `Frame 3 row misalignment at ${w}x${h}: diff=${maxDiff}`,
+    );
+  }
+});
+
 test("shape transforms interpolate position and size from measured hero bounds", () => {
   const heroBounds = { x: 100, y: 200, width: 200, height: 100 };
   const targetBounds = { x: 500, y: 600, width: 400, height: 300 };
@@ -296,15 +364,21 @@ test("Frame 4 uses the requested left-side logo order and unified center alignme
   const centers = shapes.map((shape) => shape.x + shape.width / 2);
   assert.ok(centers.every((center) => Math.abs(center - FRAME_FOUR_LOGO_CENTER_X) < 1e-9));
 });
-test("Frame 2 and Frame 4 desktop logos maintain exact vertical center alignment across multiple viewports", () => {
+test("Frame 2 and Frame 4 logos maintain exact vertical center alignment across multiple viewports", () => {
   const viewports = [
     { w: 320, h: 568 },
     { w: 360, h: 640 },
     { w: 375, h: 812 },
     { w: 390, h: 844 },
     { w: 412, h: 915 },
+    { w: 414, h: 896 },
+    { w: 430, h: 932 },
+    { w: 480, h: 800 },
+    { w: 540, h: 720 },
+    { w: 600, h: 960 },
     { w: 700, h: 1000 },
     { w: 768, h: 1024 },
+    { w: 834, h: 1194 },
     { w: 1024, h: 768 },
     { w: 1280, h: 800 },
     { w: 1440, h: 900 },
@@ -319,18 +393,26 @@ test("Frame 2 and Frame 4 desktop logos maintain exact vertical center alignment
     const scale = isMobile ? mobileScale : frameScale;
 
     // Frame 2
-    const f2Shapes = isMobile ? Object.values(FRAME_TWO_MOBILE_SHAPES) : Object.values(FRAME_TWO_SHAPES);
+    const f2Shapes = isMobile
+      ? Object.values(FRAME_TWO_MOBILE_SHAPES)
+      : Object.values(FRAME_TWO_SHAPES);
     const f2Centers = f2Shapes.map((s) => (s.x + s.width / 2) * scale);
     const f2MaxDiff = Math.max(...f2Centers) - Math.min(...f2Centers);
-    assert.ok(f2MaxDiff < 1e-6, `Frame 2 misalignment at ${w}x${h}: diff=${f2MaxDiff}`);
+    assert.ok(
+      f2MaxDiff < 1e-6,
+      `Frame 2 misalignment at ${w}x${h}: diff=${f2MaxDiff}`,
+    );
 
-    // Frame 4 (desktop and tablet share common center line)
-    if (!isMobile) {
-      const f4Shapes = Object.values(FRAME_FOUR_SHAPES);
-      const f4Centers = f4Shapes.map((s) => (s.x + s.width / 2) * scale);
-      const f4MaxDiff = Math.max(...f4Centers) - Math.min(...f4Centers);
-      assert.ok(f4MaxDiff < 1e-6, `Frame 4 misalignment at ${w}x${h}: diff=${f4MaxDiff}`);
-    }
+    // Frame 4 (desktop, tablet, and mobile all share common center line)
+    const f4Shapes = isMobile
+      ? Object.values(FRAME_FOUR_MOBILE_SHAPES)
+      : Object.values(FRAME_FOUR_SHAPES);
+    const f4Centers = f4Shapes.map((s) => (s.x + s.width / 2) * scale);
+    const f4MaxDiff = Math.max(...f4Centers) - Math.min(...f4Centers);
+    assert.ok(
+      f4MaxDiff < 1e-6,
+      `Frame 4 misalignment at ${w}x${h}: diff=${f4MaxDiff}`,
+    );
   }
 });
 

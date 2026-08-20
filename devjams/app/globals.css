@@ -392,10 +392,10 @@ body {
   }
 
   .frame-three__logo--gear {
-    left: calc(633.2px * var(--frame-scale));
-    top: calc(10.5px * var(--frame-scale));
-    width: calc(312px * var(--frame-scale));
-    height: calc(312px * var(--frame-scale));
+    left: calc(665.45px * var(--frame-scale));
+    top: calc(32.05px * var(--frame-scale));
+    width: calc(247.5px * var(--frame-scale));
+    height: calc(261px * var(--frame-scale));
   }
 
   .frame-three__logo {
@@ -931,23 +931,23 @@ body {
 
   .frame-three__logo--gemini {
     left: calc(156px * var(--mobile-scale, 1));
-    top: calc(281.19px * var(--mobile-scale, 1));
+    top: calc(281.1885px * var(--mobile-scale, 1));
     width: calc(97.623px * var(--mobile-scale, 1));
     height: calc(97.623px * var(--mobile-scale, 1));
   }
 
   .frame-three__logo--gear {
     left: calc(234px * var(--mobile-scale, 1));
-    top: calc(271.55px * var(--mobile-scale, 1));
+    top: calc(271.549px * var(--mobile-scale, 1));
     width: calc(116.903px * var(--mobile-scale, 1));
     height: calc(116.902px * var(--mobile-scale, 1));
   }
 
   .frame-three__logo--cloud {
     left: calc(375px * var(--mobile-scale, 1));
-    top: calc(530px * var(--mobile-scale, 1));
-    width: calc(383.611px * var(--mobile-scale, 1));
-    height: calc(280.09px * var(--mobile-scale, 1));
+    top: calc(1150px * var(--mobile-scale, 1));
+    width: calc(270.0621px * var(--mobile-scale, 1));
+    height: calc(197.1834px * var(--mobile-scale, 1));
     z-index: 0;
   }
 

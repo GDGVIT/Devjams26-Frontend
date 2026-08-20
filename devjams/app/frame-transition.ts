@@ -53,25 +53,40 @@ export function scaleMobileShapeBoundsAtViewport(
 }
 
 export const FRAME_TWO_MOBILE_LOGO_CENTER_X = 350;
-export const FRAME_TWO_MOBILE_SHAPES = {
+export const FRAME_TWO_MOBILE_RAW_SHAPES = {
   web: {
-    x: FRAME_TWO_MOBILE_LOGO_CENTER_X - 340 / 2,
+    x: 180,
     y: -35,
     width: 340,
     height: 340,
   },
   maps: {
-    x: FRAME_TWO_MOBILE_LOGO_CENTER_X - 190 / 2,
-    y: 350,
-    width: 190,
-    height: 242,
+    x: 213.6,
+    y: 255,
+    width: 272.8,
+    height: 348,
   },
   android: {
-    x: FRAME_TWO_MOBILE_LOGO_CENTER_X - 360 / 2,
-    y: 590,
-    width: 360,
-    height: 220,
+    x: 160,
+    y: 530,
+    width: 380,
+    height: 280,
   },
+} as const satisfies Record<string, ShapeBounds>;
+
+export const FRAME_TWO_MOBILE_SHAPES = {
+  web: alignShapeBoundsX(
+    FRAME_TWO_MOBILE_RAW_SHAPES.web,
+    FRAME_TWO_MOBILE_LOGO_CENTER_X,
+  ),
+  maps: alignShapeBoundsX(
+    FRAME_TWO_MOBILE_RAW_SHAPES.maps,
+    FRAME_TWO_MOBILE_LOGO_CENTER_X,
+  ),
+  android: alignShapeBoundsX(
+    FRAME_TWO_MOBILE_RAW_SHAPES.android,
+    FRAME_TWO_MOBILE_LOGO_CENTER_X,
+  ),
 } as const satisfies Record<string, ShapeBounds>;
 
 export const FRAME_FOUR_MOBILE_ROTATIONS = {
@@ -80,38 +95,53 @@ export const FRAME_FOUR_MOBILE_ROTATIONS = {
   cloud: 0,
 } as const;
 
-export const FRAME_FOUR_MOBILE_SHAPES = {
+export const FRAME_FOUR_MOBILE_RAW_SHAPES = {
   gear: {
-    x: -240,
-    y: -40,
-    width: 467.447,
-    height: 467.448,
+    x: -192,
+    y: -80,
+    width: 373.9576,
+    height: 373.9584,
   },
   gemini: {
-    x: -184.2405,
-    y: 255,
-    width: 358.481,
-    height: 358.481,
+    x: -147.3924,
+    y: 210,
+    width: 286.7848,
+    height: 286.7848,
   },
   cloud: {
-    x: -203.611,
-    y: 530,
-    width: 383.611,
-    height: 280.09,
+    x: -162.8888,
+    y: 1150,
+    width: 270.0621,
+    height: 197.1834,
   },
 } as const satisfies Record<string, ShapeBounds>;
 
-export const FRAME_THREE_MOBILE_GEAR_SOURCE = {
-  x: 234,
-  y: 271.549,
-  width: 116.903,
-  height: 116.902,
-} as const satisfies ShapeBounds;
+export const FRAME_FOUR_MOBILE_LOGO_CENTER_X =
+  Object.values(FRAME_FOUR_MOBILE_RAW_SHAPES).reduce(
+    (center, shape) => center + shape.x + shape.width / 2,
+    0,
+  ) / Object.values(FRAME_FOUR_MOBILE_RAW_SHAPES).length;
 
-export const FRAME_THREE_MOBILE_SHAPES = {
+export const FRAME_FOUR_MOBILE_SHAPES = {
+  gear: alignShapeBoundsX(
+    FRAME_FOUR_MOBILE_RAW_SHAPES.gear,
+    FRAME_FOUR_MOBILE_LOGO_CENTER_X,
+  ),
+  gemini: alignShapeBoundsX(
+    FRAME_FOUR_MOBILE_RAW_SHAPES.gemini,
+    FRAME_FOUR_MOBILE_LOGO_CENTER_X,
+  ),
+  cloud: alignShapeBoundsX(
+    FRAME_FOUR_MOBILE_RAW_SHAPES.cloud,
+    FRAME_FOUR_MOBILE_LOGO_CENTER_X,
+  ),
+} as const satisfies Record<string, ShapeBounds>;
+
+export const FRAME_THREE_MOBILE_ROW_Y = 330;
+export const FRAME_THREE_MOBILE_RAW_SHAPES = {
   web: {
     x: 20,
-    y: 281.725,
+    y: 281.7255,
     width: 96.549,
     height: 96.549,
   },
@@ -135,6 +165,28 @@ export const FRAME_THREE_MOBILE_SHAPES = {
   },
 } as const satisfies Record<string, ShapeBounds>;
 
+export const FRAME_THREE_MOBILE_SHAPES = {
+  web: alignShapeBoundsY(
+    FRAME_THREE_MOBILE_RAW_SHAPES.web,
+    FRAME_THREE_MOBILE_ROW_Y,
+  ),
+  maps: alignShapeBoundsY(
+    FRAME_THREE_MOBILE_RAW_SHAPES.maps,
+    FRAME_THREE_MOBILE_ROW_Y,
+  ),
+  gemini: alignShapeBoundsY(
+    FRAME_THREE_MOBILE_RAW_SHAPES.gemini,
+    FRAME_THREE_MOBILE_ROW_Y,
+  ),
+  gear: alignShapeBoundsY(
+    FRAME_THREE_MOBILE_RAW_SHAPES.gear,
+    FRAME_THREE_MOBILE_ROW_Y,
+  ),
+} as const satisfies Record<string, ShapeBounds>;
+
+export const FRAME_THREE_MOBILE_GEAR_SOURCE =
+  FRAME_THREE_MOBILE_SHAPES.gear;
+
 export type ShapeTransform = {
   x: number;
   y: number;
@@ -149,6 +201,16 @@ export function alignShapeBoundsX(
   return {
     ...shape,
     x: centerX - shape.width / 2,
+  };
+}
+
+export function alignShapeBoundsY(
+  shape: ShapeBounds,
+  centerY: number,
+): ShapeBounds {
+  return {
+    ...shape,
+    y: centerY - shape.height / 2,
   };
 }
 
@@ -228,32 +290,54 @@ export const FRAME_THREE_EDGE_LOGO_OFFSETS = {
 };
 export const HERO_TRACK_ENTRY_DELAYS = [0.5, 0.6, 0.7, 0.8] as const;
 export const FRAME_THREE_LOGO_HEIGHT = 261;
+export const FRAME_THREE_ROW_Y = 330;
+export const FRAME_THREE_ROW_CENTER_Y =
+  FRAME_THREE_ROW_Y + FRAME_THREE_LOGO_HEIGHT / 2;
 
-export const FRAME_THREE_LOGOS = {
+export const FRAME_THREE_RAW_LOGOS = {
   gemini: {
     x: 687.15,
-    y: 330,
+    y: FRAME_THREE_ROW_Y,
     width: 261,
     height: FRAME_THREE_LOGO_HEIGHT,
   },
   web: {
     x: 287.55,
-    y: 330,
+    y: FRAME_THREE_ROW_Y,
     width: 234,
     height: FRAME_THREE_LOGO_HEIGHT,
   },
   maps: {
     x: 478.35,
-    y: 330,
+    y: FRAME_THREE_ROW_Y,
     width: 252,
     height: FRAME_THREE_LOGO_HEIGHT,
   },
   gear: {
     x: 904.95,
-    y: 330,
+    y: FRAME_THREE_ROW_Y,
     width: 247.5,
     height: FRAME_THREE_LOGO_HEIGHT,
   },
+} as const satisfies Record<string, ShapeBounds>;
+
+export const FRAME_THREE_LOGOS = {
+  gemini: alignShapeBoundsY(
+    FRAME_THREE_RAW_LOGOS.gemini,
+    FRAME_THREE_ROW_CENTER_Y,
+  ),
+  web: alignShapeBoundsY(
+    FRAME_THREE_RAW_LOGOS.web,
+    FRAME_THREE_ROW_CENTER_Y,
+  ),
+  maps: alignShapeBoundsY(
+    FRAME_THREE_RAW_LOGOS.maps,
+    FRAME_THREE_ROW_CENTER_Y,
+  ),
+  gear: alignShapeBoundsY(
+    FRAME_THREE_RAW_LOGOS.gear,
+    FRAME_THREE_ROW_CENTER_Y,
+  ),
 } as const satisfies Record<string, ShapeBounds>;
 
 export function frameThreeMapsShapeAtViewport(isMobile: boolean): ShapeBounds {
