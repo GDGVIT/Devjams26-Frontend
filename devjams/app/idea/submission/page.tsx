@@ -107,7 +107,7 @@ export default function IdeaSubmissionPage() {
             }}
           >
             <Image
-              src="/assets/low-quality/gear.svg"
+              src="/assets/gear.svg"
               alt="Gear"
               width={314}
               height={314}
@@ -125,7 +125,7 @@ export default function IdeaSubmissionPage() {
             }}
           >
             <Image
-              src="/assets/low-quality/web.svg"
+              src="/assets/baked/web.png"
               alt="Web Track"
               width={232}
               height={232}
@@ -143,7 +143,7 @@ export default function IdeaSubmissionPage() {
             }}
           >
             <Image
-              src="/assets/low-quality/gemini.svg"
+              src="/assets/gemini.svg"
               alt="Gemini Track"
               width={244}
               height={244}

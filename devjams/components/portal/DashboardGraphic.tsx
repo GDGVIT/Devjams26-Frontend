@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import AssetImage from "@/components/AssetImage";
 
 export function DashboardGraphic() {
   return (
@@ -45,7 +46,7 @@ export function DashboardGraphic() {
 
         {/* Maps Pin (Subtle overlap) */}
         <div className="relative flex items-center justify-center -mr-2 sm:-mr-3 md:-mr-4 z-40 w-[110px] sm:w-[170px] md:w-[205px] h-[135px] sm:h-[200px] md:h-[240px]">
-          <Image
+          <AssetImage
             src="/assets/maps.svg"
             alt="Maps Pin"
             width={365}

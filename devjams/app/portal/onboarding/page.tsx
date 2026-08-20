@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { motion } from "@/components/gsap-motion";
-import ResponsiveSvg from "@/components/ResponsiveSvg";
+import AssetImage from "@/components/AssetImage";
 import { portalApi } from "@/services/portalApi";
 
 export default function OnboardingPage() {
@@ -81,7 +81,7 @@ export default function OnboardingPage() {
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col justify-between overflow-x-hidden p-4 sm:p-8 select-none">
       {/* Top-Left Web Graphic */}
       <div className="absolute -top-16 -left-16 sm:-top-20 sm:-left-20 w-36 h-36 sm:w-52 sm:h-52 md:w-64 md:h-64 pointer-events-none z-0 opacity-40 sm:opacity-70">
-        <ResponsiveSvg
+        <AssetImage
           src="/assets/web.svg"
           alt="Web Track Decoration"
           width={288}
@@ -93,7 +93,7 @@ export default function OnboardingPage() {
 
       {/* Top-Right Gear Graphic */}
       <div className="absolute -top-16 -right-16 sm:-top-20 sm:-right-20 w-40 h-40 sm:w-56 sm:h-56 md:w-72 md:h-72 pointer-events-none z-0 opacity-40 sm:opacity-70">
-        <ResponsiveSvg
+        <AssetImage
           src="/assets/gear.svg"
           alt="Gear Decoration"
           width={337}
