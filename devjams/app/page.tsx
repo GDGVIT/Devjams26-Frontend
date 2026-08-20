@@ -1,34 +1,25 @@
 "use client";
 
 import Image from "next/image";
+import gsap from "gsap";
 import {
   motion,
   AnimatePresence,
   useMotionValue,
   useScroll,
 } from "../components/gsap-motion";
-import type { MotionValue } from "../components/gsap-motion";
 import FoldText from "./components/FoldText";
 import SplitText from "./components/SplitText";
 import BorderGlow from "./components/BorderGlow";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
+import ResponsiveSvg from "../components/ResponsiveSvg";
 import {
   FRAME_FOUR_CONTENT_ENTER_OFFSET,
-  FRAME_FOUR_MOBILE_SHAPES,
-  FRAME_FOUR_SHAPES,
   FRAME_ONE_ANIMATION_START_PROGRESS,
   FRAME_REFERENCE_WIDTH,
   FRAME_THREE_EDGE_LOGO_OFFSETS,
-  FRAME_THREE_MOBILE_SHAPES,
-  FRAME_THREE_MOBILE_GEAR_SOURCE,
-  FRAME_THREE_LOGOS,
-  FRAME_TWO_LOGO_CENTER_X,
-  FRAME_TWO_MAPS_LEFT,
-  FRAME_TWO_MOBILE_SHAPES,
-  FRAME_TWO_SHAPES,
   FRAME_TWO_CONTENT_ENTER_OFFSET,
   HERO_TRACK_ENTRY_DELAYS,
-  alignShapeBoundsX,
   frameFourContentOffsetAt,
   frameScaleAtViewport,
   frameTwoMapEntryTransformAt,
@@ -38,28 +29,18 @@ import {
   interpolateShapeBounds,
   mobileFrameScaleAtViewport,
   mobileFrameVerticalScaleAtViewport,
-  scaleMobileShapeBoundsAtViewport,
-  scaleShapeBounds,
   heroMenuShouldCollapseAtScroll,
   menuDefaultsOpenAtViewport,
-  frameThreeMapsShapeAtViewport,
   scrollTransitionProgressAt,
   uniformShapeTransformAt,
   smoothScrollProgressAt,
   type ShapeBounds,
-} from "./frame-transition";
+} from "./transition-utils";
 type ShapeKey = "web" | "android";
 import { Tracks } from "../components/sections/Tracks";
 import { PreviousEvents } from "../components/sections/PreviousEvents";
 import { GotQuestions } from "../components/sections/GotQuestions";
 import { Footer } from "../components/sections/Footer";
-
-type ShapeMotionValues = {
-  x: MotionValue<number>;
-  y: MotionValue<number>;
-  scaleX: MotionValue<number>;
-  scaleY: MotionValue<number>;
-};
 
 type FrameThreeGeometry = {
   heroStart: number;
@@ -68,15 +49,7 @@ type FrameThreeGeometry = {
   frameTwoHeight: number;
   frameFourStart: number;
   frameFourHeight: number;
-  frameThreePageLeft: number;
-  frameThreePageTop: number;
-  frameThreeScale: number;
-  frameFourPageLeft: number;
-  frameFourPageTop: number;
-  frameFourScale: number;
-  frameFourMobileScale: number;
   heroTrackScale: number;
-  isMobile: boolean;
   viewportHeight: number;
   frameTwoLoadEnd: number;
   frameThreeTransitionEnd: number;
@@ -85,6 +58,12 @@ type FrameThreeGeometry = {
   frameTwoMaps: ShapeBounds;
   frameThreeWeb: ShapeBounds;
   frameThreeMaps: ShapeBounds;
+  frameThreeCloud: ShapeBounds;
+  frameThreeGemini: ShapeBounds;
+  frameThreeGear: ShapeBounds;
+  frameFourCloud: ShapeBounds;
+  frameFourGemini: ShapeBounds;
+  frameFourGear: ShapeBounds;
 };
 
 function readNaturalBounds(element: HTMLElement): ShapeBounds {
@@ -100,14 +79,6 @@ function readNaturalBounds(element: HTMLElement): ShapeBounds {
     height: rect.height,
   };
 }
-const FRAME_FOUR_START_SHAPES = {
-  cloud: {
-    x: 1480,
-    y: FRAME_FOUR_SHAPES.cloud.y,
-    width: 278,
-    height: 203,
-  },
-} as const;
 export default function Home() {
   const heroRef = useRef<HTMLElement>(null);
   const frameTwoRef = useRef<HTMLElement>(null);
@@ -116,13 +87,26 @@ export default function Home() {
   const webRef = useRef<HTMLDivElement>(null);
   const androidRef = useRef<HTMLDivElement>(null);
   const mapsRef = useRef<HTMLDivElement>(null);
+  const frameTwoWebTargetRef = useRef<HTMLDivElement>(null);
+  const frameTwoAndroidTargetRef = useRef<HTMLDivElement>(null);
+  const frameThreeWebTargetRef = useRef<HTMLDivElement>(null);
+  const frameThreeMapsTargetRef = useRef<HTMLDivElement>(null);
+  const frameThreeCloudRef = useRef<HTMLDivElement>(null);
+  const frameThreeGeminiRef = useRef<HTMLDivElement>(null);
+  const frameThreeGearRef = useRef<HTMLDivElement>(null);
+  const frameFourCloudTargetRef = useRef<HTMLDivElement>(null);
+  const frameFourGeminiTargetRef = useRef<HTMLDivElement>(null);
+  const frameFourGearTargetRef = useRef<HTMLDivElement>(null);
   const trackIconsRef = useRef<HTMLDivElement>(null);
   const shapeStartRef = useRef<Partial<Record<ShapeKey, ShapeBounds>>>({});
   const shapeTargetRef = useRef<Partial<Record<ShapeKey, ShapeBounds>>>({});
   const frameThreeGeometryRef = useRef<FrameThreeGeometry | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => {
-    if (menuDefaultsOpenAtViewport(window.innerWidth)) setMenuOpen(true);
+    const frame = requestAnimationFrame(() => {
+      if (menuDefaultsOpenAtViewport(window.innerWidth)) setMenuOpen(true);
+    });
+    return () => cancelAnimationFrame(frame);
   }, []);
   const [viewportWidth, setViewportWidth] = useState(FRAME_REFERENCE_WIDTH);
   const [viewportHeight, setViewportHeight] = useState(812);
@@ -142,14 +126,6 @@ export default function Home() {
   const isCompactViewport = viewportWidth <= 1024;
   const { scrollY } = useScroll();
 
-  const webX = useMotionValue(0);
-  const webY = useMotionValue(0);
-  const webScaleX = useMotionValue(1);
-  const webScaleY = useMotionValue(1);
-  const androidX = useMotionValue(0);
-  const androidY = useMotionValue(0);
-  const androidScaleX = useMotionValue(1);
-  const androidScaleY = useMotionValue(1);
   const geminiOpacity = useMotionValue(1);
   const geminiScale = useMotionValue(1);
   const cloudOpacity = useMotionValue(1);
@@ -185,28 +161,6 @@ export default function Home() {
   const frameThreeGearRotate = useMotionValue(180);
   const frameThreeGearOpacity = useMotionValue(0);
 
-  const shapeMotionValues = useMemo<Record<ShapeKey, ShapeMotionValues>>(
-    () => ({
-      web: { x: webX, y: webY, scaleX: webScaleX, scaleY: webScaleY },
-      android: {
-        x: androidX,
-        y: androidY,
-        scaleX: androidScaleX,
-        scaleY: androidScaleY,
-      },
-    }),
-    [
-      androidScaleX,
-      androidScaleY,
-      androidX,
-      androidY,
-      webScaleX,
-      webScaleY,
-      webX,
-      webY,
-    ],
-  );
-
   const syncScrollProgress = useCallback(
     (pageScroll: number) => {
       const geometry = frameThreeGeometryRef.current;
@@ -222,7 +176,7 @@ export default function Home() {
       const heroTrackScale = geometry.heroTrackScale || 1;
       const transformAt = uniformShapeTransformAt;
 
-      (Object.keys(shapeMotionValues) as ShapeKey[]).forEach((key) => {
+      (["web", "android"] as ShapeKey[]).forEach((key) => {
         const start = shapeStartRef.current[key];
         const target = shapeTargetRef.current[key];
         if (!start || !target) return;
@@ -232,10 +186,15 @@ export default function Home() {
           target,
           clampedProgress,
         );
-        shapeMotionValues[key].x.set(transform.x / heroTrackScale);
-        shapeMotionValues[key].y.set(transform.y / heroTrackScale);
-        shapeMotionValues[key].scaleX.set(transform.scaleX);
-        shapeMotionValues[key].scaleY.set(transform.scaleY);
+        const element = key === "web" ? webRef.current : androidRef.current;
+        if (!element) return;
+        gsap.set(element, {
+          x: transform.x / heroTrackScale,
+          y: transform.y / heroTrackScale,
+          scaleX: transform.scaleX,
+          scaleY: transform.scaleY,
+          force3D: true,
+        });
       });
 
       geminiOpacity.set(geminiOpacityAt(clampedProgress));
@@ -277,7 +236,8 @@ export default function Home() {
       mapsFrameThreeScaleX,
       mapsFrameThreeScaleY,
       mapsFrameThreeX,
-      shapeMotionValues,
+      androidRef,
+      webRef,
     ],
   );
 
@@ -320,10 +280,15 @@ export default function Home() {
         1,
       );
       const heroTrackScale = geometry.heroTrackScale || 1;
-      webX.set(webTransform.x / heroTrackScale);
-      webY.set(webTransform.y / heroTrackScale);
-      webScaleX.set(webTransform.scaleX);
-      webScaleY.set(webTransform.scaleY);
+      if (webRef.current) {
+        gsap.set(webRef.current, {
+          x: webTransform.x / heroTrackScale,
+          y: webTransform.y / heroTrackScale,
+          scaleX: webTransform.scaleX,
+          scaleY: webTransform.scaleY,
+          force3D: true,
+        });
+      }
 
       const mapsBounds = interpolateShapeBounds(
         geometry.frameTwoMaps,
@@ -366,10 +331,7 @@ export default function Home() {
       mapsFrameThreeX,
       mapsFrameThreeY,
       mapsOpacity,
-      webScaleX,
-      webScaleY,
-      webX,
-      webY,
+      webRef,
     ],
   );
   const syncFrameFourScroll = useCallback(
@@ -394,63 +356,9 @@ export default function Home() {
         return;
       }
 
-      const absoluteBounds = (
-        shape: ShapeBounds,
-        sectionLeft: number,
-        sectionTop: number,
-        sectionScale: number,
-      ): ShapeBounds => ({
-        x: sectionLeft + shape.x * sectionScale,
-        y: sectionTop + shape.y * sectionScale,
-        width: shape.width * sectionScale,
-        height: shape.height * sectionScale,
-      });
-      const absoluteMobileBounds = (
-        shape: ShapeBounds,
-        sectionLeft: number,
-        sectionTop: number,
-      ): ShapeBounds => ({
-        x: sectionLeft + shape.x * geometry.frameFourMobileScale,
-        y:
-          sectionTop +
-          shape.y *
-            mobileFrameVerticalScaleAtViewport(geometry.viewportHeight),
-        width: shape.width * geometry.frameFourMobileScale,
-        height:
-          shape.height *
-          mobileFrameVerticalScaleAtViewport(geometry.viewportHeight),
-      });
-      const frameFourShapes = geometry.isMobile
-        ? FRAME_FOUR_MOBILE_SHAPES
-        : FRAME_FOUR_SHAPES;
-      const targetBounds = (
-        shape: ShapeBounds,
-        sectionLeft: number,
-        sectionTop: number,
-      ): ShapeBounds =>
-        geometry.isMobile
-          ? absoluteMobileBounds(shape, sectionLeft, sectionTop)
-          : absoluteBounds(
-              shape,
-              sectionLeft,
-              sectionTop,
-              geometry.frameFourScale,
-            );
-
       const transformAt = uniformShapeTransformAt;
-      const sourceGear = absoluteBounds(
-        geometry.isMobile
-          ? FRAME_THREE_MOBILE_GEAR_SOURCE
-          : FRAME_THREE_LOGOS.gear,
-        geometry.frameThreePageLeft,
-        geometry.frameThreePageTop,
-        geometry.frameThreeScale,
-      );
-      const targetGear = targetBounds(
-        frameFourShapes.gear,
-        geometry.frameFourPageLeft,
-        geometry.frameFourPageTop,
-      );
+      const sourceGear = geometry.frameThreeGear;
+      const targetGear = geometry.frameFourGear;
       const gearTransform = transformAt(
         sourceGear,
         targetGear,
@@ -463,17 +371,8 @@ export default function Home() {
       frameThreeGearRotate.set(0);
       frameThreeGearOpacity.set(1);
 
-      const sourceGemini = absoluteBounds(
-        FRAME_THREE_LOGOS.gemini,
-        geometry.frameThreePageLeft,
-        geometry.frameThreePageTop,
-        geometry.frameThreeScale,
-      );
-      const targetGemini = targetBounds(
-        frameFourShapes.gemini,
-        geometry.frameFourPageLeft,
-        geometry.frameFourPageTop,
-      );
+      const sourceGemini = geometry.frameThreeGemini;
+      const targetGemini = geometry.frameFourGemini;
       const geminiTransform = transformAt(
         sourceGemini,
         targetGemini,
@@ -486,17 +385,8 @@ export default function Home() {
       frameThreeGeminiRotate.set(0);
       frameThreeGeminiOpacity.set(1);
 
-      const cloudStart = absoluteBounds(
-        FRAME_FOUR_START_SHAPES.cloud,
-        geometry.frameFourPageLeft,
-        geometry.frameFourPageTop,
-        geometry.frameFourScale,
-      );
-      const cloudTarget = targetBounds(
-        frameFourShapes.cloud,
-        geometry.frameFourPageLeft,
-        geometry.frameFourPageTop,
-      );
+      const cloudStart = geometry.frameThreeCloud;
+      const cloudTarget = geometry.frameFourCloud;
       const cloudTransform = transformAt(
         cloudStart,
         cloudTarget,
@@ -517,8 +407,10 @@ export default function Home() {
       frameFourAboutY.set(36 * (1 - progress));
     },
     [
+      frameFourAboutOpacity,
       frameFourAboutX,
       frameFourAboutY,
+      frameFourCloudOpacity,
       frameFourCloudScaleX,
       frameFourCloudScaleY,
       frameFourCloudX,
@@ -551,6 +443,16 @@ export default function Home() {
       const web = webRef.current;
       const android = androidRef.current;
       const maps = mapsRef.current;
+      const frameTwoWebTarget = frameTwoWebTargetRef.current;
+      const frameTwoAndroidTarget = frameTwoAndroidTargetRef.current;
+      const frameThreeWebTarget = frameThreeWebTargetRef.current;
+      const frameThreeMapsTarget = frameThreeMapsTargetRef.current;
+      const frameThreeCloud = frameThreeCloudRef.current;
+      const frameThreeGemini = frameThreeGeminiRef.current;
+      const frameThreeGear = frameThreeGearRef.current;
+      const frameFourCloudTarget = frameFourCloudTargetRef.current;
+      const frameFourGeminiTarget = frameFourGeminiTargetRef.current;
+      const frameFourGearTarget = frameFourGearTargetRef.current;
       const trackIcons = trackIconsRef.current;
       if (
         !hero ||
@@ -560,6 +462,16 @@ export default function Home() {
         !web ||
         !android ||
         !maps ||
+        !frameTwoWebTarget ||
+        !frameTwoAndroidTarget ||
+        !frameThreeWebTarget ||
+        !frameThreeMapsTarget ||
+        !frameThreeCloud ||
+        !frameThreeGemini ||
+        !frameThreeGear ||
+        !frameFourCloudTarget ||
+        !frameFourGeminiTarget ||
+        !frameFourGearTarget ||
         !trackIcons
       ) return;
       const currentViewportWidth = window.innerWidth;
@@ -579,65 +491,18 @@ export default function Home() {
         trackIcons.offsetWidth > 0
           ? trackRect.width / trackIcons.offsetWidth
           : 1;
-      const frameScale = frameScaleAtViewport(currentViewportWidth);
-      const mobileFrameScale = mobileFrameScaleAtViewport(currentViewportWidth);
-      const isMobile = currentViewportWidth <= 700;
       const heroPageTop = heroRect.top + window.scrollY;
       const framePageTop = frameRect.top + window.scrollY;
-      const framePageLeft = frameRect.left + window.scrollX;
       const frameThreePageTop = frameThreeRect.top + window.scrollY;
-      const frameThreePageLeft = frameThreeRect.left + window.scrollX;
       const frameFourPageTop = frameFourRect.top + window.scrollY;
-      const targetBounds = (
-        shape: ShapeBounds,
-        sectionLeft: number,
-        sectionTop: number,
-        sectionScale: number,
-        mobileShape = false,
-      ): ShapeBounds => {
-        const scaled = mobileShape
-          ? scaleMobileShapeBoundsAtViewport(
-              shape,
-              currentViewportWidth,
-              currentViewportHeight,
-            )
-          : scaleShapeBounds(shape, sectionScale);
-        return {
-          ...scaled,
-          x: sectionLeft + scaled.x,
-          y: sectionTop + scaled.y,
-        };
-      };
 
       shapeStartRef.current = {
         web: readNaturalBounds(web),
         android: readNaturalBounds(android),
       };
-      const frameTwoTargetScale = isMobile ? mobileFrameScale : frameScale;
-      const frameTwoWebShape = isMobile
-        ? FRAME_TWO_MOBILE_SHAPES.web
-        : alignShapeBoundsX(FRAME_TWO_SHAPES.web, FRAME_TWO_LOGO_CENTER_X);
-      const frameTwoAndroidShape = isMobile
-        ? FRAME_TWO_MOBILE_SHAPES.android
-        : alignShapeBoundsX(
-            FRAME_TWO_SHAPES.android,
-            FRAME_TWO_LOGO_CENTER_X,
-          );
       shapeTargetRef.current = {
-        web: targetBounds(
-          frameTwoWebShape,
-          framePageLeft,
-          framePageTop,
-          frameTwoTargetScale,
-          isMobile,
-        ),
-        android: targetBounds(
-          frameTwoAndroidShape,
-          framePageLeft,
-          framePageTop,
-          frameTwoTargetScale,
-          isMobile,
-        ),
+        web: readNaturalBounds(frameTwoWebTarget),
+        android: readNaturalBounds(frameTwoAndroidTarget),
       };
       frameThreeGeometryRef.current = {
         heroStart: heroPageTop,
@@ -646,15 +511,7 @@ export default function Home() {
         frameTwoHeight: frameRect.height,
         frameFourStart: frameFourPageTop,
         frameFourHeight: frameFourRect.height,
-        frameThreePageLeft,
-        frameThreePageTop,
-        frameThreeScale: frameScale,
         heroTrackScale,
-        frameFourPageLeft: frameFourRect.left + window.scrollX,
-        frameFourPageTop,
-        frameFourScale: frameScale,
-        frameFourMobileScale: mobileFrameScale,
-        isMobile,
         viewportHeight: window.innerHeight,
         frameTwoLoadEnd:
           framePageTop + frameRect.height - window.innerHeight,
@@ -666,20 +523,14 @@ export default function Home() {
         heroWeb: shapeStartRef.current.web!,
         frameTwoWeb: shapeTargetRef.current.web!,
         frameTwoMaps: readNaturalBounds(maps),
-        frameThreeWeb: targetBounds(
-          isMobile ? FRAME_THREE_MOBILE_SHAPES.web : FRAME_THREE_LOGOS.web,
-          frameThreePageLeft,
-          frameThreePageTop,
-          isMobile ? mobileFrameScale : frameScale,
-          isMobile,
-        ),
-        frameThreeMaps: targetBounds(
-          frameThreeMapsShapeAtViewport(isMobile),
-          frameThreePageLeft,
-          frameThreePageTop,
-          isMobile ? mobileFrameScale : frameScale,
-          isMobile,
-        ),
+        frameThreeWeb: readNaturalBounds(frameThreeWebTarget),
+        frameThreeMaps: readNaturalBounds(frameThreeMapsTarget),
+        frameThreeCloud: readNaturalBounds(frameThreeCloud),
+        frameThreeGemini: readNaturalBounds(frameThreeGemini),
+        frameThreeGear: readNaturalBounds(frameThreeGear),
+        frameFourCloud: readNaturalBounds(frameFourCloudTarget),
+        frameFourGemini: readNaturalBounds(frameFourGeminiTarget),
+        frameFourGear: readNaturalBounds(frameFourGearTarget),
       };
       syncScrollProgress(scrollY.get());
       syncFrameThreeScroll(scrollY.get());
@@ -692,20 +543,19 @@ export default function Home() {
     if (frameThreeRef.current) resizeObserver.observe(frameThreeRef.current);
     if (frameFourRef.current) resizeObserver.observe(frameFourRef.current);
     if (mapsRef.current) resizeObserver.observe(mapsRef.current);
-    const handleScroll = () => {
-      const pageScroll = window.scrollY;
+    const handleScroll = (pageScroll: number) => {
       syncScrollProgress(pageScroll);
       syncFrameThreeScroll(pageScroll);
       syncFrameFourScroll(pageScroll);
       if (heroMenuShouldCollapseAtScroll(pageScroll)) setMenuOpen(false);
     };
     window.addEventListener("resize", measureTransition);
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    const unsubscribeScroll = scrollY.on("change", handleScroll);
 
     return () => {
       resizeObserver.disconnect();
       window.removeEventListener("resize", measureTransition);
-      window.removeEventListener("scroll", handleScroll);
+      unsubscribeScroll();
     };
   }, [
     scrollY,
@@ -738,7 +588,11 @@ export default function Home() {
   return (
     <main
       className="relative min-h-screen w-full bg-black text-white flex flex-col items-center overflow-x-clip select-none"
-      style={{ "--frame-scale": frameScale } as CSSProperties}
+      style={{
+        "--frame-scale": frameScale,
+        "--mobile-frame-scale": mobileFrameScale,
+        "--mobile-frame-vertical-scale": mobileFrameVerticalScale,
+      } as CSSProperties}
     >
       <section
         ref={heroRef}
@@ -789,7 +643,7 @@ export default function Home() {
             aria-pressed={menuOpen}
             onClick={() => setMenuOpen((open) => !open)}
           >
-            <Image
+            <ResponsiveSvg
               src="/assets/dino-menu.svg"
               alt=""
               width={63.955}
@@ -937,7 +791,7 @@ export default function Home() {
                 key={index}
                 ref={shapeRef}
                 initial={false}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
+                animate={shapeKey ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
                 transition={{
                   duration: 0.6,
                   delay: 0.5 + index * 0.1,
@@ -946,10 +800,6 @@ export default function Home() {
                 style={
                   shapeKey
                     ? {
-                        x: shapeMotionValues[shapeKey].x,
-                        y: shapeMotionValues[shapeKey].y,
-                        scaleX: shapeMotionValues[shapeKey].scaleX,
-                        scaleY: shapeMotionValues[shapeKey].scaleY,
                         zIndex: 20,
                         opacity:
                           shapeKey === "android"
@@ -979,7 +829,7 @@ export default function Home() {
                       ease: "easeInOut",
                     }}
                   >
-                    <Image
+                    <ResponsiveSvg
                       src={icon.src}
                       alt={icon.alt}
                       width={icon.width}
@@ -1047,24 +897,22 @@ export default function Home() {
             DevJams is the flagship hackathon organized by GDG-VIT, a 48-hour intensive coding event designed to push the boundaries of innovation and develop practical problem-solving skills.
           </p>
         </motion.div>
+        <div
+          ref={frameTwoWebTargetRef}
+          className="transition-target transition-target--about-web"
+          aria-hidden="true"
+        />
+        <div
+          ref={frameTwoAndroidTargetRef}
+          className="transition-target transition-target--about-android"
+          aria-hidden="true"
+        />
       </section>
 
       <motion.div
         ref={mapsRef}
         className="about-devjams__shape about-devjams__shape--pin"
         style={{
-          left: isMobileViewport
-            ? FRAME_TWO_MOBILE_SHAPES.maps.x * mobileFrameScale
-            : FRAME_TWO_MAPS_LEFT * frameScale,
-          top: isMobileViewport
-            ? `calc(100vh + ${FRAME_TWO_MOBILE_SHAPES.maps.y * mobileFrameVerticalScale}px)`
-            : undefined,
-          width: isMobileViewport
-            ? FRAME_TWO_MOBILE_SHAPES.maps.width * mobileFrameScale
-            : undefined,
-          height: isMobileViewport
-            ? FRAME_TWO_MOBILE_SHAPES.maps.height * mobileFrameVerticalScale
-            : undefined,
           opacity: mapsOpacity,
           x: mapsFrameThreeX,
           y: mapsFrameThreeY,
@@ -1074,7 +922,7 @@ export default function Home() {
         }}
         aria-hidden="true"
       >
-        <Image
+        <ResponsiveSvg
           src="/assets/maps.svg"
           alt=""
           width={365}
@@ -1115,7 +963,18 @@ export default function Home() {
           textAlign="center"
         />
         <div className="frame-three__logos" aria-label="GDG tracks">
+          <div
+            ref={frameThreeWebTargetRef}
+            className="transition-target transition-target--tracks-web"
+            aria-hidden="true"
+          />
+          <div
+            ref={frameThreeMapsTargetRef}
+            className="transition-target transition-target--tracks-maps"
+            aria-hidden="true"
+          />
           <motion.div
+            ref={frameThreeCloudRef}
             className="frame-three__logo frame-three__logo--cloud"
             style={{
               x: frameFourCloudX,
@@ -1125,7 +984,7 @@ export default function Home() {
               opacity: frameFourCloudOpacity,
             }}
           >
-            <Image
+            <ResponsiveSvg
               src="/assets/cloud.svg"
               alt="Cloud"
               width={278}
@@ -1134,6 +993,7 @@ export default function Home() {
             />
           </motion.div>
           <motion.div
+            ref={frameThreeGeminiRef}
             className="frame-three__logo frame-three__logo--gemini"
             style={{
               x: frameThreeGeminiX,
@@ -1153,6 +1013,7 @@ export default function Home() {
             />
           </motion.div>
           <motion.div
+            ref={frameThreeGearRef}
             className="frame-three__logo frame-three__logo--gear"
             style={{
               x: frameThreeGearX,
@@ -1175,6 +1036,20 @@ export default function Home() {
       </section>
 
       <section id="about-vit" ref={frameFourRef} className="frame-four">
+        <div className="frame-four__transition-targets" aria-hidden="true">
+          <div
+            ref={frameFourGearTargetRef}
+            className="transition-target transition-target--frame-four-gear"
+          />
+          <div
+            ref={frameFourGeminiTargetRef}
+            className="transition-target transition-target--frame-four-gemini"
+          />
+          <div
+            ref={frameFourCloudTargetRef}
+            className="transition-target transition-target--frame-four-cloud"
+          />
+        </div>
         <motion.div
           className="frame-four__content"
           style={{

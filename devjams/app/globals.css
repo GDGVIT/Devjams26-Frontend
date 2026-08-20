@@ -22,6 +22,14 @@ body {
   overflow-x: hidden;
 }
 
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 
 .about-devjams {
   position: relative;
@@ -87,11 +95,10 @@ body {
   mix-blend-mode: plus-lighter;
   filter: brightness(1.12) saturate(1.05);
   transform-origin: center center;
-  will-change: transform, opacity;
 }
 
 .about-devjams__shape--pin {
-  left: 911.1626px;
+  left: calc(951.5371167px * var(--frame-scale));
   top: calc(100vh + 387.2815px);
   width: 364.106px;
   height: 464.3671px;
@@ -106,6 +113,69 @@ body {
   height: 100%;
   max-width: none;
   object-fit: contain;
+}
+
+/* These layout-only anchors let transitions measure the real destination rect. */
+.transition-target {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.transition-target--about-web {
+  left: calc(866.7959px * var(--frame-scale));
+  top: 0;
+  width: calc(453.8907px * var(--frame-scale));
+  height: calc(453.8907px * var(--frame-scale));
+}
+
+.transition-target--about-android {
+  left: calc(860px * var(--frame-scale));
+  top: calc(739.2776px * var(--frame-scale));
+  width: calc(467.627px * var(--frame-scale));
+  height: calc(285.7433px * var(--frame-scale));
+}
+
+.transition-target--tracks-web {
+  left: calc(48.05px * var(--frame-scale));
+  top: calc(32.05px * var(--frame-scale));
+  width: calc(234px * var(--frame-scale));
+  height: calc(261px * var(--frame-scale));
+}
+
+.transition-target--tracks-maps {
+  left: calc(260px * var(--frame-scale));
+  top: calc(32.05px * var(--frame-scale));
+  width: calc(252px * var(--frame-scale));
+  height: calc(261px * var(--frame-scale));
+}
+
+.frame-four__transition-targets {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.transition-target--frame-four-gear {
+  left: calc(75px * var(--frame-scale));
+  top: calc(12.294572px * var(--frame-scale));
+  width: calc(514.7120538px * var(--frame-scale));
+  height: calc(514.7120538px * var(--frame-scale));
+}
+
+.transition-target--frame-four-gemini {
+  left: calc(143.80822px * var(--frame-scale));
+  top: calc(333.350487px * var(--frame-scale));
+  width: calc(405.249978px * var(--frame-scale));
+  height: calc(516.8405823px * var(--frame-scale));
+}
+
+.transition-target--frame-four-cloud {
+  left: calc(112.373px * var(--frame-scale));
+  top: calc(739.2776px * var(--frame-scale));
+  width: calc(467.627px * var(--frame-scale));
+  height: calc(285.7433px * var(--frame-scale));
 }
 
 
@@ -137,7 +207,6 @@ body {
   line-height: 1.5;
   text-align: center;
   text-transform: capitalize;
-  will-change: transform, opacity;
 }
 
 .frame-three__description {
@@ -155,7 +224,6 @@ body {
   line-height: 1;
   letter-spacing: 0.02em;
   text-align: center;
-  will-change: transform, opacity;
 }
 
 .frame-three__logos {
@@ -172,7 +240,6 @@ body {
   position: absolute;
   display: block;
   transform-origin: center center;
-  will-change: transform, opacity;
   mix-blend-mode: plus-lighter;
   filter: brightness(1.12) saturate(1.05);
 }
@@ -186,7 +253,7 @@ body {
 }
 
 .frame-three__logo--gemini {
-  left: 447.65px;
+  left: 435px;
   top: 32.05px;
   width: 261px;
   height: 261px;
@@ -329,11 +396,25 @@ body {
   }
 
   .about-devjams__shape--pin {
-    left: calc(911.1626px * var(--frame-scale));
-    top: calc(100vh + (387.2815px * var(--frame-scale)));
-    width: calc(364.106px * var(--frame-scale));
-    height: calc(464.3671px * var(--frame-scale));
+    left: calc(200px * var(--mobile-frame-scale));
+    top: calc(100vh + (220px * var(--mobile-frame-vertical-scale)));
+    width: calc(300px * var(--mobile-frame-scale));
+    height: calc(390px * var(--mobile-frame-vertical-scale));
     z-index: 20;
+  }
+
+  .transition-target--about-web {
+    left: calc(225px * var(--mobile-frame-scale));
+    top: calc(-5px * var(--mobile-frame-vertical-scale));
+    width: calc(250px * var(--mobile-frame-scale));
+    height: calc(250px * var(--mobile-frame-scale));
+  }
+
+  .transition-target--about-android {
+    left: calc(167.5px * var(--mobile-frame-scale));
+    top: calc(599.4519231px * var(--mobile-frame-vertical-scale));
+    width: calc(365px * var(--mobile-frame-scale));
+    height: calc(223.0961538px * var(--mobile-frame-vertical-scale));
   }
 
   .frame-three {
@@ -367,8 +448,22 @@ body {
     height: calc(322.05px * var(--frame-scale));
   }
 
+  .transition-target--tracks-web {
+    left: calc(71.3671875px * var(--mobile-frame-scale) - 239.5px * var(--frame-scale));
+    top: calc(85.9375px * var(--mobile-frame-vertical-scale) - 297.95px * var(--frame-scale));
+    width: calc(67.96875px * var(--mobile-frame-scale));
+    height: calc(67.96875px * var(--mobile-frame-vertical-scale));
+  }
+
+  .transition-target--tracks-maps {
+    left: calc(138px * var(--mobile-frame-scale) - 239.5px * var(--frame-scale));
+    top: calc(85.9375px * var(--mobile-frame-vertical-scale) - 297.95px * var(--frame-scale));
+    width: calc(65.625px * var(--mobile-frame-scale));
+    height: calc(67.96875px * var(--mobile-frame-vertical-scale));
+  }
+
   .frame-three__logo--gemini {
-    left: calc(447.65px * var(--frame-scale));
+    left: calc(435px * var(--frame-scale));
     top: calc(32.05px * var(--frame-scale));
     width: calc(261px * var(--frame-scale));
     height: calc(261px * var(--frame-scale));
@@ -405,6 +500,115 @@ body {
     height: 100svh;
     overflow: hidden;
     z-index: 3;
+  }
+
+  .transition-target--frame-four-gear {
+    left: calc(-120px * var(--mobile-frame-scale));
+    top: calc(-20px * var(--mobile-frame-vertical-scale));
+    width: calc(300px * var(--mobile-frame-scale));
+    height: calc(316.3636364px * var(--mobile-frame-vertical-scale));
+  }
+
+  .transition-target--frame-four-gemini {
+    left: calc(-120px * var(--mobile-frame-scale));
+    top: calc(220px * var(--mobile-frame-vertical-scale));
+    width: calc(300px * var(--mobile-frame-scale));
+    height: calc(300px * var(--mobile-frame-vertical-scale));
+  }
+
+  .transition-target--frame-four-cloud {
+    left: calc(-120px * var(--mobile-frame-scale));
+    top: calc(610px * var(--mobile-frame-vertical-scale));
+    width: calc(300px * var(--mobile-frame-scale));
+    height: calc(219.0647482px * var(--mobile-frame-vertical-scale));
+  }
+}
+
+@media (min-width: 701px) and (max-width: 1024px) {
+  .transition-target--about-web {
+    left: calc(866.7959px * var(--frame-scale));
+    top: 0;
+    width: calc(453.8907px * var(--frame-scale));
+    height: calc(453.8907px * var(--frame-scale));
+  }
+
+  .transition-target--about-android {
+    left: calc(860px * var(--frame-scale));
+    top: calc(739.2776px * var(--frame-scale));
+    width: calc(467.627px * var(--frame-scale));
+    height: calc(285.7433px * var(--frame-scale));
+  }
+
+  .transition-target--tracks-web {
+    left: calc(48.05px * var(--frame-scale));
+    top: calc(32.05px * var(--frame-scale));
+    width: calc(234px * var(--frame-scale));
+    height: calc(261px * var(--frame-scale));
+  }
+
+  .transition-target--tracks-maps {
+    left: calc(260px * var(--frame-scale));
+    top: calc(32.05px * var(--frame-scale));
+    width: calc(252px * var(--frame-scale));
+    height: calc(261px * var(--frame-scale));
+  }
+
+  .transition-target--frame-four-gear {
+    left: calc(75px * var(--frame-scale));
+    top: calc(12.294572px * var(--frame-scale));
+    width: calc(514.7120538px * var(--frame-scale));
+    height: calc(514.7120538px * var(--frame-scale));
+  }
+
+  .transition-target--frame-four-gemini {
+    left: calc(143.80822px * var(--frame-scale));
+    top: calc(333.350487px * var(--frame-scale));
+    width: calc(405.249978px * var(--frame-scale));
+    height: calc(516.8405823px * var(--frame-scale));
+  }
+
+  .transition-target--frame-four-cloud {
+    left: calc(112.373px * var(--frame-scale));
+    top: calc(739.2776px * var(--frame-scale));
+    width: calc(467.627px * var(--frame-scale));
+    height: calc(285.7433px * var(--frame-scale));
+  }
+}
+
+@media (max-width: 700px) {
+  .about-devjams,
+  .frame-three,
+  .frame-four {
+    height: 100svh;
+    min-height: 600px;
+  }
+
+  /* About DevJams: content takes the left 70%, right 30% stays open */
+  .about-devjams__content {
+    left: 0;
+    top: 150px;
+    width: 70%;
+    box-sizing: border-box;
+    padding: 0 12px 0 20px;
+  }
+
+  /* About VIT: content takes the right 70%, left 30% stays open */
+  .frame-four__content {
+    left: 30%;
+    top: 150px;
+    width: 70%;
+    box-sizing: border-box;
+    padding: 0 20px 0 12px;
+  }
+
+  .about-devjams__title,
+  .frame-four__title {
+    font-size: clamp(30px, 8.6vw, 44px);
+  }
+
+  .about-devjams__description,
+  .frame-four__description {
+    font-size: clamp(16px, 4.6vw, 24px);
   }
 }
 
@@ -514,7 +718,6 @@ body {
 
 .hero-menu__dino,
 .hero-menu__mark {
-  will-change: transform;
   transition: transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -713,6 +916,32 @@ body {
 
   .hero-track-icons {
     margin-top: -150px;
+    scale: clamp(0.28, calc((100vw - 32px) / 980px), 0.68) !important;
+  }
+
+  /* About GDG: slightly larger track SVGs and description closer to title */
+  .frame-three__logo--gemini {
+    width: calc(261px * var(--frame-scale) * 1.4);
+    height: calc(261px * var(--frame-scale) * 1.4);
+  }
+
+  .frame-three__logo--gear {
+    width: calc(312px * var(--frame-scale) * 1.4);
+    height: calc(312px * var(--frame-scale) * 1.4);
+  }
+
+  .transition-target--tracks-web {
+    width: calc(67.96875px * var(--mobile-frame-scale) * 1.4);
+    height: calc(67.96875px * var(--mobile-frame-vertical-scale) * 1.4);
+  }
+
+  .transition-target--tracks-maps {
+    width: calc(65.625px * var(--mobile-frame-scale) * 1.4);
+    height: calc(67.96875px * var(--mobile-frame-vertical-scale) * 1.4);
+  }
+
+  .frame-three__description {
+    top: clamp(138px, 21vh, 200px);
   }
 }
 @media (max-width: 700px) {
@@ -745,14 +974,14 @@ body {
 }
 
 
-@media (max-width: 700px) {
+@media (max-width: 1023px) {
   .hero-logo-canvas {
     max-width: none;
-    scale: clamp(0.28, calc((100vw - 32px) / 955.5px), 0.72) !important;
+    scale: clamp(0.28, calc((100vw - 32px) / 955.5px), 1) !important;
   }
 
   .hero-track-icons {
-    scale: clamp(0.36, calc((100vw - 32px) / 784px), 0.75) !important;
+    scale: clamp(0.36, calc((100vw - 32px) / 784px), 1) !important;
   }
 }
 

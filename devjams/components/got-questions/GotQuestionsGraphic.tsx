@@ -127,8 +127,8 @@ export function GotQuestionsGraphic({
         </linearGradient>
 
         {/* Ultra-soft Gaussian blur for seamless, diffuse liquid color blending */}
-        <filter id="meshGlow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="150" result="blur" />
+        <filter id="meshGlow" x="-15%" y="-15%" width="130%" height="130%">
+          <feGaussianBlur stdDeviation="48" result="blur" />
         </filter>
 
         {/* Dynamic triangle / full-screen expanding clip path */}
