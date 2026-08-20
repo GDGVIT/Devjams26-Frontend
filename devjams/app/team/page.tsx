@@ -36,39 +36,6 @@ export default function TeamPage() {
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto select-none pb-16">
       {/* 1440x1024 Desktop Reference Frame Canvas */}
       <div className="relative w-full max-w-[1440px] min-h-[1024px] flex-shrink-0">
-        {/* Top Left GDG Lockup */}
-        <header className="absolute top-8 left-[94px] z-30" aria-label="Google Developer Groups">
-          <Link href="/" className="cursor-pointer flex items-center">
-            <motion.div
-              className="hero-gdg-lockup"
-              initial={false}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <Image
-                src="/assets/gdg-logo-white.svg"
-                alt="GDG Logo"
-                width={46}
-                height={23}
-                priority
-                className="hero-gdg-lockup__icon"
-              />
-              <span className="hero-gdg-lockup__wordmark" aria-hidden="true">
-                <Image
-                  src="/assets/gdg-lockup-line.png"
-                  alt="Google Developer Groups on Campus - VIT Chennai"
-                  width={3003}
-                  height={300}
-                  priority
-                  className="hero-gdg-lockup__wordmark-image"
-                />
-              </span>
-              <span className="hero-gdg-lockup__name">
-                Vellore Institute of Technology
-              </span>
-            </motion.div>
-          </Link>
-        </header>
 
         {/* Group 1948755624 - Top 4 Logos Blend Banner (gear, web, gemini, cursor) */}
         <div
