@@ -69,7 +69,7 @@ export function JoinTeamModal({ isOpen, onClose }: JoinTeamModalProps) {
         </button>
 
         <div className="text-center mb-6">
-          <h3 className="text-2xl font-bold tracking-tight text-white">
+          <h3 className="text-2xl font-medium tracking-tight text-white">
             Enter Team Code
           </h3>
           <p className="text-xs text-neutral-400 mt-1">
@@ -86,7 +86,7 @@ export function JoinTeamModal({ isOpen, onClose }: JoinTeamModalProps) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-neutral-300 mb-1.5">
+            <label className="block text-xs font-normal text-neutral-300 mb-1.5">
               Team Invite Code
             </label>
             <input
@@ -100,7 +100,7 @@ export function JoinTeamModal({ isOpen, onClose }: JoinTeamModalProps) {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-neutral-300 mb-1.5">
+            <label className="block text-xs font-normal text-neutral-300 mb-1.5">
               Your Primary Role
             </label>
             <select
@@ -121,7 +121,7 @@ export function JoinTeamModal({ isOpen, onClose }: JoinTeamModalProps) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 py-3 px-4 rounded-full bg-white hover:bg-neutral-100 text-black font-semibold text-sm transition shadow-[0_0_20px_rgba(255,255,255,0.2)] disabled:opacity-50 cursor-pointer"
+            className="w-full mt-2 py-3 px-4 rounded-full bg-[#2A2A2E]/90 hover:bg-white text-white hover:text-black border border-white/10 hover:border-transparent font-normal text-sm transition-colors duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.5)] disabled:opacity-50 cursor-pointer"
           >
             {loading ? "Joining Team..." : "Join Team & Continue →"}
           </button>

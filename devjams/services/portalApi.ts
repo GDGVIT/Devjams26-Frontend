@@ -65,71 +65,17 @@ export interface IdeaSubmission {
   updatedAt: string;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
-const ACCESS_KEY = process.env.NEXT_PUBLIC_ACCESS_KEY || "test-access";
 const STORAGE_KEY_SESSION = "devjams26_portal_session";
+const STORAGE_KEY_ONBOARDING = "devjams26_portal_onboarding";
 const STORAGE_KEY_SUBMISSION = "devjams26_portal_submission";
+const STORAGE_KEY_TEAM = "devjams26_portal_team";
 
 export const portalApi = {
-  // Authentication via POST /auth/participant
-  async loginParticipant(email: string, accessKey = ACCESS_KEY): Promise<UserSession> {
+  // Client-side authentication
+  async loginParticipant(email: string): Promise<UserSession> {
     const cleanedEmail = email.trim().toLowerCase();
     const isInternal = cleanedEmail.endsWith("@vitstudent.ac.in") || cleanedEmail.endsWith("@vit.ac.in");
 
-    if (API_BASE_URL) {
-      try {
-        const res = await fetch(`${API_BASE_URL}/auth/participant`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: cleanedEmail,
-            access_key: accessKey,
-          }),
-        });
-
-        if (!res.ok) {
-          const errorData = await res.json().catch(() => ({ message: "Authentication failed" }));
-          throw new Error(errorData.message || `Login failed with status ${res.status}`);
-        }
-
-        const data = await res.json();
-        const token = data.token;
-
-        // Fetch participant profile via GET /participant/me
-        let profile: any = null;
-        if (token) {
-          try {
-            profile = await portalApi.getParticipantProfile(token);
-          } catch (e) {
-            console.warn("Could not fetch participant profile:", e);
-          }
-        }
-
-        const session: UserSession = {
-          id: profile?.id || `user_${Date.now()}`,
-          name: profile?.name || cleanedEmail.split("@")[0].replace(".", " ").toUpperCase(),
-          email: cleanedEmail,
-          participantType: isInternal ? "internal" : "external",
-          registrationNumber: profile?.registration_number || profile?.reg_no || (isInternal ? "23BCE" + Math.floor(1000 + Math.random() * 9000) : undefined),
-          college: profile?.college || (isInternal ? "Vellore Institute of Technology, Vellore" : "External Institution"),
-          phone: profile?.phone || profile?.contact_number,
-          isCheckedIn: profile?.is_checked_in ?? false,
-          token: token,
-          createdAt: new Date().toISOString(),
-        };
-
-        portalApi.saveSession(session);
-        return session;
-      } catch (err: any) {
-        console.error("API error during login, falling back to local session:", err);
-        // If API fails or is unreachable, throw or fallback gracefully
-        if (err.message && !err.message.includes("Failed to fetch")) {
-          throw err;
-        }
-      }
-    }
-
-    // Client-side session fallback
     const session: UserSession = {
       id: `${isInternal ? "int" : "ext"}_${Date.now()}`,
       name: cleanedEmail.split("@")[0].replace(".", " ").toUpperCase(),
@@ -140,27 +86,9 @@ export const portalApi = {
       token: "mock_jwt_" + Date.now(),
       createdAt: new Date().toISOString(),
     };
+
     portalApi.saveSession(session);
     return session;
-  },
-
-  // Profile lookup via GET /participant/me
-  async getParticipantProfile(token?: string): Promise<any> {
-    const currentToken = token || portalApi.getSession()?.token;
-    if (!API_BASE_URL || !currentToken) return null;
-
-    const res = await fetch(`${API_BASE_URL}/participant/me`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${currentToken}`,
-      },
-    });
-
-    if (!res.ok) {
-      throw new Error(`Failed to fetch profile (Status: ${res.status})`);
-    }
-
-    return await res.json();
   },
 
   // Internal Login alias
@@ -201,11 +129,22 @@ export const portalApi = {
       createdAt: existing?.createdAt || new Date().toISOString(),
     };
 
+    if (typeof window !== "undefined") {
+      localStorage.setItem(STORAGE_KEY_ONBOARDING, JSON.stringify(data));
+    }
     portalApi.saveSession(session);
     return session;
   },
 
   getInternalOnboarding(): InternalOnboardingData | null {
+    if (typeof window !== "undefined") {
+      const raw = localStorage.getItem(STORAGE_KEY_ONBOARDING);
+      if (raw) {
+        try {
+          return JSON.parse(raw);
+        } catch {}
+      }
+    }
     const session = portalApi.getSession();
     if (!session) return null;
     return {
@@ -217,6 +156,34 @@ export const portalApi = {
       hostelBlock: session.hostelBlock || "",
       roomNumber: session.roomNumber || "",
     };
+  },
+
+  // Local Team storage
+  async saveTeam(teamData: { name: string; code?: string; track?: TrackType; members?: TeamMember[] }): Promise<any> {
+    const team = {
+      id: `team_${Date.now()}`,
+      name: teamData.name,
+      code: teamData.code || "DJ26-" + Math.floor(1000 + Math.random() * 9000),
+      track: teamData.track || "web",
+      members: teamData.members || [],
+      createdAt: new Date().toISOString(),
+    };
+    if (typeof window !== "undefined") {
+      localStorage.setItem(STORAGE_KEY_TEAM, JSON.stringify(team));
+    }
+    return team;
+  },
+
+  async getParticipantTeam(): Promise<any> {
+    if (typeof window !== "undefined") {
+      const raw = localStorage.getItem(STORAGE_KEY_TEAM);
+      if (raw) {
+        try {
+          return JSON.parse(raw);
+        } catch {}
+      }
+    }
+    return null;
   },
 
   saveSession(session: UserSession): void {

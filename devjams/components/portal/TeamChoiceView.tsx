@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "../gsap-motion";
 import { DashboardGraphic } from "./DashboardGraphic";
 
@@ -17,7 +18,7 @@ export function TeamChoiceView() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white mb-2 sm:mb-4 text-center"
+          className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-white mb-2 sm:mb-4 text-center"
           style={{
             fontFamily: '"Google Sans", var(--font-google-sans), sans-serif',
           }}
@@ -43,25 +44,28 @@ export function TeamChoiceView() {
           className="relative z-30 mt-8 sm:mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full px-4 max-w-5xl"
         >
           {/* Continue To Join */}
-          <motion.button
-            type="button"
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.96 }}
-            className="group w-full sm:w-auto min-w-[280px] sm:min-w-[340px] md:min-w-[380px] h-[60px] sm:h-[66px] px-8 sm:px-12 rounded-full bg-[#2A2A2E]/90 hover:bg-white text-white hover:text-black border border-white/10 hover:border-transparent font-semibold text-base sm:text-lg md:text-[21px] flex items-center justify-center gap-3 sm:gap-4 transition-colors duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer select-none"
-            style={{
-              fontFamily: '"Google Sans", var(--font-google-sans), sans-serif',
-            }}
-          >
-            <span className="whitespace-nowrap">Continue To Join</span>
-            <svg
-              className="w-5 h-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+          <Link href="/join" className="w-full sm:w-auto inline-block">
+            <motion.button
+              type="button"
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              className="group w-full sm:w-auto min-w-[280px] sm:min-w-[340px] md:min-w-[380px] h-[60px] sm:h-[66px] px-8 sm:px-12 rounded-full bg-[#2A2A2E]/90 hover:bg-white text-white hover:text-black border border-white/10 hover:border-transparent font-normal flex items-center justify-center gap-3 sm:gap-4 transition-colors duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer select-none"
+              style={{
+                fontFamily: '"Google Sans", var(--font-google-sans), sans-serif',
+                fontSize: "22.5px",
+              }}
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M7 17L17 7M17 7H9M17 7V15" />
-            </svg>
-          </motion.button>
+              <span className="whitespace-nowrap">Continue To Join</span>
+              <svg
+                className="w-5 h-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M7 17L17 7M17 7H9M17 7V15" />
+              </svg>
+            </motion.button>
+          </Link>
 
           {/* "or" separator */}
           <span className="text-white/60 text-sm sm:text-base font-normal px-2 select-none">
@@ -69,25 +73,28 @@ export function TeamChoiceView() {
           </span>
 
           {/* Continue To Create */}
-          <motion.button
-            type="button"
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.96 }}
-            className="group w-full sm:w-auto min-w-[280px] sm:min-w-[340px] md:min-w-[380px] h-[60px] sm:h-[66px] px-8 sm:px-12 rounded-full bg-[#2A2A2E]/90 hover:bg-white text-white hover:text-black border border-white/10 hover:border-transparent font-semibold text-base sm:text-lg md:text-[21px] flex items-center justify-center gap-3 sm:gap-4 transition-colors duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer select-none"
-            style={{
-              fontFamily: '"Google Sans", var(--font-google-sans), sans-serif',
-            }}
-          >
-            <span className="whitespace-nowrap">Continue To Create</span>
-            <svg
-              className="w-5 h-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+          <Link href="/create" className="w-full sm:w-auto inline-block">
+            <motion.button
+              type="button"
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              className="group w-full sm:w-auto min-w-[280px] sm:min-w-[340px] md:min-w-[380px] h-[60px] sm:h-[66px] px-8 sm:px-12 rounded-full bg-[#2A2A2E]/90 hover:bg-white text-white hover:text-black border border-white/10 hover:border-transparent font-normal flex items-center justify-center gap-3 sm:gap-4 transition-colors duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer select-none"
+              style={{
+                fontFamily: '"Google Sans", var(--font-google-sans), sans-serif',
+                fontSize: "22.5px",
+              }}
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M7 17L17 7M17 7H9M17 7V15" />
-            </svg>
-          </motion.button>
+              <span className="whitespace-nowrap">Continue To Create</span>
+              <svg
+                className="w-5 h-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M7 17L17 7M17 7H9M17 7V15" />
+              </svg>
+            </motion.button>
+          </Link>
         </motion.div>
       </div>
     </main>

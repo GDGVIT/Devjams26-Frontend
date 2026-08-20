@@ -65,7 +65,7 @@ export function CreateTeamModal({ isOpen, onClose }: CreateTeamModalProps) {
         </button>
 
         <div className="text-center mb-6">
-          <h3 className="text-2xl font-bold tracking-tight text-white">
+          <h3 className="text-2xl font-medium tracking-tight text-white">
             Create Your Hackathon Team
           </h3>
           <p className="text-xs text-neutral-400 mt-1">
@@ -82,7 +82,7 @@ export function CreateTeamModal({ isOpen, onClose }: CreateTeamModalProps) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-neutral-300 mb-1.5">
+            <label className="block text-xs font-normal text-neutral-300 mb-1.5">
               Team Name
             </label>
             <input
@@ -96,7 +96,7 @@ export function CreateTeamModal({ isOpen, onClose }: CreateTeamModalProps) {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-neutral-300 mb-1.5">
+            <label className="block text-xs font-normal text-neutral-300 mb-1.5">
               Primary Track Domain
             </label>
             <select
@@ -115,7 +115,7 @@ export function CreateTeamModal({ isOpen, onClose }: CreateTeamModalProps) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 py-3 px-4 rounded-full bg-gradient-to-r from-amber-400 to-orange-400 hover:from-amber-300 hover:to-orange-300 text-black font-bold text-sm transition shadow-[0_0_20px_rgba(251,188,4,0.3)] disabled:opacity-50 cursor-pointer"
+            className="w-full mt-2 py-3 px-4 rounded-full bg-[#2A2A2E]/90 hover:bg-white text-white hover:text-black border border-white/10 hover:border-transparent font-normal text-sm transition-colors duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.5)] disabled:opacity-50 cursor-pointer"
           >
             {loading ? "Creating Team..." : "Create Team & Continue to Proposal 🚀"}
           </button>
