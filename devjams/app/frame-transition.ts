@@ -97,36 +97,36 @@ export const FRAME_FOUR_MOBILE_SHAPES = {
 } as const satisfies Record<string, ShapeBounds>;
 
 export const FRAME_THREE_MOBILE_GEAR_SOURCE = {
-  x: 872.7,
-  y: 308.45,
-  width: 312,
-  height: 312,
+  x: 230,
+  y: 330,
+  width: 65,
+  height: 68,
 } as const satisfies ShapeBounds;
 
 export const FRAME_THREE_MOBILE_SHAPES = {
   web: {
-    x: 71.3671875,
-    y: 85.9375,
-    width: 67.96875,
-    height: 67.96875,
+    x: 62,
+    y: 330,
+    width: 68,
+    height: 68,
   },
   maps: {
-    x: 124.5703125,
-    y: 85.9375,
-    width: 65.625,
-    height: 67.96875,
+    x: 118,
+    y: 330,
+    width: 66,
+    height: 68,
   },
   gemini: {
-    x: 178.9453125,
-    y: 85.9375,
-    width: 67.96875,
-    height: 67.96875,
+    x: 174,
+    y: 330,
+    width: 68,
+    height: 68,
   },
   gear: {
-    x: 235.6640625,
-    y: 85.9375,
-    width: 64.453125,
-    height: 67.96875,
+    x: 230,
+    y: 330,
+    width: 65,
+    height: 68,
   },
 } as const satisfies Record<string, ShapeBounds>;
 

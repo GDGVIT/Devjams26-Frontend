@@ -743,7 +743,10 @@ export default function Home() {
   return (
     <main
       className="relative min-h-screen w-full bg-black text-white flex flex-col items-center overflow-x-clip select-none"
-      style={{ "--frame-scale": frameScale } as CSSProperties}
+      style={{
+        "--frame-scale": frameScale,
+        "--mobile-scale": mobileFrameScale,
+      } as CSSProperties}
     >
       <section
         ref={heroRef}
@@ -1089,35 +1092,45 @@ export default function Home() {
       </section>
       <section id="tracks" ref={frameThreeRef} className="frame-three">
         <h2 className="frame-three__title">
-          <FoldText
-            text="About GDG"
-            splitBy="char"
-            hinge="top"
-            trigger="scroll"
-            duration={0.65}
-            stagger={0.045}
-            ease="power3.out"
-            perspective={700}
-            creaseShading={0.55}
-            fontSize="clamp(2rem, 5vw, 4rem)"
-            fontWeight={700}
-            color="#ffffff"
-          />
+          {isMobileViewport ? (
+            "About GDG"
+          ) : (
+            <FoldText
+              text="About GDG"
+              splitBy="char"
+              hinge="top"
+              trigger="scroll"
+              duration={0.65}
+              stagger={0.045}
+              ease="power3.out"
+              perspective={700}
+              creaseShading={0.55}
+              fontSize="clamp(2rem, 5vw, 4rem)"
+              fontWeight={700}
+              color="#ffffff"
+            />
+          )}
         </h2>
-        <SplitText
-          tag="p"
-          text="Fueled by curiosity and a bit of chaos, we are a community of coders who love to push limits, designers who bring ideas to life, and managers who turn vision into reality. We build crazy things that matter."
-          className="frame-three__description"
-          delay={35}
-          duration={0.8}
-          ease="power3.out"
-          splitType="words, chars"
-          from={{ opacity: 0, y: 40 }}
-          to={{ opacity: 1, y: 0 }}
-          threshold={0.1}
-          rootMargin="-100px"
-          textAlign="center"
-        />
+        {isMobileViewport ? (
+          <p className="frame-three__description">
+            Fueled by curiosity and a bit of chaos, we are a community of coders who love to push limits, designers who bring ideas to life, and managers who turn vision into reality. We build crazy things that matter.
+          </p>
+        ) : (
+          <SplitText
+            tag="p"
+            text="Fueled by curiosity and a bit of chaos, we are a community of coders who love to push limits, designers who bring ideas to life, and managers who turn vision into reality. We build crazy things that matter."
+            className="frame-three__description"
+            delay={35}
+            duration={0.8}
+            ease="power3.out"
+            splitType="words, chars"
+            from={{ opacity: 0, y: 40 }}
+            to={{ opacity: 1, y: 0 }}
+            threshold={0.1}
+            rootMargin="-100px"
+            textAlign="center"
+          />
+        )}
         <div className="frame-three__logos" aria-label="GDG tracks">
           <motion.div
             className="frame-three__logo frame-three__logo--cloud"
