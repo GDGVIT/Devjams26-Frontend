@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import ResponsiveSvg from "../../components/ResponsiveSvg";
 import { motion } from "../../components/gsap-motion";
@@ -19,6 +21,40 @@ export default function JoinPage() {
 
   return (
     <main className="relative h-screen w-screen bg-black text-white overflow-hidden select-none">
+      {/* Top Left GDG Lockup */}
+      <header className="absolute top-8 left-[94px] z-30" aria-label="Google Developer Groups">
+        <Link href="/" className="cursor-pointer flex items-center">
+          <motion.div
+            className="hero-gdg-lockup"
+            initial={false}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <Image
+              src="/assets/gdg-logo-white.svg"
+              alt="GDG Logo"
+              width={46}
+              height={23}
+              priority
+              className="hero-gdg-lockup__icon"
+            />
+            <span className="hero-gdg-lockup__wordmark" aria-hidden="true">
+              <Image
+                src="/assets/gdg-lockup-line.png"
+                alt="Google Developer Groups on Campus - VIT Chennai"
+                width={3003}
+                height={300}
+                priority
+                className="hero-gdg-lockup__wordmark-image"
+              />
+            </span>
+            <span className="hero-gdg-lockup__name">
+              Vellore Institute of Technology
+            </span>
+          </motion.div>
+        </Link>
+      </header>
+
       {/* Group 1948755623 - Left Form Container */}
       <div
         className="absolute z-20 flex flex-col justify-between"
@@ -128,69 +164,48 @@ export default function JoinPage() {
         </form>
       </div>
 
-      {/* Right Side 3 Logos (Only these 3 logos fitted to screen) */}
+      {/* Right Side 3 Logos Box - Height exactly 100vh with all 3 logos perfectly stacked and fully visible */}
       <div
-        className="absolute right-0 top-0 bottom-0 pointer-events-none z-10 flex flex-col items-end justify-between h-full overflow-hidden"
+        className="absolute right-[5vw] top-0 bottom-0 pointer-events-none z-10 flex flex-col items-center justify-between py-[2vh] overflow-hidden"
         style={{
-          width: "min(468px, 40vw)",
+          width: "min(460px, 32vw)",
+          height: "100vh",
         }}
         aria-hidden="true"
       >
-        {/* Web Track Logo */}
-        <div
-          className="relative flex-shrink-0"
-          style={{
-            width: "clamp(260px, 32vw, 454px)",
-            height: "clamp(260px, 32vw, 454px)",
-            marginTop: "-2%",
-            marginRight: "-2%",
-          }}
-        >
+        {/* Web Track Logo (Top) */}
+        <div className="relative w-full flex items-center justify-center flex-shrink-0" style={{ height: "35vh" }}>
           <ResponsiveSvg
             src="/assets/web.svg"
             alt="Web Track"
             width={454}
             height={454}
             priority
-            className="w-full h-full object-contain"
+            className="max-h-full max-w-full object-contain"
           />
         </div>
 
-        {/* Maps Logo */}
-        <div
-          className="relative flex-shrink-0 -my-[18%]"
-          style={{
-            width: "clamp(210px, 26vw, 364px)",
-            height: "clamp(260px, 33vw, 464px)",
-            marginRight: "6%",
-          }}
-        >
+        {/* Maps Logo (Middle) */}
+        <div className="relative w-full flex items-center justify-center flex-shrink-0 -my-[3vh]" style={{ height: "36vh" }}>
           <ResponsiveSvg
             src="/assets/maps.svg"
             alt="Google Maps"
             width={365}
             height={465}
             priority
-            className="w-full h-full object-contain"
+            className="max-h-full max-w-full object-contain"
           />
         </div>
 
-        {/* Android Track Logo */}
-        <div
-          className="relative flex-shrink-0"
-          style={{
-            width: "clamp(260px, 33vw, 468px)",
-            height: "clamp(160px, 20vw, 286px)",
-            marginBottom: "-2%",
-          }}
-        >
+        {/* Android Track Logo (Bottom) */}
+        <div className="relative w-full flex items-center justify-center flex-shrink-0" style={{ height: "26vh" }}>
           <ResponsiveSvg
             src="/assets/android.svg"
             alt="Android Track"
             width={468}
             height={286}
             priority
-            className="w-full h-full object-contain"
+            className="max-h-full max-w-full object-contain"
           />
         </div>
       </div>
