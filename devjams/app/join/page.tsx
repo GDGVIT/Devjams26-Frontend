@@ -167,14 +167,14 @@ export default function JoinPage() {
         </div>
 
         {/* Right Side 3 Logos Stack (Exact Figma Coordinates & Dimensions) */}
-        {/* Web Track Logo */}
+        {/* Web Track Logo (70% on screen) */}
         <div
           className="absolute pointer-events-none z-10"
           style={{
             width: "453.8907px",
             height: "453.8907px",
             left: "886.8px",
-            top: "-1px",
+            top: "-136.17px",
             mixBlendMode: "screen",
           }}
           aria-hidden="true"
@@ -189,14 +189,14 @@ export default function JoinPage() {
           />
         </div>
 
-        {/* Maps Logo */}
+        {/* Maps Logo (Shifted up with web) */}
         <div
           className="absolute pointer-events-none z-10"
           style={{
             width: "364.106px",
             height: "464.3671px",
             left: "931.16px",
-            top: "385.83px",
+            top: "250.66px",
             mixBlendMode: "screen",
           }}
           aria-hidden="true"
@@ -211,14 +211,14 @@ export default function JoinPage() {
           />
         </div>
 
-        {/* Android Track Logo */}
+        {/* Android Track Logo (Shifted up with web) */}
         <div
           className="absolute pointer-events-none z-10"
           style={{
             width: "467.627px",
             height: "285.7412px",
             left: "880px",
-            top: "737.83px",
+            top: "602.66px",
             mixBlendMode: "screen",
           }}
           aria-hidden="true"
