@@ -161,7 +161,7 @@ export default function IdeaSubmissionPage() {
             }}
           >
             <Image
-              src="/assets/cursor.svg"
+              src="/assets/baked/cursor.png"
               alt="Cursor"
               width={170}
               height={205}

@@ -121,7 +121,7 @@ export default function TeamPage() {
             }}
           >
             <Image
-              src="/assets/cursor.svg"
+              src="/assets/baked/cursor.png"
               alt="Cursor"
               width={170}
               height={205}
