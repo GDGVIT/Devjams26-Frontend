@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import gsap from "gsap";
 import {
   motion,
@@ -845,43 +846,45 @@ export default function Home() {
         </div>
         <h2 className="hero-cta-title">Wham Bam, Lets DevJam!</h2>
         {/* Idea Submission Button */}
-        <BorderGlow
-          className="hero-idea-border-glow"
-          edgeSensitivity={24}
-          glowColor="210 90 72"
-          backgroundColor="#ffffff"
-          borderRadius={999}
-          glowRadius={18}
-          glowIntensity={1.15}
-          coneSpread={20}
-          animated={false}
-          colors={["#ea4335", "#fbbc04", "#34a853", "#4285f4"]}
-          fillOpacity={0.35}
-        >
-          <motion.button
-            type="button"
-            initial={false}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{
-              duration: 0.5,
-              delay: 1.1,
-              type: "spring",
-              stiffness: 220,
-              damping: 18,
-            }}
-            whileHover={{
-              scale: 1.07,
-              backgroundColor: "#ffffff",
-            }}
-            whileTap={{ scale: 0.94 }}
-            className="hero-idea-button cursor-pointer bg-white text-black font-bold text-lg flex items-center justify-center relative"
-            style={{
-              fontFamily: '"Google Sans", var(--font-google-sans), sans-serif',
-            }}
+        <Link href="/portal" className="hero-idea-link inline-block relative z-30">
+          <BorderGlow
+            className="hero-idea-border-glow"
+            edgeSensitivity={24}
+            glowColor="210 90 72"
+            backgroundColor="#ffffff"
+            borderRadius={999}
+            glowRadius={18}
+            glowIntensity={1.15}
+            coneSpread={20}
+            animated={false}
+            colors={["#ea4335", "#fbbc04", "#34a853", "#4285f4"]}
+            fillOpacity={0.35}
           >
-            Idea Submission
-          </motion.button>
-        </BorderGlow>
+            <motion.button
+              type="button"
+              initial={false}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{
+                duration: 0.5,
+                delay: 1.1,
+                type: "spring",
+                stiffness: 220,
+                damping: 18,
+              }}
+              whileHover={{
+                scale: 1.07,
+                backgroundColor: "#ffffff",
+              }}
+              whileTap={{ scale: 0.94 }}
+              className="hero-idea-button cursor-pointer bg-white text-black font-bold text-lg flex items-center justify-center relative"
+              style={{
+                fontFamily: '"Google Sans", var(--font-google-sans), sans-serif',
+              }}
+            >
+              Idea Submission
+            </motion.button>
+          </BorderGlow>
+        </Link>
 
 
         </div>
