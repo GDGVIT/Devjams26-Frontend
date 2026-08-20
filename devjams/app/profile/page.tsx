@@ -9,18 +9,21 @@ export default function ProfilePage() {
   const router = useRouter();
 
   return (
-    <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto select-none pt-[clamp(100px,14vw,180px)] px-4 sm:px-6 md:px-10 pb-20">
-      {/* Top Full-Bleed Floating Graphics Banner (Group 1948755625) */}
+    <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto select-none p-4 sm:p-6 md:p-10 pb-20">
+      {/* Top Floating Graphics Banner (Group 1948755625: width: 1564.97px, height: 215.75px) */}
       <div
-        className="absolute top-0 left-0 right-0 w-full h-[clamp(130px,18vw,220px)] pointer-events-none z-10 overflow-hidden select-none"
+        className="relative pointer-events-none z-10 w-full max-w-[1565px] aspect-[1565/216] -mt-[clamp(16px,3vw,35px)] flex items-center justify-center overflow-visible select-none"
         aria-hidden="true"
       >
-        {/* 1. Left Pair: NotebookLLM + Cursor (Bleeds to left edge) */}
-        <div className="absolute left-0 top-0 w-[clamp(190px,26vw,340px)] h-full flex items-center justify-start">
-          {/* NotebookLLM */}
+        <div className="relative w-full h-full">
+          {/* 1. Left: NotebookLLM (left: -62px / -3.96%, top: 24px / 11.12%, width: 175.8px / 11.23%, height: 119.83px / 55.54%) */}
           <div
-            className="absolute -left-6 sm:-left-10 top-2 w-[55%] max-w-[176px] aspect-square flex items-center justify-center"
+            className="absolute flex items-center justify-center"
             style={{
+              left: "-3.96%",
+              top: "11.12%",
+              width: "11.23%",
+              height: "55.54%",
               mixBlendMode: "screen",
               filter: "brightness(1.15) saturate(1.05)",
             }}
@@ -35,10 +38,14 @@ export default function ProfilePage() {
             />
           </div>
 
-          {/* Cursor (Overlapping to right of NotebookLLM) */}
+          {/* 2. Left: Cursor (left: 86.38px / 5.52%, top: 31.26px / 14.49%, width: 93.72px / 5.99%, height: 112.9px / 52.33%) */}
           <div
-            className="absolute left-[30%] sm:left-[35%] top-3 w-[55%] max-w-[171px] aspect-[171/144] flex items-center justify-center"
+            className="absolute flex items-center justify-center"
             style={{
+              left: "5.52%",
+              top: "14.49%",
+              width: "5.99%",
+              height: "52.33%",
               mixBlendMode: "screen",
               filter: "brightness(1.15) saturate(1.05)",
             }}
@@ -46,20 +53,21 @@ export default function ProfilePage() {
             <Image
               src="/assets/baked/cursor.png"
               alt="Cursor"
-              width={171}
-              height={144}
+              width={94}
+              height={113}
               priority
               className="w-full h-full object-contain"
             />
           </div>
-        </div>
 
-        {/* 2. Middle Pair: Antigravity + Folder (Centered) */}
-        <div className="absolute left-1/2 -translate-x-1/2 top-0 w-[clamp(230px,32vw,400px)] h-full flex items-center justify-center">
-          {/* Antigravity Arch */}
+          {/* 3. Middle: Antigravity (left: 41.63%, top: 31px / 14.37%, width: 258.25px / 16.50%, height: 127.41px / 59.05%) */}
           <div
-            className="absolute left-[2%] sm:left-[5%] top-1 sm:top-2 w-[65%] max-w-[260px] aspect-[299/276] flex items-center justify-center"
+            className="absolute flex items-center justify-center"
             style={{
+              left: "41.63%",
+              top: "14.37%",
+              width: "16.50%",
+              height: "59.05%",
               mixBlendMode: "screen",
               filter: "brightness(1.12) saturate(1.05)",
             }}
@@ -67,17 +75,21 @@ export default function ProfilePage() {
             <Image
               src="/assets/baked/antigravity.png"
               alt="Antigravity"
-              width={299}
-              height={276}
+              width={258}
+              height={127}
               priority
               className="w-full h-full object-contain"
             />
           </div>
 
-          {/* Folder Graphic (Overlapping right of Antigravity) */}
+          {/* 4. Middle: Folder (left: 698.88px / 44.66%, top: 31px / 14.37%, width: 148.38px / 9.48%, height: 120.03px / 55.63%) */}
           <div
-            className="absolute left-[44%] sm:left-[48%] top-3 sm:top-4 w-[52%] max-w-[150px] aspect-[149/121] flex items-center justify-center"
+            className="absolute flex items-center justify-center"
             style={{
+              left: "44.66%",
+              top: "14.37%",
+              width: "9.48%",
+              height: "55.63%",
               mixBlendMode: "screen",
               filter: "brightness(1.12) saturate(1.05)",
             }}
@@ -85,20 +97,21 @@ export default function ProfilePage() {
             <Image
               src="/assets/baked/folder.png"
               alt="Folder"
-              width={149}
-              height={121}
+              width={148}
+              height={120}
               priority
               className="w-full h-full object-contain"
             />
           </div>
-        </div>
 
-        {/* 3. Right Pair: Maps + Four-Petal (Bleeds to right edge) */}
-        <div className="absolute right-0 top-0 w-[clamp(190px,26vw,340px)] h-full flex items-center justify-end">
-          {/* Maps Pin */}
+          {/* 5. Right: Maps (left: 1256px / 80.26%, top: -22px / -10.20%, width: 246.97px / 15.78%, height: 215.75px / 100%) */}
           <div
-            className="absolute right-[30%] sm:right-[35%] top-1 sm:top-2 w-[50%] max-w-[165px] aspect-[365/465] flex items-center justify-center"
+            className="absolute flex items-center justify-center"
             style={{
+              left: "80.26%",
+              top: "-10.20%",
+              width: "15.78%",
+              height: "100%",
               mixBlendMode: "screen",
               filter: "brightness(1.15) saturate(1.05)",
             }}
@@ -106,17 +119,22 @@ export default function ProfilePage() {
             <Image
               src="/assets/baked/maps.png"
               alt="Maps"
-              width={165}
-              height={210}
+              width={247}
+              height={216}
               priority
               className="w-full h-full object-contain"
             />
           </div>
 
-          {/* Four-Petal Flower Graphic (Overlapping right of Maps) */}
+          {/* 6. Right: Four-Petal (left: 1287.22px / 82.25%, top: -22px / -10.20%, width: 165.24px / 10.56%, height: 165.24px / 76.59%, rotate: 112.41deg) */}
           <div
-            className="absolute -right-6 sm:-right-10 top-3 w-[55%] max-w-[175px] aspect-square flex items-center justify-center"
+            className="absolute flex items-center justify-center"
             style={{
+              left: "82.25%",
+              top: "-10.20%",
+              width: "10.56%",
+              height: "76.59%",
+              transform: "rotate(112.41deg)",
               mixBlendMode: "screen",
               filter: "brightness(1.15) saturate(1.05)",
             }}
@@ -124,8 +142,8 @@ export default function ProfilePage() {
             <Image
               src="/assets/four-petal.png"
               alt="Four Petal"
-              width={153}
-              height={194}
+              width={165}
+              height={165}
               priority
               className="w-full h-full object-contain"
             />
