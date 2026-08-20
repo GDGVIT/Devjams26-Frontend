@@ -15,11 +15,22 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProp
 import ResponsiveSvg from "../components/ResponsiveSvg";
 import {
   FRAME_FOUR_CONTENT_ENTER_OFFSET,
+  FRAME_FOUR_MOBILE_ROTATIONS,
+  FRAME_FOUR_MOBILE_SHAPES,
+  FRAME_FOUR_SHAPES,
   FRAME_ONE_ANIMATION_START_PROGRESS,
   FRAME_REFERENCE_WIDTH,
   FRAME_THREE_EDGE_LOGO_OFFSETS,
+  FRAME_THREE_MOBILE_SHAPES,
+  FRAME_THREE_MOBILE_GEAR_SOURCE,
+  FRAME_THREE_LOGOS,
+  FRAME_TWO_LOGO_CENTER_X,
+  FRAME_TWO_MAPS_LEFT,
+  FRAME_TWO_MOBILE_SHAPES,
+  FRAME_TWO_SHAPES,
   FRAME_TWO_CONTENT_ENTER_OFFSET,
   HERO_TRACK_ENTRY_DELAYS,
+  alignShapeBoundsX,
   frameFourContentOffsetAt,
   frameScaleAtViewport,
   frameTwoMapEntryTransformAt,
@@ -29,13 +40,16 @@ import {
   interpolateShapeBounds,
   mobileFrameScaleAtViewport,
   mobileFrameVerticalScaleAtViewport,
+  scaleMobileShapeBoundsAtViewport,
+  scaleShapeBounds,
   heroMenuShouldCollapseAtScroll,
   menuDefaultsOpenAtViewport,
+  frameThreeMapsShapeAtViewport,
   scrollTransitionProgressAt,
   uniformShapeTransformAt,
   smoothScrollProgressAt,
   type ShapeBounds,
-} from "./transition-utils";
+} from "./frame-transition";
 type ShapeKey = "web" | "android";
 import { Tracks } from "../components/sections/Tracks";
 import { PreviousEvents } from "../components/sections/PreviousEvents";
@@ -49,7 +63,15 @@ type FrameThreeGeometry = {
   frameTwoHeight: number;
   frameFourStart: number;
   frameFourHeight: number;
+  frameThreePageLeft: number;
+  frameThreePageTop: number;
+  frameThreeScale: number;
+  frameFourPageLeft: number;
+  frameFourPageTop: number;
+  frameFourScale: number;
+  frameFourMobileScale: number;
   heroTrackScale: number;
+  isMobile: boolean;
   viewportHeight: number;
   frameTwoLoadEnd: number;
   frameThreeTransitionEnd: number;
@@ -58,12 +80,6 @@ type FrameThreeGeometry = {
   frameTwoMaps: ShapeBounds;
   frameThreeWeb: ShapeBounds;
   frameThreeMaps: ShapeBounds;
-  frameThreeCloud: ShapeBounds;
-  frameThreeGemini: ShapeBounds;
-  frameThreeGear: ShapeBounds;
-  frameFourCloud: ShapeBounds;
-  frameFourGemini: ShapeBounds;
-  frameFourGear: ShapeBounds;
 };
 
 function readNaturalBounds(element: HTMLElement): ShapeBounds {
@@ -79,6 +95,14 @@ function readNaturalBounds(element: HTMLElement): ShapeBounds {
     height: rect.height,
   };
 }
+const FRAME_FOUR_START_SHAPES = {
+  cloud: {
+    x: 1480,
+    y: FRAME_FOUR_SHAPES.cloud.y,
+    width: 278,
+    height: 203,
+  },
+} as const;
 export default function Home() {
   const heroRef = useRef<HTMLElement>(null);
   const frameTwoRef = useRef<HTMLElement>(null);
@@ -87,16 +111,6 @@ export default function Home() {
   const webRef = useRef<HTMLDivElement>(null);
   const androidRef = useRef<HTMLDivElement>(null);
   const mapsRef = useRef<HTMLDivElement>(null);
-  const frameTwoWebTargetRef = useRef<HTMLDivElement>(null);
-  const frameTwoAndroidTargetRef = useRef<HTMLDivElement>(null);
-  const frameThreeWebTargetRef = useRef<HTMLDivElement>(null);
-  const frameThreeMapsTargetRef = useRef<HTMLDivElement>(null);
-  const frameThreeCloudRef = useRef<HTMLDivElement>(null);
-  const frameThreeGeminiRef = useRef<HTMLDivElement>(null);
-  const frameThreeGearRef = useRef<HTMLDivElement>(null);
-  const frameFourCloudTargetRef = useRef<HTMLDivElement>(null);
-  const frameFourGeminiTargetRef = useRef<HTMLDivElement>(null);
-  const frameFourGearTargetRef = useRef<HTMLDivElement>(null);
   const trackIconsRef = useRef<HTMLDivElement>(null);
   const shapeStartRef = useRef<Partial<Record<ShapeKey, ShapeBounds>>>({});
   const shapeTargetRef = useRef<Partial<Record<ShapeKey, ShapeBounds>>>({});
@@ -257,7 +271,10 @@ export default function Home() {
       const transitionProgress = smoothScrollProgressAt(rawTransitionProgress);
 
       if (pageScroll < geometry.frameTwoLoadEnd) {
+        mapsFrameThreeX.set(0);
         mapsFrameThreeY.set(0);
+        mapsFrameThreeScaleX.set(1);
+        mapsFrameThreeScaleY.set(1);
         androidFrameThreeOpacity.set(1);
         frameThreeGeminiX.set(FRAME_THREE_EDGE_LOGO_OFFSETS.gemini);
         frameThreeGeminiRotate.set(-180);
@@ -356,9 +373,70 @@ export default function Home() {
         return;
       }
 
+      const absoluteBounds = (
+        shape: ShapeBounds,
+        sectionLeft: number,
+        sectionTop: number,
+        sectionScale: number,
+      ): ShapeBounds => ({
+        x: sectionLeft + shape.x * sectionScale,
+        y: sectionTop + shape.y * sectionScale,
+        width: shape.width * sectionScale,
+        height: shape.height * sectionScale,
+      });
+      const absoluteMobileBounds = (
+        shape: ShapeBounds,
+        sectionLeft: number,
+        sectionTop: number,
+      ): ShapeBounds => ({
+        x: sectionLeft + shape.x * geometry.frameFourMobileScale,
+        y: sectionTop + shape.y * geometry.frameFourMobileScale,
+        width: shape.width * geometry.frameFourMobileScale,
+        height: shape.height * geometry.frameFourMobileScale,
+      });
+      const frameFourShapes = geometry.isMobile
+        ? FRAME_FOUR_MOBILE_SHAPES
+        : FRAME_FOUR_SHAPES;
+      const targetBounds = (
+        shape: ShapeBounds,
+        sectionLeft: number,
+        sectionTop: number,
+      ): ShapeBounds =>
+        geometry.isMobile
+          ? absoluteMobileBounds(shape, sectionLeft, sectionTop)
+          : absoluteBounds(
+              shape,
+              sectionLeft,
+              sectionTop,
+              geometry.frameFourScale,
+            );
+
       const transformAt = uniformShapeTransformAt;
-      const sourceGear = geometry.frameThreeGear;
-      const targetGear = geometry.frameFourGear;
+      const sourceBounds = (
+        shape: ShapeBounds,
+        sectionLeft: number,
+        sectionTop: number,
+      ): ShapeBounds =>
+        geometry.isMobile
+          ? absoluteMobileBounds(shape, sectionLeft, sectionTop)
+          : absoluteBounds(
+              shape,
+              sectionLeft,
+              sectionTop,
+              geometry.frameThreeScale,
+            );
+      const sourceGear = sourceBounds(
+        geometry.isMobile
+          ? FRAME_THREE_MOBILE_GEAR_SOURCE
+          : FRAME_THREE_LOGOS.gear,
+        geometry.frameThreePageLeft,
+        geometry.frameThreePageTop,
+      );
+      const targetGear = targetBounds(
+        frameFourShapes.gear,
+        geometry.frameFourPageLeft,
+        geometry.frameFourPageTop,
+      );
       const gearTransform = transformAt(
         sourceGear,
         targetGear,
@@ -368,11 +446,22 @@ export default function Home() {
       frameThreeGearY.set(gearTransform.y);
       frameThreeGearScaleX.set(gearTransform.scaleX);
       frameThreeGearScaleY.set(gearTransform.scaleY);
-      frameThreeGearRotate.set(0);
+      frameThreeGearRotate.set(
+        geometry.isMobile ? FRAME_FOUR_MOBILE_ROTATIONS.gear * progress : 0,
+      );
       frameThreeGearOpacity.set(1);
-
-      const sourceGemini = geometry.frameThreeGemini;
-      const targetGemini = geometry.frameFourGemini;
+      const sourceGemini = sourceBounds(
+        geometry.isMobile
+          ? FRAME_THREE_MOBILE_SHAPES.gemini
+          : FRAME_THREE_LOGOS.gemini,
+        geometry.frameThreePageLeft,
+        geometry.frameThreePageTop,
+      );
+      const targetGemini = targetBounds(
+        frameFourShapes.gemini,
+        geometry.frameFourPageLeft,
+        geometry.frameFourPageTop,
+      );
       const geminiTransform = transformAt(
         sourceGemini,
         targetGemini,
@@ -385,8 +474,30 @@ export default function Home() {
       frameThreeGeminiRotate.set(0);
       frameThreeGeminiOpacity.set(1);
 
-      const cloudStart = geometry.frameThreeCloud;
-      const cloudTarget = geometry.frameFourCloud;
+      const cloudStart = geometry.isMobile
+        ? {
+            x: geometry.frameFourPageLeft + 375 * geometry.frameFourMobileScale,
+            y:
+              geometry.frameFourPageTop +
+              FRAME_FOUR_MOBILE_SHAPES.cloud.y * geometry.frameFourMobileScale,
+            width:
+              FRAME_FOUR_MOBILE_SHAPES.cloud.width *
+              geometry.frameFourMobileScale,
+            height:
+              FRAME_FOUR_MOBILE_SHAPES.cloud.height *
+              geometry.frameFourMobileScale,
+          }
+        : absoluteBounds(
+            FRAME_FOUR_START_SHAPES.cloud,
+            geometry.frameFourPageLeft,
+            geometry.frameFourPageTop,
+            geometry.frameFourScale,
+          );
+      const cloudTarget = targetBounds(
+        frameFourShapes.cloud,
+        geometry.frameFourPageLeft,
+        geometry.frameFourPageTop,
+      );
       const cloudTransform = transformAt(
         cloudStart,
         cloudTarget,
@@ -443,16 +554,6 @@ export default function Home() {
       const web = webRef.current;
       const android = androidRef.current;
       const maps = mapsRef.current;
-      const frameTwoWebTarget = frameTwoWebTargetRef.current;
-      const frameTwoAndroidTarget = frameTwoAndroidTargetRef.current;
-      const frameThreeWebTarget = frameThreeWebTargetRef.current;
-      const frameThreeMapsTarget = frameThreeMapsTargetRef.current;
-      const frameThreeCloud = frameThreeCloudRef.current;
-      const frameThreeGemini = frameThreeGeminiRef.current;
-      const frameThreeGear = frameThreeGearRef.current;
-      const frameFourCloudTarget = frameFourCloudTargetRef.current;
-      const frameFourGeminiTarget = frameFourGeminiTargetRef.current;
-      const frameFourGearTarget = frameFourGearTargetRef.current;
       const trackIcons = trackIconsRef.current;
       if (
         !hero ||
@@ -462,16 +563,6 @@ export default function Home() {
         !web ||
         !android ||
         !maps ||
-        !frameTwoWebTarget ||
-        !frameTwoAndroidTarget ||
-        !frameThreeWebTarget ||
-        !frameThreeMapsTarget ||
-        !frameThreeCloud ||
-        !frameThreeGemini ||
-        !frameThreeGear ||
-        !frameFourCloudTarget ||
-        !frameFourGeminiTarget ||
-        !frameFourGearTarget ||
         !trackIcons
       ) return;
       const currentViewportWidth = window.innerWidth;
@@ -491,18 +582,63 @@ export default function Home() {
         trackIcons.offsetWidth > 0
           ? trackRect.width / trackIcons.offsetWidth
           : 1;
+      const frameScale = frameScaleAtViewport(currentViewportWidth);
+      const mobileFrameScale = mobileFrameScaleAtViewport(currentViewportWidth);
+      const isMobile = currentViewportWidth <= 700;
       const heroPageTop = heroRect.top + window.scrollY;
       const framePageTop = frameRect.top + window.scrollY;
+      const framePageLeft = frameRect.left + window.scrollX;
       const frameThreePageTop = frameThreeRect.top + window.scrollY;
+      const frameThreePageLeft = frameThreeRect.left + window.scrollX;
       const frameFourPageTop = frameFourRect.top + window.scrollY;
+      const frameFourPageLeft = frameFourRect.left + window.scrollX;
+      const targetBounds = (
+        shape: ShapeBounds,
+        sectionLeft: number,
+        sectionTop: number,
+        sectionScale: number,
+        mobileShape = false,
+      ): ShapeBounds => {
+        const scaled = mobileShape
+          ? scaleMobileShapeBoundsAtViewport(
+              shape,
+              currentViewportWidth,
+              currentViewportHeight,
+            )
+          : scaleShapeBounds(shape, sectionScale);
+        return {
+          ...scaled,
+          x: sectionLeft + scaled.x,
+          y: sectionTop + scaled.y,
+        };
+      };
 
       shapeStartRef.current = {
         web: readNaturalBounds(web),
         android: readNaturalBounds(android),
       };
+      const frameTwoTargetScale = isMobile ? mobileFrameScale : frameScale;
+      const frameTwoWebShape = isMobile
+        ? FRAME_TWO_MOBILE_SHAPES.web
+        : FRAME_TWO_SHAPES.web;
+      const frameTwoAndroidShape = isMobile
+        ? FRAME_TWO_MOBILE_SHAPES.android
+        : FRAME_TWO_SHAPES.android;
       shapeTargetRef.current = {
-        web: readNaturalBounds(frameTwoWebTarget),
-        android: readNaturalBounds(frameTwoAndroidTarget),
+        web: targetBounds(
+          frameTwoWebShape,
+          framePageLeft,
+          framePageTop,
+          frameTwoTargetScale,
+          isMobile,
+        ),
+        android: targetBounds(
+          frameTwoAndroidShape,
+          framePageLeft,
+          framePageTop,
+          frameTwoTargetScale,
+          isMobile,
+        ),
       };
       frameThreeGeometryRef.current = {
         heroStart: heroPageTop,
@@ -511,10 +647,22 @@ export default function Home() {
         frameTwoHeight: frameRect.height,
         frameFourStart: frameFourPageTop,
         frameFourHeight: frameFourRect.height,
+        frameThreePageLeft,
+        frameThreePageTop,
+        frameThreeScale: frameScale,
         heroTrackScale,
+        frameFourPageLeft,
+        frameFourPageTop,
+        frameFourScale: frameScale,
+        frameFourMobileScale: mobileFrameScale,
+        isMobile,
         viewportHeight: window.innerHeight,
         frameTwoLoadEnd:
-          framePageTop + frameRect.height - window.innerHeight,
+          framePageTop +
+          Math.max(
+            frameRect.height * 0.35,
+            frameRect.height - window.innerHeight * 0.65,
+          ),
         frameThreeTransitionEnd: halfVisibleScrollAt(
           frameThreePageTop,
           frameThreeRect.height,
@@ -523,14 +671,20 @@ export default function Home() {
         heroWeb: shapeStartRef.current.web!,
         frameTwoWeb: shapeTargetRef.current.web!,
         frameTwoMaps: readNaturalBounds(maps),
-        frameThreeWeb: readNaturalBounds(frameThreeWebTarget),
-        frameThreeMaps: readNaturalBounds(frameThreeMapsTarget),
-        frameThreeCloud: readNaturalBounds(frameThreeCloud),
-        frameThreeGemini: readNaturalBounds(frameThreeGemini),
-        frameThreeGear: readNaturalBounds(frameThreeGear),
-        frameFourCloud: readNaturalBounds(frameFourCloudTarget),
-        frameFourGemini: readNaturalBounds(frameFourGeminiTarget),
-        frameFourGear: readNaturalBounds(frameFourGearTarget),
+        frameThreeWeb: targetBounds(
+          isMobile ? FRAME_THREE_MOBILE_SHAPES.web : FRAME_THREE_LOGOS.web,
+          frameThreePageLeft,
+          frameThreePageTop,
+          isMobile ? mobileFrameScale : frameScale,
+          false,
+        ),
+        frameThreeMaps: targetBounds(
+          frameThreeMapsShapeAtViewport(isMobile),
+          frameThreePageLeft,
+          frameThreePageTop,
+          isMobile ? mobileFrameScale : frameScale,
+          false,
+        ),
       };
       syncScrollProgress(scrollY.get());
       syncFrameThreeScroll(scrollY.get());
@@ -590,8 +744,7 @@ export default function Home() {
       className="relative min-h-screen w-full bg-black text-white flex flex-col items-center overflow-x-clip select-none"
       style={{
         "--frame-scale": frameScale,
-        "--mobile-frame-scale": mobileFrameScale,
-        "--mobile-frame-vertical-scale": mobileFrameVerticalScale,
+        "--mobile-scale": mobileFrameScale,
       } as CSSProperties}
     >
       <section
@@ -897,84 +1050,84 @@ export default function Home() {
             DevJams is the flagship hackathon organized by GDG-VIT, a 48-hour intensive coding event designed to push the boundaries of innovation and develop practical problem-solving skills.
           </p>
         </motion.div>
-        <div
-          ref={frameTwoWebTargetRef}
-          className="transition-target transition-target--about-web"
+
+        <motion.div
+          ref={mapsRef}
+          className="about-devjams__shape about-devjams__shape--pin"
+          style={{
+            left: isMobileViewport
+              ? FRAME_TWO_MOBILE_SHAPES.maps.x * mobileFrameScale
+              : FRAME_TWO_SHAPES.maps.x * frameScale,
+            top: isMobileViewport
+              ? FRAME_TWO_MOBILE_SHAPES.maps.y * mobileFrameVerticalScale
+              : FRAME_TWO_SHAPES.maps.y * frameScale,
+            width: isMobileViewport
+              ? FRAME_TWO_MOBILE_SHAPES.maps.width * mobileFrameScale
+              : FRAME_TWO_SHAPES.maps.width * frameScale,
+            height: isMobileViewport
+              ? FRAME_TWO_MOBILE_SHAPES.maps.height * mobileFrameVerticalScale
+              : FRAME_TWO_SHAPES.maps.height * frameScale,
+            opacity: mapsOpacity,
+            x: mapsFrameThreeX,
+            y: mapsFrameThreeY,
+            scaleX: mapsFrameThreeScaleX,
+            scaleY: mapsFrameThreeScaleY,
+            zIndex: isMobileViewport ? 5 : 20,
+          }}
           aria-hidden="true"
-        />
-        <div
-          ref={frameTwoAndroidTargetRef}
-          className="transition-target transition-target--about-android"
-          aria-hidden="true"
-        />
+        >
+          <ResponsiveSvg
+            src="/assets/maps.svg"
+            alt=""
+            width={365}
+            height={465}
+            className="about-devjams__shape-image"
+          />
+        </motion.div>
       </section>
-
-      <motion.div
-        ref={mapsRef}
-        className="about-devjams__shape about-devjams__shape--pin"
-        style={{
-          opacity: mapsOpacity,
-          x: mapsFrameThreeX,
-          y: mapsFrameThreeY,
-          scaleX: mapsFrameThreeScaleX,
-          scaleY: mapsFrameThreeScaleY,
-          zIndex: isMobileViewport ? 5 : 20,
-        }}
-        aria-hidden="true"
-      >
-        <ResponsiveSvg
-          src="/assets/maps.svg"
-          alt=""
-          width={365}
-          height={465}
-          className="about-devjams__shape-image"
-        />
-      </motion.div>
-
       <section id="tracks" ref={frameThreeRef} className="frame-three">
         <h2 className="frame-three__title">
-          <FoldText
-            text="About GDG"
-            splitBy="char"
-            hinge="top"
-            trigger="scroll"
-            duration={0.65}
-            stagger={0.045}
-            ease="power3.out"
-            perspective={700}
-            creaseShading={0.55}
-            fontSize="clamp(2rem, 5vw, 4rem)"
-            fontWeight={700}
-            color="#ffffff"
-          />
+          {isMobileViewport ? (
+            "About GDG"
+          ) : (
+            <FoldText
+              text="About GDG"
+              splitBy="char"
+              hinge="top"
+              trigger="scroll"
+              duration={0.65}
+              stagger={0.045}
+              ease="power3.out"
+              perspective={700}
+              creaseShading={0.55}
+              fontSize="clamp(2rem, 5vw, 4rem)"
+              fontWeight={700}
+              color="#ffffff"
+            />
+          )}
         </h2>
-        <SplitText
-          tag="p"
-          text="Fueled by curiosity and a bit of chaos, we are a community of coders who love to push limits, designers who bring ideas to life, and managers who turn vision into reality. We build crazy things that matter."
-          className="frame-three__description"
-          delay={35}
-          duration={0.8}
-          ease="power3.out"
-          splitType="words, chars"
-          from={{ opacity: 0, y: 40 }}
-          to={{ opacity: 1, y: 0 }}
-          threshold={0.1}
-          rootMargin="-100px"
-          textAlign="center"
-        />
+        {isMobileViewport ? (
+          <p className="frame-three__description">
+            Fueled by curiosity and a bit of chaos, we are a community of coders who love to push limits, designers who bring ideas to life, and managers who turn vision into reality. We build crazy things that matter.
+          </p>
+        ) : (
+          <SplitText
+            tag="p"
+            text="Fueled by curiosity and a bit of chaos, we are a community of coders who love to push limits, designers who bring ideas to life, and managers who turn vision into reality. We build crazy things that matter."
+            className="frame-three__description"
+            delay={35}
+            duration={0.8}
+            ease="power3.out"
+            splitType="words, chars"
+            from={{ opacity: 0, y: 40 }}
+            to={{ opacity: 1, y: 0 }}
+            threshold={0.1}
+            rootMargin="-100px"
+            textAlign="center"
+          />
+        )}
         <div className="frame-three__logos" aria-label="GDG tracks">
-          <div
-            ref={frameThreeWebTargetRef}
-            className="transition-target transition-target--tracks-web"
-            aria-hidden="true"
-          />
-          <div
-            ref={frameThreeMapsTargetRef}
-            className="transition-target transition-target--tracks-maps"
-            aria-hidden="true"
-          />
           <motion.div
-            ref={frameThreeCloudRef}
             className="frame-three__logo frame-three__logo--cloud"
             style={{
               x: frameFourCloudX,
@@ -993,7 +1146,6 @@ export default function Home() {
             />
           </motion.div>
           <motion.div
-            ref={frameThreeGeminiRef}
             className="frame-three__logo frame-three__logo--gemini"
             style={{
               x: frameThreeGeminiX,
@@ -1013,7 +1165,6 @@ export default function Home() {
             />
           </motion.div>
           <motion.div
-            ref={frameThreeGearRef}
             className="frame-three__logo frame-three__logo--gear"
             style={{
               x: frameThreeGearX,
@@ -1036,20 +1187,6 @@ export default function Home() {
       </section>
 
       <section id="about-vit" ref={frameFourRef} className="frame-four">
-        <div className="frame-four__transition-targets" aria-hidden="true">
-          <div
-            ref={frameFourGearTargetRef}
-            className="transition-target transition-target--frame-four-gear"
-          />
-          <div
-            ref={frameFourGeminiTargetRef}
-            className="transition-target transition-target--frame-four-gemini"
-          />
-          <div
-            ref={frameFourCloudTargetRef}
-            className="transition-target transition-target--frame-four-cloud"
-          />
-        </div>
         <motion.div
           className="frame-four__content"
           style={{
