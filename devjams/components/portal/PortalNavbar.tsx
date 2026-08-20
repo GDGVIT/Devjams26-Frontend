@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { portalApi, type UserSession } from "../../services/portalApi";
@@ -8,11 +8,7 @@ import { portalApi, type UserSession } from "../../services/portalApi";
 export function PortalNavbar() {
   const router = useRouter();
   const pathname = usePathname();
-  const [session, setSession] = useState<UserSession | null>(null);
-
-  useEffect(() => {
-    setSession(portalApi.getSession());
-  }, []);
+  const [session] = useState<UserSession | null>(() => portalApi.getSession());
 
   const handleLogout = () => {
     portalApi.logout();
