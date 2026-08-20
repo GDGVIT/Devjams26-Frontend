@@ -9,16 +9,16 @@ export default function ProfilePage() {
   const router = useRouter();
 
   return (
-    <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto select-none p-4 sm:p-6 md:p-10 pb-20">
+    <div className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start select-none overflow-x-hidden pb-20">
       {/* Top Floating Graphics Banner: Left (notebookllm + cursor), Center (antigravity + folder), Right (maps + four-petal) */}
       <div
-        className="w-full flex items-center justify-between pointer-events-none z-10 select-none overflow-visible mb-6 pt-1 sm:pt-2 px-1 sm:px-4"
+        className="absolute top-0 left-0 right-0 w-full pointer-events-none z-10 select-none overflow-visible"
         aria-hidden="true"
       >
-        {/* 1. Left Pair (Align Left: NotebookLLM then Cursor with 30% blend) */}
-        <div className="flex items-center justify-start relative flex-shrink-0">
+        {/* 1. Left Pair (Align Top-Left Corner with Bleed) */}
+        <div className="absolute left-0 -top-2 sm:-top-5 flex items-center justify-start">
           <div
-            className="relative h-[clamp(65px,10vw,120px)] w-auto aspect-[176/120] flex items-center justify-center"
+            className="relative h-[clamp(75px,11vw,140px)] w-auto aspect-[176/120] flex items-center justify-center -ml-4 sm:-ml-8"
             style={{
               mixBlendMode: "screen",
               filter: "brightness(1.15) saturate(1.05)",
@@ -34,7 +34,7 @@ export default function ProfilePage() {
             />
           </div>
           <div
-            className="relative h-[clamp(65px,10vw,120px)] w-auto aspect-[171/144] flex items-center justify-center -ml-[30%]"
+            className="relative h-[clamp(75px,11vw,140px)] w-auto aspect-[171/144] flex items-center justify-center -ml-[30%]"
             style={{
               mixBlendMode: "screen",
               filter: "brightness(1.15) saturate(1.05)",
@@ -51,10 +51,10 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* 2. Center Pair (Align Center: Antigravity then Folder with 30% blend) */}
-        <div className="flex items-center justify-center relative flex-shrink-0">
+        {/* 2. Center Pair (Align Top-Center) */}
+        <div className="absolute left-1/2 -translate-x-1/2 top-0 sm:top-1 flex items-center justify-center">
           <div
-            className="relative h-[clamp(65px,10vw,120px)] w-auto aspect-[299/276] flex items-center justify-center"
+            className="relative h-[clamp(75px,11vw,140px)] w-auto aspect-[299/276] flex items-center justify-center"
             style={{
               mixBlendMode: "screen",
               filter: "brightness(1.12) saturate(1.05)",
@@ -70,7 +70,7 @@ export default function ProfilePage() {
             />
           </div>
           <div
-            className="relative h-[clamp(65px,10vw,120px)] w-auto aspect-[149/121] flex items-center justify-center -ml-[30%]"
+            className="relative h-[clamp(75px,11vw,140px)] w-auto aspect-[149/121] flex items-center justify-center -ml-[30%]"
             style={{
               mixBlendMode: "screen",
               filter: "brightness(1.12) saturate(1.05)",
@@ -87,10 +87,10 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* 3. Right Pair (Align Right: Maps then Four-Petal with 30% blend) */}
-        <div className="flex items-center justify-end relative flex-shrink-0">
+        {/* 3. Right Pair (Align Top-Right Corner with Bleed) */}
+        <div className="absolute right-0 -top-2 sm:-top-5 flex items-center justify-end">
           <div
-            className="relative h-[clamp(65px,10vw,120px)] w-auto aspect-[365/465] flex items-center justify-center"
+            className="relative h-[clamp(75px,11vw,140px)] w-auto aspect-[365/465] flex items-center justify-center"
             style={{
               mixBlendMode: "screen",
               filter: "brightness(1.15) saturate(1.05)",
@@ -106,7 +106,7 @@ export default function ProfilePage() {
             />
           </div>
           <div
-            className="relative h-[clamp(65px,10vw,120px)] w-auto aspect-square flex items-center justify-center -ml-[30%]"
+            className="relative h-[clamp(75px,11vw,140px)] w-auto aspect-square flex items-center justify-center -ml-[30%] -mr-4 sm:-mr-8"
             style={{
               mixBlendMode: "screen",
               filter: "brightness(1.15) saturate(1.05)",
@@ -123,8 +123,9 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
-      <div className="w-full max-w-[1072px] mx-auto flex flex-col items-start gap-[clamp(20px,3.5vh,36px)] mt-2 z-20 px-1 sm:px-3 md:px-0">
-        {/* Profile Page Title */}
+
+      {/* Main Content Container (Semantic Main) */}
+      <main className="w-full max-w-[1072px] mx-auto flex flex-col items-start gap-[clamp(20px,3.5vh,36px)] z-20 pt-[clamp(85px,12vw,155px)] px-4 sm:px-6 md:px-0">
         <h1
           className="text-white font-bold tracking-normal leading-[1.2] text-center capitalize m-0 select-none w-full text-[clamp(32px,5vw,64px)]"
           style={{
@@ -311,7 +312,7 @@ export default function ProfilePage() {
             <span>Back</span>
           </motion.button>
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }
