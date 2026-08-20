@@ -10,20 +10,16 @@ export default function ProfilePage() {
 
   return (
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto select-none p-4 sm:p-6 md:p-10 pb-20">
-      {/* Top Floating Graphics Banner (Group 1948755625: width: 1564.97px, height: 215.75px) */}
+      {/* Top Floating Graphics Banner: Left (notebookllm + cursor), Center (antigravity + folder), Right (maps + four-petal) */}
       <div
-        className="relative pointer-events-none z-10 w-full max-w-[1565px] aspect-[1565/216] -mt-[clamp(16px,3vw,35px)] flex items-center justify-center overflow-visible select-none"
+        className="w-full flex items-center justify-between pointer-events-none z-10 select-none overflow-hidden h-[clamp(90px,14vw,170px)] -mt-[clamp(12px,2.5vw,28px)] mb-3"
         aria-hidden="true"
       >
-        <div className="relative w-full h-full">
-          {/* 1. Left: NotebookLLM (left: -62px / -3.96%, top: 24px / 11.12%, width: 175.8px / 11.23%, height: 119.83px / 55.54%) */}
+        {/* 1. Left Pair (Align Left: NotebookLLM then Cursor with 30% blend) */}
+        <div className="flex items-center justify-start relative flex-shrink-0">
           <div
-            className="absolute flex items-center justify-center"
+            className="relative w-[clamp(75px,11vw,140px)] aspect-[176/120] flex items-center justify-center"
             style={{
-              left: "-3.96%",
-              top: "11.12%",
-              width: "11.23%",
-              height: "55.54%",
               mixBlendMode: "screen",
               filter: "brightness(1.15) saturate(1.05)",
             }}
@@ -37,15 +33,9 @@ export default function ProfilePage() {
               className="w-full h-full object-contain"
             />
           </div>
-
-          {/* 2. Left: Cursor (left: 86.38px / 5.52%, top: 31.26px / 14.49%, width: 93.72px / 5.99%, height: 112.9px / 52.33%) */}
           <div
-            className="absolute flex items-center justify-center"
+            className="relative w-[clamp(70px,10vw,130px)] aspect-[171/144] flex items-center justify-center -ml-[30%]"
             style={{
-              left: "5.52%",
-              top: "14.49%",
-              width: "5.99%",
-              height: "52.33%",
               mixBlendMode: "screen",
               filter: "brightness(1.15) saturate(1.05)",
             }}
@@ -53,21 +43,19 @@ export default function ProfilePage() {
             <Image
               src="/assets/baked/cursor.png"
               alt="Cursor"
-              width={94}
-              height={113}
+              width={171}
+              height={144}
               priority
               className="w-full h-full object-contain"
             />
           </div>
+        </div>
 
-          {/* 3. Middle: Antigravity (left: 41.63%, top: 31px / 14.37%, width: 258.25px / 16.50%, height: 127.41px / 59.05%) */}
+        {/* 2. Center Pair (Align Center: Antigravity then Folder with 30% blend) */}
+        <div className="flex items-center justify-center relative flex-shrink-0">
           <div
-            className="absolute flex items-center justify-center"
+            className="relative w-[clamp(85px,13vw,165px)] aspect-[299/276] flex items-center justify-center"
             style={{
-              left: "41.63%",
-              top: "14.37%",
-              width: "16.50%",
-              height: "59.05%",
               mixBlendMode: "screen",
               filter: "brightness(1.12) saturate(1.05)",
             }}
@@ -75,21 +63,15 @@ export default function ProfilePage() {
             <Image
               src="/assets/baked/antigravity.png"
               alt="Antigravity"
-              width={258}
-              height={127}
+              width={299}
+              height={276}
               priority
               className="w-full h-full object-contain"
             />
           </div>
-
-          {/* 4. Middle: Folder (left: 698.88px / 44.66%, top: 31px / 14.37%, width: 148.38px / 9.48%, height: 120.03px / 55.63%) */}
           <div
-            className="absolute flex items-center justify-center"
+            className="relative w-[clamp(75px,11vw,140px)] aspect-[149/121] flex items-center justify-center -ml-[30%]"
             style={{
-              left: "44.66%",
-              top: "14.37%",
-              width: "9.48%",
-              height: "55.63%",
               mixBlendMode: "screen",
               filter: "brightness(1.12) saturate(1.05)",
             }}
@@ -97,21 +79,19 @@ export default function ProfilePage() {
             <Image
               src="/assets/baked/folder.png"
               alt="Folder"
-              width={148}
-              height={120}
+              width={149}
+              height={121}
               priority
               className="w-full h-full object-contain"
             />
           </div>
+        </div>
 
-          {/* 5. Right: Maps (left: 1256px / 80.26%, top: -22px / -10.20%, width: 246.97px / 15.78%, height: 215.75px / 100%) */}
+        {/* 3. Right Pair (Align Right: Maps then Four-Petal with 30% blend) */}
+        <div className="flex items-center justify-end relative flex-shrink-0">
           <div
-            className="absolute flex items-center justify-center"
+            className="relative w-[clamp(80px,12vw,155px)] aspect-[365/465] flex items-center justify-center"
             style={{
-              left: "80.26%",
-              top: "-10.20%",
-              width: "15.78%",
-              height: "100%",
               mixBlendMode: "screen",
               filter: "brightness(1.15) saturate(1.05)",
             }}
@@ -119,22 +99,15 @@ export default function ProfilePage() {
             <Image
               src="/assets/baked/maps.png"
               alt="Maps"
-              width={247}
-              height={216}
+              width={165}
+              height={210}
               priority
               className="w-full h-full object-contain"
             />
           </div>
-
-          {/* 6. Right: Four-Petal (left: 1287.22px / 82.25%, top: -22px / -10.20%, width: 165.24px / 10.56%, height: 165.24px / 76.59%, rotate: 112.41deg) */}
           <div
-            className="absolute flex items-center justify-center"
+            className="relative w-[clamp(75px,11vw,145px)] aspect-square flex items-center justify-center -ml-[30%]"
             style={{
-              left: "82.25%",
-              top: "-10.20%",
-              width: "10.56%",
-              height: "76.59%",
-              transform: "rotate(112.41deg)",
               mixBlendMode: "screen",
               filter: "brightness(1.15) saturate(1.05)",
             }}
@@ -142,8 +115,8 @@ export default function ProfilePage() {
             <Image
               src="/assets/four-petal.png"
               alt="Four Petal"
-              width={165}
-              height={165}
+              width={153}
+              height={194}
               priority
               className="w-full h-full object-contain"
             />
