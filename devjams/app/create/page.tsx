@@ -140,9 +140,9 @@ export default function CreateTeamPage() {
         className="absolute right-[clamp(16px,4vw,60px)] top-0 bottom-0 h-screen pointer-events-none z-10 hidden md:flex flex-col items-center justify-between py-[1vh] overflow-hidden w-[clamp(280px,32vw,460px)]"
         aria-hidden="true"
       >
-        {/* 1. Web Track Logo (Top, dynamically scaled in vh) */}
+        {/* 1. Web Track Logo (Top, 70% visible on screen, 30% shifted up) */}
         <div
-          className="relative w-full flex-shrink-0 flex items-center justify-center"
+          className="relative w-full flex-shrink-0 flex items-center justify-center -mt-[11.4vh]"
           style={{
             height: "38vh",
             mixBlendMode: "screen",
@@ -159,9 +159,9 @@ export default function CreateTeamPage() {
           />
         </div>
 
-        {/* 2. Maps Logo (Middle with 20% vertical overlap / blend on Web and Android) */}
+        {/* 2. Maps Logo (Vertically Centered in Screen) */}
         <div
-          className="relative w-full flex-shrink-0 flex items-center justify-center -my-[7.5vh]"
+          className="relative w-full flex-shrink-0 flex items-center justify-center my-auto"
           style={{
             height: "39vh",
             mixBlendMode: "screen",
