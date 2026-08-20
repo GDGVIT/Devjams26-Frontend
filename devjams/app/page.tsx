@@ -1,17 +1,17 @@
 "use client";
 
 import Image from "next/image";
+import gsap from "gsap";
 import {
   motion,
   AnimatePresence,
   useMotionValue,
   useScroll,
 } from "../components/gsap-motion";
-import type { MotionValue } from "../components/gsap-motion";
 import FoldText from "./components/FoldText";
 import SplitText from "./components/SplitText";
 import BorderGlow from "./components/BorderGlow";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import ResponsiveSvg from "../components/ResponsiveSvg";
 import {
   FRAME_FOUR_CONTENT_ENTER_OFFSET,
@@ -55,13 +55,6 @@ import { Tracks } from "../components/sections/Tracks";
 import { PreviousEvents } from "../components/sections/PreviousEvents";
 import { GotQuestions } from "../components/sections/GotQuestions";
 import { Footer } from "../components/sections/Footer";
-
-type ShapeMotionValues = {
-  x: MotionValue<number>;
-  y: MotionValue<number>;
-  scaleX: MotionValue<number>;
-  scaleY: MotionValue<number>;
-};
 
 type FrameThreeGeometry = {
   heroStart: number;
@@ -124,7 +117,10 @@ export default function Home() {
   const frameThreeGeometryRef = useRef<FrameThreeGeometry | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => {
-    if (menuDefaultsOpenAtViewport(window.innerWidth)) setMenuOpen(true);
+    const frame = requestAnimationFrame(() => {
+      if (menuDefaultsOpenAtViewport(window.innerWidth)) setMenuOpen(true);
+    });
+    return () => cancelAnimationFrame(frame);
   }, []);
   const [viewportWidth, setViewportWidth] = useState(FRAME_REFERENCE_WIDTH);
   const [viewportHeight, setViewportHeight] = useState(812);
@@ -144,14 +140,6 @@ export default function Home() {
   const isCompactViewport = viewportWidth <= 1024;
   const { scrollY } = useScroll();
 
-  const webX = useMotionValue(0);
-  const webY = useMotionValue(0);
-  const webScaleX = useMotionValue(1);
-  const webScaleY = useMotionValue(1);
-  const androidX = useMotionValue(0);
-  const androidY = useMotionValue(0);
-  const androidScaleX = useMotionValue(1);
-  const androidScaleY = useMotionValue(1);
   const geminiOpacity = useMotionValue(1);
   const geminiScale = useMotionValue(1);
   const cloudOpacity = useMotionValue(1);
@@ -187,28 +175,6 @@ export default function Home() {
   const frameThreeGearRotate = useMotionValue(180);
   const frameThreeGearOpacity = useMotionValue(0);
 
-  const shapeMotionValues = useMemo<Record<ShapeKey, ShapeMotionValues>>(
-    () => ({
-      web: { x: webX, y: webY, scaleX: webScaleX, scaleY: webScaleY },
-      android: {
-        x: androidX,
-        y: androidY,
-        scaleX: androidScaleX,
-        scaleY: androidScaleY,
-      },
-    }),
-    [
-      androidScaleX,
-      androidScaleY,
-      androidX,
-      androidY,
-      webScaleX,
-      webScaleY,
-      webX,
-      webY,
-    ],
-  );
-
   const syncScrollProgress = useCallback(
     (pageScroll: number) => {
       const geometry = frameThreeGeometryRef.current;
@@ -224,7 +190,7 @@ export default function Home() {
       const heroTrackScale = geometry.heroTrackScale || 1;
       const transformAt = uniformShapeTransformAt;
 
-      (Object.keys(shapeMotionValues) as ShapeKey[]).forEach((key) => {
+      (["web", "android"] as ShapeKey[]).forEach((key) => {
         const start = shapeStartRef.current[key];
         const target = shapeTargetRef.current[key];
         if (!start || !target) return;
@@ -234,10 +200,15 @@ export default function Home() {
           target,
           clampedProgress,
         );
-        shapeMotionValues[key].x.set(transform.x / heroTrackScale);
-        shapeMotionValues[key].y.set(transform.y / heroTrackScale);
-        shapeMotionValues[key].scaleX.set(transform.scaleX);
-        shapeMotionValues[key].scaleY.set(transform.scaleY);
+        const element = key === "web" ? webRef.current : androidRef.current;
+        if (!element) return;
+        gsap.set(element, {
+          x: transform.x / heroTrackScale,
+          y: transform.y / heroTrackScale,
+          scaleX: transform.scaleX,
+          scaleY: transform.scaleY,
+          force3D: true,
+        });
       });
 
       geminiOpacity.set(geminiOpacityAt(clampedProgress));
@@ -279,7 +250,8 @@ export default function Home() {
       mapsFrameThreeScaleX,
       mapsFrameThreeScaleY,
       mapsFrameThreeX,
-      shapeMotionValues,
+      androidRef,
+      webRef,
     ],
   );
 
@@ -325,10 +297,15 @@ export default function Home() {
         1,
       );
       const heroTrackScale = geometry.heroTrackScale || 1;
-      webX.set(webTransform.x / heroTrackScale);
-      webY.set(webTransform.y / heroTrackScale);
-      webScaleX.set(webTransform.scaleX);
-      webScaleY.set(webTransform.scaleY);
+      if (webRef.current) {
+        gsap.set(webRef.current, {
+          x: webTransform.x / heroTrackScale,
+          y: webTransform.y / heroTrackScale,
+          scaleX: webTransform.scaleX,
+          scaleY: webTransform.scaleY,
+          force3D: true,
+        });
+      }
 
       const mapsBounds = interpolateShapeBounds(
         geometry.frameTwoMaps,
@@ -371,10 +348,7 @@ export default function Home() {
       mapsFrameThreeX,
       mapsFrameThreeY,
       mapsOpacity,
-      webScaleX,
-      webScaleY,
-      webX,
-      webY,
+      webRef,
     ],
   );
   const syncFrameFourScroll = useCallback(
@@ -544,8 +518,10 @@ export default function Home() {
       frameFourAboutY.set(36 * (1 - progress));
     },
     [
+      frameFourAboutOpacity,
       frameFourAboutX,
       frameFourAboutY,
+      frameFourCloudOpacity,
       frameFourCloudScaleX,
       frameFourCloudScaleY,
       frameFourCloudX,
@@ -615,6 +591,7 @@ export default function Home() {
       const frameThreePageTop = frameThreeRect.top + window.scrollY;
       const frameThreePageLeft = frameThreeRect.left + window.scrollX;
       const frameFourPageTop = frameFourRect.top + window.scrollY;
+      const frameFourPageLeft = frameFourRect.left + window.scrollX;
       const targetBounds = (
         shape: ShapeBounds,
         sectionLeft: number,
@@ -674,7 +651,7 @@ export default function Home() {
         frameThreePageTop,
         frameThreeScale: frameScale,
         heroTrackScale,
-        frameFourPageLeft: frameFourRect.left + window.scrollX,
+        frameFourPageLeft,
         frameFourPageTop,
         frameFourScale: frameScale,
         frameFourMobileScale: mobileFrameScale,
@@ -720,20 +697,19 @@ export default function Home() {
     if (frameThreeRef.current) resizeObserver.observe(frameThreeRef.current);
     if (frameFourRef.current) resizeObserver.observe(frameFourRef.current);
     if (mapsRef.current) resizeObserver.observe(mapsRef.current);
-    const handleScroll = () => {
-      const pageScroll = window.scrollY;
+    const handleScroll = (pageScroll: number) => {
       syncScrollProgress(pageScroll);
       syncFrameThreeScroll(pageScroll);
       syncFrameFourScroll(pageScroll);
       if (heroMenuShouldCollapseAtScroll(pageScroll)) setMenuOpen(false);
     };
     window.addEventListener("resize", measureTransition);
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    const unsubscribeScroll = scrollY.on("change", handleScroll);
 
     return () => {
       resizeObserver.disconnect();
       window.removeEventListener("resize", measureTransition);
-      window.removeEventListener("scroll", handleScroll);
+      unsubscribeScroll();
     };
   }, [
     scrollY,
@@ -968,7 +944,7 @@ export default function Home() {
                 key={index}
                 ref={shapeRef}
                 initial={false}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
+                animate={shapeKey ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
                 transition={{
                   duration: 0.6,
                   delay: 0.5 + index * 0.1,
@@ -977,10 +953,6 @@ export default function Home() {
                 style={
                   shapeKey
                     ? {
-                        x: shapeMotionValues[shapeKey].x,
-                        y: shapeMotionValues[shapeKey].y,
-                        scaleX: shapeMotionValues[shapeKey].scaleX,
-                        scaleY: shapeMotionValues[shapeKey].scaleY,
                         zIndex: 20,
                         opacity:
                           shapeKey === "android"

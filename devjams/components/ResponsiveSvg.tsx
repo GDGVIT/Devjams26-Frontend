@@ -17,6 +17,7 @@ export default function ResponsiveSvg({ src, priority: _priority, ...props }: Re
       <source media="(max-width: 700px)" srcSet={variantPath(src, "low-quality")} />
       <Image
         {...props}
+        alt={props.alt ?? ""}
         src={variantPath(src, "high-quality")}
         loading={_priority ? "eager" : "lazy"}
       />

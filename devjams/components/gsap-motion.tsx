@@ -1,6 +1,7 @@
 "use client";
 
 import gsap from "gsap";
+import { useLenis } from "lenis/react";
 import {
   createElement,
   forwardRef,
@@ -8,6 +9,7 @@ import {
   useEffect,
   useImperativeHandle,
   useLayoutEffect,
+  useCallback,
   useRef,
   useState,
   type CSSProperties,
@@ -16,6 +18,7 @@ import {
   type Ref,
   type RefObject,
 } from "react";
+
 export interface MotionValue<T> {
   get(): T;
   set(value: T): void;
@@ -46,6 +49,7 @@ function createValue<T>(initial: T): MotionValue<T> {
   return {
     get: () => current,
     set: (value) => {
+      if (Object.is(current, value)) return;
       current = value;
       listeners.forEach((listener) => listener(value));
     },
@@ -85,6 +89,7 @@ function mapRange(value: number, input: number[], output: Array<number | string>
   }
   return output[output.length - 1];
 }
+
 export function useTransform<T, R>(value: MotionValue<T>, mapper: (value: T) => R): MotionValue<R>;
 export function useTransform<T, R>(values: MotionValue<T>[], mapper: (values: T[]) => R): MotionValue<R>;
 export function useTransform(value: MotionValue<number>, input: number[], output: number[]): MotionValue<number>;
@@ -109,6 +114,7 @@ export function useTransform<TInput>(
     const cleanups = sourceValues.map((item) => item.on("change", update));
     update();
     return () => cleanups.forEach((cleanup) => cleanup());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [derived, inputOrMapper, output, sourceValues]);
 
   return derived;
@@ -130,31 +136,123 @@ function offsetPoint(element: HTMLElement, point: string, viewportHeight: number
 export function useScroll(options?: { target?: RefObject<HTMLElement | null>; offset?: string[] }) {
   const scrollY = useMotionValue(0);
   const scrollYProgress = useMotionValue(0);
+  const targetOption = options?.target;
+  const offsetStart = options?.offset?.[0] ?? "start end";
+  const offsetEnd = options?.offset?.[1] ?? "end start";
+  const targetRef = useRef<HTMLElement | null>(null);
+  const offsetsRef = useRef(options?.offset ?? ["start end", "end start"]);
+  const rangeRef = useRef<{ element: HTMLElement; start: number; end: number } | null>(null);
+
+  const refreshRange = useCallback(() => {
+    const target = targetRef.current;
+    if (!target) {
+      rangeRef.current = null;
+      return;
+    }
+
+    const offsets = offsetsRef.current;
+    rangeRef.current = {
+      element: target,
+      start: offsetPoint(target, offsets[0], window.innerHeight),
+      end: offsetPoint(target, offsets[1], window.innerHeight),
+    };
+  }, []);
+
+  const updateFromLenis = useCallback((lenis: { scroll: number }) => {
+    const currentScroll = lenis.scroll;
+    scrollY.set(currentScroll);
+
+    const target = targetRef.current;
+    if (!target) {
+      scrollYProgress.set(
+        currentScroll /
+          Math.max(1, document.documentElement.scrollHeight - window.innerHeight),
+      );
+      return;
+    }
+
+    if (rangeRef.current?.element !== target) refreshRange();
+    const range = rangeRef.current;
+    if (!range) return;
+    scrollYProgress.set(
+      clamp((currentScroll - range.start) / Math.max(1, range.end - range.start)),
+    );
+  }, [refreshRange, scrollY, scrollYProgress]);
+
+  // Read Lenis directly so scroll-linked values update on the same frame as smooth scrolling.
+  useLenis(updateFromLenis, []);
 
   useEffect(() => {
-    const update = () => {
-      const currentScroll = window.scrollY;
-      scrollY.set(currentScroll);
-      const target = options?.target?.current;
-      if (!target) {
-        scrollYProgress.set(currentScroll / Math.max(1, document.documentElement.scrollHeight - window.innerHeight));
-        return;
-      }
-      const offsets = options?.offset ?? ["start end", "end start"];
-      const start = offsetPoint(target, offsets[0], window.innerHeight);
-      const end = offsetPoint(target, offsets[1], window.innerHeight);
-      scrollYProgress.set(clamp((currentScroll - start) / Math.max(1, end - start)));
-    };
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
+    targetRef.current = targetOption?.current ?? null;
+    offsetsRef.current = [offsetStart, offsetEnd];
+    refreshRange();
+    window.addEventListener("resize", refreshRange);
+    const fontsReady = document.fonts?.ready.then(refreshRange);
     return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
+      window.removeEventListener("resize", refreshRange);
+      void fontsReady;
     };
-  }, [options?.target, options?.offset, scrollY, scrollYProgress]);
+  }, [targetOption, offsetStart, offsetEnd, refreshRange]);
 
   return { scrollY, scrollYProgress };
+}
+
+type PendingMotionUpdate = {
+  styles: Record<string, unknown>;
+  attributes: Record<string, unknown>;
+};
+
+const pendingMotionUpdates = new Map<HTMLElement, PendingMotionUpdate>();
+let motionFlushQueued = false;
+
+function flushMotionUpdates() {
+  motionFlushQueued = false;
+  pendingMotionUpdates.forEach(({ styles, attributes }, element) => {
+    if (Object.keys(styles).length > 0) gsap.set(element, { ...styles, force3D: true });
+    Object.entries(attributes).forEach(([key, value]) => element.setAttribute(key, String(value)));
+  });
+  pendingMotionUpdates.clear();
+}
+
+// Flush on a microtask instead of the next rAF: Lenis already runs inside the
+// GSAP ticker's rAF, so this applies scroll-linked styles in the same frame
+// instead of one frame late (which reads as lag while smooth scrolling).
+function scheduleMotionFlush() {
+  if (motionFlushQueued) return;
+  motionFlushQueued = true;
+  if (typeof queueMicrotask === "function") {
+    queueMicrotask(flushMotionUpdates);
+  } else {
+    Promise.resolve().then(flushMotionUpdates);
+  }
+}
+
+function queueMotionStyle(element: HTMLElement, key: string, value: unknown) {
+  const pending = pendingMotionUpdates.get(element) ?? { styles: {}, attributes: {} };
+  pending.styles[key] = value;
+  pendingMotionUpdates.set(element, pending);
+  scheduleMotionFlush();
+}
+
+function queueMotionAttribute(element: HTMLElement, key: string, value: unknown) {
+  const pending = pendingMotionUpdates.get(element) ?? { styles: {}, attributes: {} };
+  pending.attributes[key] = value;
+  pendingMotionUpdates.set(element, pending);
+  scheduleMotionFlush();
+}
+
+function cancelMotionStyles(element: HTMLElement) {
+  const pending = pendingMotionUpdates.get(element);
+  if (!pending) return;
+  pending.styles = {};
+  if (Object.keys(pending.attributes).length === 0) pendingMotionUpdates.delete(element);
+}
+
+function cancelMotionAttributes(element: HTMLElement) {
+  const pending = pendingMotionUpdates.get(element);
+  if (!pending) return;
+  pending.attributes = {};
+  if (Object.keys(pending.styles).length === 0) pendingMotionUpdates.delete(element);
 }
 
 function isMotionValue(value: unknown): value is MotionValue<unknown> {
@@ -175,22 +273,48 @@ function gsapTarget(target: AnimationTarget) {
   return result;
 }
 
-function gsapTransition(transition?: Record<string, unknown>) {
-  if (!transition) return {};
-  if (transition.type === "spring") return { duration: 0.7, ease: "back.out(1.7)" };
-  return {
-    duration: typeof transition.duration === "number" ? transition.duration : undefined,
-    delay: typeof transition.delay === "number" ? transition.delay : undefined,
-    ease: typeof transition.ease === "string" ? transition.ease : undefined,
-    repeat: transition.repeat === Infinity ? -1 : undefined,
-  };
+function parseGsapEase(ease: unknown): string {
+  if (typeof ease === "string") {
+    if (ease === "easeInOut") return "power1.inOut";
+    if (ease === "easeOut") return "power1.out";
+    if (ease === "easeIn") return "power1.in";
+    if (ease === "linear") return "none";
+    return ease;
+  }
+  if (Array.isArray(ease) && ease.length === 4) {
+    const [, y1, , y2] = ease;
+    if (Number(y1) > 0.8 || Number(y2) > 0.8) return "power2.out";
+    return "power1.out";
+  }
+  return "power2.out";
 }
 
+function gsapTransition(transition?: Record<string, unknown>) {
+  if (!transition) return { force3D: true, ease: "power2.out" };
+  if (transition.type === "spring") {
+    const stiffness = typeof transition.stiffness === "number" ? transition.stiffness : 200;
+    const damping = typeof transition.damping === "number" ? transition.damping : 20;
+    const overshoot = Math.max(1, Math.min(2.5, stiffness / (damping * 6)));
+    return {
+      duration: typeof transition.duration === "number" ? transition.duration : 0.6,
+      ease: `back.out(${overshoot.toFixed(1)})`,
+      force3D: true,
+    };
+  }
+  return {
+    duration: typeof transition.duration === "number" ? transition.duration : 0.4,
+    delay: typeof transition.delay === "number" ? transition.delay : undefined,
+    ease: parseGsapEase(transition.ease),
+    repeat: transition.repeat === Infinity ? -1 : undefined,
+    force3D: true,
+  };
+}
 
 function MotionElement({ as, ...props }: MotionProps & { as: string }) {
   const elementRef = useRef<HTMLElement | null>(null);
   const { ref, initial, animate, exit, whileInView, whileHover, whileTap, variants, viewport, transition, style, layoutId, children, ...domProps } = props;
   useImperativeHandle(ref as Ref<HTMLElement>, () => elementRef.current as HTMLElement);
+
   useLayoutEffect(() => {
     const element = elementRef.current;
     if (!element) return;
@@ -198,16 +322,57 @@ function MotionElement({ as, ...props }: MotionProps & { as: string }) {
     const initialTarget = resolveTarget(initial, variants);
     const animateTarget = resolveTarget(animate, variants);
     const inViewTarget = resolveTarget(whileInView, variants) ?? animateTarget;
-    if (initialTarget) gsap.set(element, gsapTarget(initialTarget));
+    if (initialTarget) gsap.set(element, { ...gsapTarget(initialTarget), force3D: true });
 
-    let activeTween: gsap.core.Tween | undefined;
+    let activeAnimation: gsap.core.Tween | gsap.core.Timeline | undefined;
     const run = () => {
       if (inViewTarget) {
-        activeTween?.kill();
-        activeTween = gsap.to(element, {
-          ...gsapTarget(inViewTarget),
-          ...gsapTransition(transition),
-        });
+        activeAnimation?.kill();
+        const targetVars = gsapTarget(inViewTarget);
+        const arrayProps = Object.entries(targetVars).filter(([, v]) => Array.isArray(v));
+
+        if (arrayProps.length > 0) {
+          const [propName, rawKeyframes] = arrayProps[0] as [string, (number | string)[]];
+          const trans = gsapTransition(transition);
+
+          if (rawKeyframes.length === 3 && rawKeyframes[0] === rawKeyframes[2]) {
+            // Yoyo float / pulse animation (e.g. y: [0, -8, 0])
+            activeAnimation = gsap.to(element, {
+              [propName]: rawKeyframes[1],
+              duration: (trans.duration ?? 3) / 2,
+              repeat: trans.repeat ?? -1,
+              yoyo: true,
+              ease: "sine.inOut",
+              delay: trans.delay,
+              force3D: true,
+            });
+          } else {
+            // Multi-step keyframes timeline (never pass ease to timeline constructor)
+            const tl = gsap.timeline({
+              repeat: trans.repeat ?? 0,
+              delay: trans.delay ?? 0,
+            });
+            const stepDuration = (trans.duration ?? 1) / Math.max(1, rawKeyframes.length - 1);
+            rawKeyframes.forEach((val, idx) => {
+              if (idx === 0) {
+                gsap.set(element, { [propName]: val, force3D: true });
+              } else {
+                tl.to(element, {
+                  [propName]: val,
+                  duration: stepDuration,
+                  ease: trans.ease ?? "power1.inOut",
+                  force3D: true,
+                });
+              }
+            });
+            activeAnimation = tl;
+          }
+        } else {
+          activeAnimation = gsap.to(element, {
+            ...targetVars,
+            ...gsapTransition(transition),
+          });
+        }
       }
     };
 
@@ -226,16 +391,16 @@ function MotionElement({ as, ...props }: MotionProps & { as: string }) {
 
     const hoverTarget = whileHover ? gsapTarget(whileHover) : null;
     const tapTarget = whileTap ? gsapTarget(whileTap) : null;
-    const onEnter = hoverTarget ? () => gsap.to(element, { ...hoverTarget, duration: 0.2 }) : undefined;
-    const onLeave = hoverTarget ? () => gsap.to(element, { ...gsapTarget(resolveTarget(animate, variants) ?? {}), duration: 0.2 }) : undefined;
-    const onPointerDown = tapTarget ? () => gsap.to(element, { ...tapTarget, duration: 0.12 }) : undefined;
-    const onPointerUp = tapTarget ? () => gsap.to(element, { ...gsapTarget(resolveTarget(animate, variants) ?? {}), duration: 0.12 }) : undefined;
+    const onEnter = hoverTarget ? () => gsap.to(element, { ...hoverTarget, duration: 0.2, force3D: true }) : undefined;
+    const onLeave = hoverTarget ? () => gsap.to(element, { ...gsapTarget(resolveTarget(animate, variants) ?? {}), duration: 0.2, force3D: true }) : undefined;
+    const onPointerDown = tapTarget ? () => gsap.to(element, { ...tapTarget, duration: 0.12, force3D: true }) : undefined;
+    const onPointerUp = tapTarget ? () => gsap.to(element, { ...gsapTarget(resolveTarget(animate, variants) ?? {}), duration: 0.12, force3D: true }) : undefined;
     if (onEnter) element.addEventListener("pointerenter", onEnter);
     if (onLeave) element.addEventListener("pointerleave", onLeave);
     if (onPointerDown) element.addEventListener("pointerdown", onPointerDown);
     if (onPointerUp) element.addEventListener("pointerup", onPointerUp);
     return () => {
-      activeTween?.kill();
+      activeAnimation?.kill();
       observer?.disconnect();
       if (onEnter) element.removeEventListener("pointerenter", onEnter);
       if (onLeave) element.removeEventListener("pointerleave", onLeave);
@@ -247,11 +412,20 @@ function MotionElement({ as, ...props }: MotionProps & { as: string }) {
   useLayoutEffect(() => {
     const element = elementRef.current;
     if (!element || !style) return;
+
     const subscriptions = Object.entries(style)
       .filter(([, value]) => isMotionValue(value))
-      .map(([key, value]) => (value as MotionValue<unknown>).on("change", (next) => gsap.set(element, { [key]: next })));
-    gsap.set(element, gsapTarget(style as AnimationTarget));
-    return () => subscriptions.forEach((unsubscribe) => unsubscribe());
+      .map(([key, value]) =>
+        (value as MotionValue<unknown>).on("change", (next) => {
+          queueMotionStyle(element, key, next);
+        })
+      );
+
+    gsap.set(element, { ...gsapTarget(style as AnimationTarget), force3D: true });
+    return () => {
+      subscriptions.forEach((unsubscribe) => unsubscribe());
+      cancelMotionStyles(element);
+    };
   }, [style]);
 
   useLayoutEffect(() => {
@@ -259,10 +433,15 @@ function MotionElement({ as, ...props }: MotionProps & { as: string }) {
     if (!element) return;
     const subscriptions = Object.entries(domProps)
       .filter(([, value]) => isMotionValue(value))
-      .map(([key, value]) => (value as MotionValue<unknown>).on("change", (next) => {
-        element.setAttribute(key, String(next));
-      }));
-    return () => subscriptions.forEach((unsubscribe) => unsubscribe());
+      .map(([key, value]) =>
+        (value as MotionValue<unknown>).on("change", (next) => {
+          queueMotionAttribute(element, key, next);
+        })
+      );
+    return () => {
+      subscriptions.forEach((unsubscribe) => unsubscribe());
+      cancelMotionAttributes(element);
+    };
   }, [domProps]);
 
   const renderedProps = Object.fromEntries(
