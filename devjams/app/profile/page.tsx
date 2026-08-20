@@ -12,13 +12,13 @@ export default function ProfilePage() {
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto select-none p-4 sm:p-6 md:p-10 pb-20">
       {/* Top Floating Graphics Banner: Left (notebookllm + cursor), Center (antigravity + folder), Right (maps + four-petal) */}
       <div
-        className="w-full flex items-center justify-between pointer-events-none z-10 select-none overflow-hidden h-[clamp(90px,14vw,170px)] -mt-[clamp(12px,2.5vw,28px)] mb-3"
+        className="w-full flex items-center justify-between pointer-events-none z-10 select-none overflow-visible mb-6 pt-1 sm:pt-2 px-1 sm:px-4"
         aria-hidden="true"
       >
         {/* 1. Left Pair (Align Left: NotebookLLM then Cursor with 30% blend) */}
         <div className="flex items-center justify-start relative flex-shrink-0">
           <div
-            className="relative w-[clamp(75px,11vw,140px)] aspect-[176/120] flex items-center justify-center"
+            className="relative h-[clamp(65px,10vw,120px)] w-auto aspect-[176/120] flex items-center justify-center"
             style={{
               mixBlendMode: "screen",
               filter: "brightness(1.15) saturate(1.05)",
@@ -34,7 +34,7 @@ export default function ProfilePage() {
             />
           </div>
           <div
-            className="relative w-[clamp(70px,10vw,130px)] aspect-[171/144] flex items-center justify-center -ml-[30%]"
+            className="relative h-[clamp(65px,10vw,120px)] w-auto aspect-[171/144] flex items-center justify-center -ml-[30%]"
             style={{
               mixBlendMode: "screen",
               filter: "brightness(1.15) saturate(1.05)",
@@ -54,7 +54,7 @@ export default function ProfilePage() {
         {/* 2. Center Pair (Align Center: Antigravity then Folder with 30% blend) */}
         <div className="flex items-center justify-center relative flex-shrink-0">
           <div
-            className="relative w-[clamp(85px,13vw,165px)] aspect-[299/276] flex items-center justify-center"
+            className="relative h-[clamp(65px,10vw,120px)] w-auto aspect-[299/276] flex items-center justify-center"
             style={{
               mixBlendMode: "screen",
               filter: "brightness(1.12) saturate(1.05)",
@@ -70,7 +70,7 @@ export default function ProfilePage() {
             />
           </div>
           <div
-            className="relative w-[clamp(75px,11vw,140px)] aspect-[149/121] flex items-center justify-center -ml-[30%]"
+            className="relative h-[clamp(65px,10vw,120px)] w-auto aspect-[149/121] flex items-center justify-center -ml-[30%]"
             style={{
               mixBlendMode: "screen",
               filter: "brightness(1.12) saturate(1.05)",
@@ -90,7 +90,7 @@ export default function ProfilePage() {
         {/* 3. Right Pair (Align Right: Maps then Four-Petal with 30% blend) */}
         <div className="flex items-center justify-end relative flex-shrink-0">
           <div
-            className="relative w-[clamp(80px,12vw,155px)] aspect-[365/465] flex items-center justify-center"
+            className="relative h-[clamp(65px,10vw,120px)] w-auto aspect-[365/465] flex items-center justify-center"
             style={{
               mixBlendMode: "screen",
               filter: "brightness(1.15) saturate(1.05)",
@@ -106,7 +106,7 @@ export default function ProfilePage() {
             />
           </div>
           <div
-            className="relative w-[clamp(75px,11vw,145px)] aspect-square flex items-center justify-center -ml-[30%]"
+            className="relative h-[clamp(65px,10vw,120px)] w-auto aspect-square flex items-center justify-center -ml-[30%]"
             style={{
               mixBlendMode: "screen",
               filter: "brightness(1.15) saturate(1.05)",
