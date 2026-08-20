@@ -18,7 +18,6 @@ export default function JoinPage() {
       setIsSubmitting(false);
     }, 1000);
   };
-
   return (
     <main className="relative h-screen w-screen bg-black text-white flex items-center justify-center overflow-hidden select-none">
       {/* 1440x1024 Desktop Reference Frame Canvas - Exact Screen Height Container */}
