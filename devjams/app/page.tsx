@@ -19,7 +19,6 @@ import {
   FRAME_REFERENCE_WIDTH,
   FRAME_THREE_EDGE_LOGO_OFFSETS,
   FRAME_TWO_CONTENT_ENTER_OFFSET,
-  FRAME_TWO_TRANSITION_END_PADDING,
   HERO_TRACK_ENTRY_DELAYS,
   frameFourContentOffsetAt,
   frameScaleAtViewport,
@@ -170,20 +169,10 @@ export default function Home() {
       const transitionProgress = scrollTransitionProgressAt(
         pageScroll,
         geometry.heroStart +
-          geometry.heroHeight * 0.5,
+          geometry.heroHeight * FRAME_ONE_ANIMATION_START_PROGRESS,
         geometry.frameTwoStart,
       );
       const clampedProgress = smoothScrollProgressAt(transitionProgress);
-      // SVG shapes get a wider frame window: start earlier, end later.
-      const shapeProgress = smoothScrollProgressAt(
-        scrollTransitionProgressAt(
-          pageScroll,
-          geometry.heroStart +
-            geometry.heroHeight * FRAME_ONE_ANIMATION_START_PROGRESS,
-          geometry.frameTwoStart +
-            geometry.frameTwoHeight * FRAME_TWO_TRANSITION_END_PADDING,
-        ),
-      );
       const heroTrackScale = geometry.heroTrackScale || 1;
       const transformAt = uniformShapeTransformAt;
 
@@ -195,7 +184,7 @@ export default function Home() {
         const transform = transformAt(
           start,
           target,
-          shapeProgress,
+          clampedProgress,
         );
         const element = key === "web" ? webRef.current : androidRef.current;
         if (!element) return;
@@ -217,7 +206,7 @@ export default function Home() {
       );
       cloudOpacity.set(1 - cloudFadeProgress);
 
-      const mapEntry = frameTwoMapEntryTransformAt(shapeProgress);
+      const mapEntry = frameTwoMapEntryTransformAt(clampedProgress);
       mapsFrameThreeX.set(mapEntry.x);
       mapsFrameThreeScaleX.set(mapEntry.scale);
       mapsFrameThreeScaleY.set(mapEntry.scale);
@@ -257,20 +246,17 @@ export default function Home() {
       const geometry = frameThreeGeometryRef.current;
       if (!geometry) return;
 
-      const transitionStart =
-        geometry.frameTwoLoadEnd - geometry.viewportHeight * 0.12;
-      const transitionEnd =
-        geometry.frameThreeTransitionEnd + geometry.viewportHeight * 0.12;
       const rawTransitionProgress = Math.min(
         1,
         Math.max(
           0,
-          (pageScroll - transitionStart) / (transitionEnd - transitionStart),
+          (pageScroll - geometry.frameTwoLoadEnd) /
+            (geometry.frameThreeTransitionEnd - geometry.frameTwoLoadEnd),
         ),
       );
       const transitionProgress = smoothScrollProgressAt(rawTransitionProgress);
 
-      if (pageScroll < transitionStart) {
+      if (pageScroll < geometry.frameTwoLoadEnd) {
         mapsFrameThreeY.set(0);
         androidFrameThreeOpacity.set(1);
         frameThreeGeminiX.set(FRAME_THREE_EDGE_LOGO_OFFSETS.gemini);
@@ -354,14 +340,10 @@ export default function Home() {
       if (!geometry) return;
 
       const transitionStart =
-        geometry.frameFourStart - geometry.viewportHeight * 1.15;
+        geometry.frameFourStart - geometry.viewportHeight;
       const rawProgress = Math.min(
         1,
-        Math.max(
-          0,
-          (pageScroll - transitionStart) /
-            (geometry.frameFourHeight + geometry.viewportHeight * 0.15),
-        ),
+        Math.max(0, (pageScroll - transitionStart) / geometry.frameFourHeight),
       );
       const progress = smoothScrollProgressAt(rawProgress);
 

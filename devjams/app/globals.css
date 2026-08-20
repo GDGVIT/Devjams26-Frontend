@@ -145,7 +145,7 @@ body {
 }
 
 .transition-target--tracks-maps {
-  left: calc(238.85px * var(--frame-scale));
+  left: calc(260px * var(--frame-scale));
   top: calc(32.05px * var(--frame-scale));
   width: calc(252px * var(--frame-scale));
   height: calc(261px * var(--frame-scale));
@@ -253,7 +253,7 @@ body {
 }
 
 .frame-three__logo--gemini {
-  left: 447.65px;
+  left: 435px;
   top: 32.05px;
   width: 261px;
   height: 261px;
@@ -456,14 +456,14 @@ body {
   }
 
   .transition-target--tracks-maps {
-    left: calc(124.5703125px * var(--mobile-frame-scale) - 239.5px * var(--frame-scale));
+    left: calc(138px * var(--mobile-frame-scale) - 239.5px * var(--frame-scale));
     top: calc(85.9375px * var(--mobile-frame-vertical-scale) - 297.95px * var(--frame-scale));
     width: calc(65.625px * var(--mobile-frame-scale));
     height: calc(67.96875px * var(--mobile-frame-vertical-scale));
   }
 
   .frame-three__logo--gemini {
-    left: calc(447.65px * var(--frame-scale));
+    left: calc(435px * var(--frame-scale));
     top: calc(32.05px * var(--frame-scale));
     width: calc(261px * var(--frame-scale));
     height: calc(261px * var(--frame-scale));
@@ -547,7 +547,7 @@ body {
   }
 
   .transition-target--tracks-maps {
-    left: calc(238.85px * var(--frame-scale));
+    left: calc(260px * var(--frame-scale));
     top: calc(32.05px * var(--frame-scale));
     width: calc(252px * var(--frame-scale));
     height: calc(261px * var(--frame-scale));
@@ -572,6 +572,43 @@ body {
     top: calc(739.2776px * var(--frame-scale));
     width: calc(467.627px * var(--frame-scale));
     height: calc(285.7433px * var(--frame-scale));
+  }
+}
+
+@media (max-width: 700px) {
+  .about-devjams,
+  .frame-three,
+  .frame-four {
+    height: 100svh;
+    min-height: 600px;
+  }
+
+  /* About DevJams: content takes the left 70%, right 30% stays open */
+  .about-devjams__content {
+    left: 0;
+    top: 150px;
+    width: 70%;
+    box-sizing: border-box;
+    padding: 0 12px 0 20px;
+  }
+
+  /* About VIT: content takes the right 70%, left 30% stays open */
+  .frame-four__content {
+    left: 30%;
+    top: 150px;
+    width: 70%;
+    box-sizing: border-box;
+    padding: 0 20px 0 12px;
+  }
+
+  .about-devjams__title,
+  .frame-four__title {
+    font-size: clamp(30px, 8.6vw, 44px);
+  }
+
+  .about-devjams__description,
+  .frame-four__description {
+    font-size: clamp(16px, 4.6vw, 24px);
   }
 }
 
@@ -879,6 +916,32 @@ body {
 
   .hero-track-icons {
     margin-top: -150px;
+    scale: clamp(0.28, calc((100vw - 32px) / 980px), 0.68) !important;
+  }
+
+  /* About GDG: slightly larger track SVGs and description closer to title */
+  .frame-three__logo--gemini {
+    width: calc(261px * var(--frame-scale) * 1.4);
+    height: calc(261px * var(--frame-scale) * 1.4);
+  }
+
+  .frame-three__logo--gear {
+    width: calc(312px * var(--frame-scale) * 1.4);
+    height: calc(312px * var(--frame-scale) * 1.4);
+  }
+
+  .transition-target--tracks-web {
+    width: calc(67.96875px * var(--mobile-frame-scale) * 1.4);
+    height: calc(67.96875px * var(--mobile-frame-vertical-scale) * 1.4);
+  }
+
+  .transition-target--tracks-maps {
+    width: calc(65.625px * var(--mobile-frame-scale) * 1.4);
+    height: calc(67.96875px * var(--mobile-frame-vertical-scale) * 1.4);
+  }
+
+  .frame-three__description {
+    top: clamp(138px, 21vh, 200px);
   }
 }
 @media (max-width: 700px) {
@@ -911,14 +974,14 @@ body {
 }
 
 
-@media (max-width: 700px) {
+@media (max-width: 1023px) {
   .hero-logo-canvas {
     max-width: none;
-    scale: clamp(0.28, calc((100vw - 32px) / 955.5px), 0.72) !important;
+    scale: clamp(0.28, calc((100vw - 32px) / 955.5px), 1) !important;
   }
 
   .hero-track-icons {
-    scale: clamp(0.36, calc((100vw - 32px) / 784px), 0.75) !important;
+    scale: clamp(0.36, calc((100vw - 32px) / 784px), 1) !important;
   }
 }
 

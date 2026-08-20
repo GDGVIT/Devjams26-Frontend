@@ -57,8 +57,7 @@ export function frameTwoMapEntryTransformAt(progress: number) {
   };
 }
 
-export const FRAME_ONE_ANIMATION_START_PROGRESS = 0.35;
-export const FRAME_TWO_TRANSITION_END_PADDING = 0.25;
+export const FRAME_ONE_ANIMATION_START_PROGRESS = 0.5;
 export const FRAME_TWO_CONTENT_ENTER_OFFSET = { x: -160, y: 0 };
 export const FRAME_THREE_EDGE_LOGO_OFFSETS = { gemini: -420, gear: 420 };
 export const HERO_TRACK_ENTRY_DELAYS = [0.5, 0.6, 0.7, 0.8] as const;
