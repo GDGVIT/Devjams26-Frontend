@@ -93,7 +93,7 @@ export default function TeamPage() {
               filter: "brightness(1.12) saturate(1.05)",
             }}
           >
-            <ResponsiveSvg
+            <Image
               src="/assets/low-quality/gear.svg"
               alt="Gear"
               width={314}
@@ -115,7 +115,7 @@ export default function TeamPage() {
               filter: "brightness(1.12) saturate(1.05)",
             }}
           >
-            <ResponsiveSvg
+            <Image
               src="/assets/low-quality/web.svg"
               alt="Web Track"
               width={232}
@@ -137,7 +137,7 @@ export default function TeamPage() {
               filter: "brightness(1.12) saturate(1.05)",
             }}
           >
-            <ResponsiveSvg
+            <Image
               src="/assets/low-quality/gemini.svg"
               alt="Gemini Track"
               width={244}
@@ -159,7 +159,7 @@ export default function TeamPage() {
               filter: "brightness(1.12) saturate(1.05)",
             }}
           >
-            <ResponsiveSvg
+            <Image
               src="/assets/low-quality/cursor.svg"
               alt="Cursor"
               width={170}
