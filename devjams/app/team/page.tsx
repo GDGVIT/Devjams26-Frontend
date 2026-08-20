@@ -1,10 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { useState } from "react";
-import ResponsiveSvg from "../../components/ResponsiveSvg";
-import { motion } from "../../components/gsap-motion";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "../../components/gsap-motion";
 
 type Member = {
   id: string;
@@ -14,7 +12,9 @@ type Member = {
 export default function TeamPage() {
   const [teamName] = useState("DEVJAMS");
   const [teamCode] = useState("GHY618");
-  const [copied, setCopied] = useState(false);
+  const [codeCopied, setCodeCopied] = useState(false);
+  const [inviteCopied, setInviteCopied] = useState(false);
+  const [memberToRemove, setMemberToRemove] = useState<Member | null>(null);
   const [members, setMembers] = useState<Member[]>([
     { id: "1", name: "DEVJAMS" },
     { id: "2", name: "DEVJAMS" },
@@ -22,21 +22,38 @@ export default function TeamPage() {
     { id: "4", name: "DEVJAMS" },
   ]);
 
-  const removeMember = (id: string) => {
-    setMembers((prev) => prev.filter((m) => m.id !== id));
+  const confirmRemoveMember = () => {
+    if (!memberToRemove) return;
+    setMembers((prev) => prev.filter((m) => m.id !== memberToRemove.id));
+    setMemberToRemove(null);
+  };
+
+  const copyTeamCode = () => {
+    navigator.clipboard.writeText(teamCode);
+    setCodeCopied(true);
+    setTimeout(() => setCodeCopied(false), 2000);
   };
 
   const handleInvite = () => {
     navigator.clipboard.writeText(teamCode);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setInviteCopied(true);
+    setTimeout(() => setInviteCopied(false), 2000);
   };
+
+  // Close modal on Escape
+  useEffect(() => {
+    if (!memberToRemove) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMemberToRemove(null);
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [memberToRemove]);
 
   return (
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto select-none pb-16">
       {/* 1440x1024 Desktop Reference Frame Canvas */}
       <div className="relative w-full max-w-[1440px] min-h-[1024px] flex-shrink-0">
-
         {/* Group 1948755624 - Top 4 Logos Blend Banner (gear, web, gemini, cursor) */}
         <div
           className="absolute pointer-events-none z-10"
@@ -163,9 +180,7 @@ export default function TeamPage() {
           }}
         >
           {/* Frame 1948755611 - Team Details Block */}
-          <div
-            className="flex flex-col items-start w-[1072px] h-[191px]"
-          >
+          <div className="flex flex-col items-start w-[1072px] h-[191px]">
             {/* Team Details Section Heading */}
             <h2
               className="text-white font-normal leading-[150%] capitalize m-0 flex items-center w-[1072px] h-[72px]"
@@ -178,9 +193,7 @@ export default function TeamPage() {
             </h2>
 
             {/* Frame 1948754746 - Fields Row (Name & Team Code) */}
-            <div
-              className="flex flex-row items-center w-[1072px] h-[119px] gap-[79px]"
-            >
+            <div className="flex flex-row items-center w-[1072px] h-[119px] gap-[79px]">
               {/* Group 1948754767 - Name Field */}
               <div className="relative w-[587px] h-[114.3px]">
                 {/* Name Label */}
@@ -195,9 +208,7 @@ export default function TeamPage() {
                 </span>
 
                 {/* Frame 1948754657 - Name Box */}
-                <div
-                  className="absolute left-0 top-[60.65px] w-[587px] h-[56px] bg-[#343434] rounded-[8px] flex flex-row items-center px-[29.05px] py-[5.81px] box-border"
-                >
+                <div className="absolute left-0 top-[60.65px] w-[587px] h-[56px] bg-[#343434] rounded-[8px] flex flex-row items-center px-[29.05px] py-[5.81px] box-border">
                   <span
                     className="text-white/60 font-normal leading-[31px]"
                     style={{
@@ -223,10 +234,8 @@ export default function TeamPage() {
                   Team Code
                 </span>
 
-                {/* Frame 1948754657 - Team Code Box */}
-                <div
-                  className="absolute left-0 top-[62.65px] w-[406px] h-[52px] bg-[#343434] rounded-[8px] flex flex-row items-center px-[29.05px] py-[5.81px] box-border"
-                >
+                {/* Frame 1948754657 - Team Code Box with Copy Clipboard Button */}
+                <div className="absolute left-0 top-[62.65px] w-[406px] h-[52px] bg-[#343434] rounded-[8px] flex flex-row items-center justify-between px-[29.05px] py-[5.81px] box-border">
                   <span
                     className="text-white/60 font-normal leading-[31px]"
                     style={{
@@ -236,15 +245,54 @@ export default function TeamPage() {
                   >
                     {teamCode}
                   </span>
+
+                  {/* Clipboard Icon Button */}
+                  <button
+                    type="button"
+                    onClick={copyTeamCode}
+                    aria-label="Copy team code"
+                    className="flex items-center gap-1.5 cursor-pointer bg-transparent border-none p-1 text-white/60 hover:text-white transition-colors"
+                  >
+                    {codeCopied ? (
+                      <span className="text-xs text-green-400 font-medium select-none">
+                        Copied!
+                      </span>
+                    ) : null}
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-5 h-5 flex-shrink-0"
+                    >
+                      <path
+                        d="M16 4H18C19.1046 4 20 4.89543 20 6V20C20 21.1046 19.1046 22 18 22H8C6.89543 22 6 21.1046 6 20V18"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <rect
+                        x="4"
+                        y="2"
+                        width="12"
+                        height="16"
+                        rx="2"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Frame 1948755613 - Members Block */}
-          <div
-            className="flex flex-col items-start w-[465px] h-[377px] gap-[15px]"
-          >
+          <div className="flex flex-col items-start w-[465px] h-[377px] gap-[15px]">
             {/* Members Heading */}
             <h2
               className="text-white font-normal leading-[150%] capitalize m-0 flex items-center w-[465px] h-[72px]"
@@ -257,9 +305,7 @@ export default function TeamPage() {
             </h2>
 
             {/* Frame 1948755612 - Member Rows */}
-            <div
-              className="flex flex-col items-start w-[465px] h-[290px] gap-[22px]"
-            >
+            <div className="flex flex-col items-start w-[465px] h-[290px] gap-[22px]">
               {members.map((member) => (
                 <div
                   key={member.id}
@@ -278,7 +324,7 @@ export default function TeamPage() {
                   {/* Remove Button / Cross Icon */}
                   <button
                     type="button"
-                    onClick={() => removeMember(member.id)}
+                    onClick={() => setMemberToRemove(member)}
                     aria-label={`Remove member ${member.name}`}
                     className="relative w-[17.68px] h-[17.68px] flex items-center justify-center cursor-pointer bg-transparent border-none p-0 hover:opacity-100 opacity-60 transition-opacity"
                   >
@@ -342,10 +388,97 @@ export default function TeamPage() {
               textAlign: "center",
             }}
           >
-            {copied ? "Copied!" : "Invite"}
+            {inviteCopied ? "Copied!" : "Invite"}
           </span>
         </motion.button>
       </div>
+
+      {/* Remove Member Confirmation Modal Popup */}
+      <AnimatePresence>
+        {memberToRemove && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMemberToRemove(null)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+
+            {/* Modal Card */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: 12 }}
+              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+              className="relative z-10 w-[440px] max-w-[92vw] bg-[#1E1E1E] border border-white/15 rounded-[20px] p-7 shadow-2xl flex flex-col items-center text-center gap-6"
+            >
+              {/* Warning Icon */}
+              <div className="w-12 h-12 rounded-full bg-red-500/15 border border-red-500/30 flex items-center justify-center text-[#EA4335]">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-6 h-6"
+                >
+                  <path
+                    d="M12 9V14M12 17.5V18M12 3L2 21H22L12 3Z"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+
+              {/* Message */}
+              <div className="flex flex-col gap-2">
+                <h3
+                  className="text-white font-bold text-2xl m-0"
+                  style={{
+                    fontFamily:
+                      'var(--font-google-sans), "Google Sans", sans-serif',
+                  }}
+                >
+                  Sure you want to remove {memberToRemove.name}?
+                </h3>
+                <p className="text-white/60 text-sm m-0">
+                  This action will remove the member from your team.
+                </p>
+              </div>
+
+              {/* Action Buttons: Cancel | Remove */}
+              <div className="flex flex-row items-center justify-center gap-4 w-full pt-2">
+                <button
+                  type="button"
+                  onClick={() => setMemberToRemove(null)}
+                  className="flex-1 h-11 rounded-[35px] border border-white/30 text-white font-medium text-base hover:bg-white/10 transition-colors cursor-pointer"
+                  style={{
+                    fontFamily:
+                      'var(--font-google-sans), "Google Sans", sans-serif',
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmRemoveMember}
+                  className="flex-1 h-11 rounded-[35px] bg-[#EA4335] text-white font-bold text-base hover:bg-[#d93025] transition-colors border-none cursor-pointer shadow-lg shadow-red-500/20"
+                  style={{
+                    fontFamily:
+                      'var(--font-google-sans), "Google Sans", sans-serif',
+                  }}
+                >
+                  Remove
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }
