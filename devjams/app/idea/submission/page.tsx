@@ -1,0 +1,440 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "../../../components/gsap-motion";
+
+const ALL_TRACKS = [
+  "AIML",
+  "Web",
+  "Android",
+  "Cloud",
+  "FinTech",
+  "DevTools & Infra",
+  "AR/VR",
+  "Open Innovation",
+  "Multimedia",
+];
+
+export default function IdeaSubmissionPage() {
+  const [shortDescription, setShortDescription] = useState("");
+  const [longDescription, setLongDescription] = useState("");
+  const [links, setLinks] = useState("");
+  const [selectedTracks, setSelectedTracks] = useState<string[]>(["Web", "AIML"]);
+  const [isTracksOpen, setIsTracksOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsTracksOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const removeTrack = (track: string) => {
+    setSelectedTracks((prev) => prev.filter((t) => t !== track));
+  };
+
+  const addTrack = (track: string) => {
+    if (!selectedTracks.includes(track)) {
+      setSelectedTracks((prev) => [...prev, track]);
+    }
+    setIsTracksOpen(false);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setSubmitted(true);
+      setTimeout(() => setSubmitted(false), 3000);
+    }, 1200);
+  };
+
+  return (
+    <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto select-none p-6 md:p-10 pb-20">
+      {/* Top Header: GDG Lockup (Left) & Profile (Right) */}
+      <header className="w-full max-w-[1280px] flex items-center justify-between z-30 mb-2">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 group transition-opacity hover:opacity-80"
+          aria-label="DevJams Home"
+        >
+          <Image
+            src="/assets/gdg-logo-white.svg"
+            alt="GDG Logo"
+            width={46}
+            height={23}
+            priority
+            className="w-auto h-5 md:h-6 object-contain"
+          />
+          <span className="hidden sm:inline-block">
+            <Image
+              src="/assets/gdg-lockup-line.png"
+              alt="Google Developer Groups"
+              width={160}
+              height={18}
+              priority
+              className="h-3.5 md:h-4 w-auto object-contain opacity-90"
+            />
+          </span>
+        </Link>
+
+        {/* Profile Link */}
+        <Link
+          href="/profile"
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-white/90 hover:text-white transition-all group"
+          aria-label="User Profile"
+        >
+          <span
+            className="text-[16px] md:text-[18px] font-medium tracking-wide"
+            style={{ fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif" }}
+          >
+            Profile
+          </span>
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="text-white group-hover:scale-105 transition-transform"
+          >
+            <circle cx="12" cy="8" r="4" />
+            <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
+          </svg>
+        </Link>
+      </header>
+
+      {/* Top 4 Logos Blend Banner (Group 1948755624 - gear, web, gemini, cursor) */}
+      <div
+        className="relative pointer-events-none z-10 w-full max-w-[848px] h-[clamp(140px,22vw,314px)] -mt-[clamp(40px,8vw,135px)] flex items-center justify-center overflow-visible"
+        aria-hidden="true"
+      >
+        <div className="relative w-full h-full flex items-center justify-center">
+          {/* 1. Gear Logo */}
+          <div
+            className="absolute left-0 top-0 w-[37%] aspect-square flex items-center justify-center"
+            style={{
+              mixBlendMode: "screen",
+              filter: "brightness(1.12) saturate(1.05)",
+            }}
+          >
+            <Image
+              src="/assets/low-quality/gear.svg"
+              alt="Gear"
+              width={314}
+              height={314}
+              priority
+              className="w-full h-full object-contain"
+            />
+          </div>
+
+          {/* 2. Web Track Logo */}
+          <div
+            className="absolute left-[32.5%] top-[15%] w-[27.3%] aspect-square flex items-center justify-center"
+            style={{
+              mixBlendMode: "screen",
+              filter: "brightness(1.12) saturate(1.05)",
+            }}
+          >
+            <Image
+              src="/assets/low-quality/web.svg"
+              alt="Web Track"
+              width={232}
+              height={232}
+              priority
+              className="w-full h-full object-contain"
+            />
+          </div>
+
+          {/* 3. Gemini Track Logo */}
+          <div
+            className="absolute left-[55.5%] top-[11.8%] w-[28.8%] aspect-square flex items-center justify-center"
+            style={{
+              mixBlendMode: "screen",
+              filter: "brightness(1.12) saturate(1.05)",
+            }}
+          >
+            <Image
+              src="/assets/low-quality/gemini.svg"
+              alt="Gemini Track"
+              width={244}
+              height={244}
+              priority
+              className="w-full h-full object-contain"
+            />
+          </div>
+
+          {/* 4. Cursor Logo */}
+          <div
+            className="absolute left-[80%] top-[23.3%] w-[20%] aspect-[170/205] flex items-center justify-center"
+            style={{
+              mixBlendMode: "screen",
+              filter: "brightness(1.12) saturate(1.05)",
+            }}
+          >
+            <Image
+              src="/assets/cursor.svg"
+              alt="Cursor"
+              width={170}
+              height={205}
+              priority
+              className="w-full h-full object-contain"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Main Form Content Container (Frame 1948755618) */}
+      <div className="w-full max-w-[1072px] flex flex-col items-center gap-[clamp(16px,2vh,24px)] mt-2 z-20">
+        {/* Title: Idea Submission */}
+        <h1
+          className="text-white font-bold tracking-normal leading-[1.2] text-center capitalize m-0 select-none w-full text-[clamp(36px,4.5vw,64px)]"
+          style={{
+            fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+          }}
+        >
+          Idea Submission
+        </h1>
+
+        {/* Form Fields Container (Frame 1948755617) */}
+        <form
+          onSubmit={handleSubmit}
+          className="w-full flex flex-col items-start gap-[clamp(18px,2.5vh,28px)] mt-2"
+        >
+          {/* Field 1: Short Description (Frame 1948755613) */}
+          <div className="w-full flex flex-col items-start gap-2.5">
+            <label
+              htmlFor="shortDescription"
+              className="text-white font-normal capitalize text-[clamp(20px,2.2vw,32px)] leading-[1.3]"
+              style={{
+                fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+              }}
+            >
+              Short Description
+            </label>
+            <textarea
+              id="shortDescription"
+              value={shortDescription}
+              onChange={(e) => setShortDescription(e.target.value)}
+              placeholder="Brief summary of your project..."
+              className="w-full bg-[#343434] text-white rounded-[8px] px-5 sm:px-7 py-3 text-[16px] sm:text-[18px] focus:outline-none focus:ring-1 focus:ring-white/40 resize-none h-[82px] transition-all placeholder:text-neutral-500"
+              style={{
+                fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+              }}
+            />
+          </div>
+
+          {/* Field 2: Long Description (Frame 1948755614) */}
+          <div className="w-full flex flex-col items-start gap-2.5">
+            <label
+              htmlFor="longDescription"
+              className="text-white font-normal capitalize text-[clamp(20px,2.2vw,32px)] leading-[1.3]"
+              style={{
+                fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+              }}
+            >
+              Long Description
+            </label>
+            <textarea
+              id="longDescription"
+              value={longDescription}
+              onChange={(e) => setLongDescription(e.target.value)}
+              placeholder="Detailed architecture, features, problem statement and solution..."
+              className="w-full bg-[#343434] text-white rounded-[8px] px-5 sm:px-7 py-3 text-[16px] sm:text-[18px] focus:outline-none focus:ring-1 focus:ring-white/40 resize-none h-[125px] transition-all placeholder:text-neutral-500"
+              style={{
+                fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+              }}
+            />
+          </div>
+
+          {/* Field 3: Links (Frame 1948755615) */}
+          <div className="w-full flex flex-col items-start gap-2.5">
+            <label
+              htmlFor="links"
+              className="text-white font-normal capitalize text-[clamp(20px,2.2vw,32px)] leading-[1.3]"
+              style={{
+                fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+              }}
+            >
+              Links
+            </label>
+            <input
+              id="links"
+              type="text"
+              value={links}
+              onChange={(e) => setLinks(e.target.value)}
+              placeholder="GitHub repo, Figma, demo URLs (comma separated)..."
+              className="w-full bg-[#343434] text-white rounded-[8px] px-5 sm:px-7 py-3 text-[16px] sm:text-[18px] focus:outline-none focus:ring-1 focus:ring-white/40 h-[56px] transition-all placeholder:text-neutral-500"
+              style={{
+                fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+              }}
+            />
+          </div>
+
+          {/* Field 4: Tracks (Frame 1948755616) */}
+          <div className="w-full flex flex-col items-start gap-2.5 relative" ref={dropdownRef}>
+            <label
+              className="text-white font-normal capitalize text-[clamp(20px,2.2vw,32px)] leading-[1.3]"
+              style={{
+                fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+              }}
+            >
+              Tracks
+            </label>
+
+            {/* Custom Interactive Chip Dropdown Input Box (Frame 1948754657) */}
+            <div
+              onClick={() => setIsTracksOpen((prev) => !prev)}
+              className="w-full min-h-[56px] bg-[#343434] text-white rounded-[8px] px-4 sm:px-6 py-2.5 flex items-center justify-between cursor-pointer border border-transparent hover:border-white/20 transition-all select-none"
+            >
+              {/* Chips container */}
+              <div className="flex flex-wrap items-center gap-2.5">
+                {selectedTracks.length === 0 ? (
+                  <span className="text-neutral-500 text-[16px] sm:text-[18px]">
+                    Select tracks...
+                  </span>
+                ) : (
+                  selectedTracks.map((track) => (
+                    <span
+                      key={track}
+                      className="inline-flex items-center gap-2 px-3.5 py-1 rounded-[22px] border border-white/60 text-white text-[14px] sm:text-[16px] font-normal transition-colors bg-black/20"
+                      style={{
+                        fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeTrack(track);
+                      }}
+                    >
+                      {track}
+                      {/* Close 'x' icon (Vectors 1185, 1186) */}
+                      <span
+                        className="inline-flex items-center justify-center w-4 h-4 rounded-full text-white/80 hover:text-white hover:bg-white/20 transition-colors"
+                        aria-label={`Remove ${track}`}
+                      >
+                        ×
+                      </span>
+                    </span>
+                  ))
+                )}
+              </div>
+
+              {/* Vector 1184 - Dropdown arrow */}
+              <svg
+                width="20"
+                height="11"
+                viewBox="0 0 20 11"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className={`transition-transform duration-200 text-white/60 flex-shrink-0 ml-2 ${
+                  isTracksOpen ? "rotate-180" : ""
+                }`}
+              >
+                <path
+                  d="M1.5 1.5L10 9.5L18.5 1.5"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+
+            {/* Dropdown Menu Options */}
+            <AnimatePresence>
+              {isTracksOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.98 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute left-0 right-0 top-full mt-1.5 bg-[#252525] border border-neutral-700 rounded-[8px] shadow-xl p-2 z-50 flex flex-wrap gap-2 max-h-56 overflow-y-auto"
+                >
+                  {ALL_TRACKS.map((track) => {
+                    const isSelected = selectedTracks.includes(track);
+                    return (
+                      <button
+                        type="button"
+                        key={track}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (isSelected) {
+                            removeTrack(track);
+                          } else {
+                            addTrack(track);
+                          }
+                        }}
+                        className={`px-3 py-1.5 rounded-[18px] text-[14px] font-normal transition-all cursor-pointer ${
+                          isSelected
+                            ? "bg-white text-black font-medium"
+                            : "bg-[#343434] text-white hover:bg-[#444444]"
+                        }`}
+                        style={{
+                          fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+                        }}
+                      >
+                        {track} {isSelected ? "✓" : "+"}
+                      </button>
+                    );
+                  })}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Submit Button (Frame 1948754781) */}
+          <div className="pt-2">
+            <motion.button
+              type="submit"
+              disabled={isSubmitting}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="bg-white text-black font-medium text-[clamp(18px,2vw,23px)] rounded-[35px] px-6 py-2.5 flex items-center justify-center gap-2.5 cursor-pointer border-none shadow-md hover:bg-neutral-100 transition-all disabled:opacity-60"
+              style={{
+                fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+                minWidth: "154px",
+                height: "44px",
+              }}
+            >
+              <span>{isSubmitting ? "Submitting..." : submitted ? "Submitted!" : "Submit"}</span>
+              {/* North-East Arrow Vector */}
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="stroke-current flex-shrink-0"
+              >
+                <path
+                  d="M4.5 11.5L11.5 4.5M11.5 4.5H5.5M11.5 4.5V10.5"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </motion.button>
+          </div>
+        </form>
+      </div>
+    </main>
+  );
+}
