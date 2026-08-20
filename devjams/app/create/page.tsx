@@ -6,13 +6,13 @@ import { useState } from "react";
 import ResponsiveSvg from "../../components/ResponsiveSvg";
 import { motion } from "../../components/gsap-motion";
 
-export default function JoinPage() {
-  const [teamCode, setTeamCode] = useState("");
+export default function CreateTeamPage() {
+  const [teamName, setTeamName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!teamCode.trim()) return;
+    if (!teamName.trim()) return;
     setIsSubmitting(true);
     setTimeout(() => {
       setIsSubmitting(false);
@@ -67,7 +67,7 @@ export default function JoinPage() {
             top: "calc(50% - 296px / 2)",
           }}
         >
-          {/* Title: Join A Team */}
+          {/* Title: Create A Team */}
           <h1
             className="text-white font-bold tracking-normal leading-none select-none m-0"
             style={{
@@ -79,10 +79,10 @@ export default function JoinPage() {
               alignItems: "center",
             }}
           >
-            Join A Team
+            Create A Team
           </h1>
 
-          {/* Subtitle / Prompt: Enter Your Team's Code (top: 455, gap: 10px from title bottom 445) */}
+          {/* Subtitle / Prompt: Enter Your Team's Name (top: 455, gap: 10px from title bottom 445) */}
           <p
             className="text-white font-normal m-0 select-none"
             style={{
@@ -96,7 +96,7 @@ export default function JoinPage() {
               alignItems: "center",
             }}
           >
-            Enter Your Team’s Code
+            Enter Your Team’s Name
           </p>
 
           {/* Form with Input (top: 528, gap: 19px from subtitle bottom 509) and Submit Button (top: 612, gap: 25px from input bottom 587) */}
@@ -104,9 +104,9 @@ export default function JoinPage() {
             {/* Input Field */}
             <input
               type="text"
-              value={teamCode}
-              onChange={(e) => setTeamCode(e.target.value)}
-              placeholder="Enter code here"
+              value={teamName}
+              onChange={(e) => setTeamName(e.target.value)}
+              placeholder="Enter team name"
               className="w-[590px] h-[59px] bg-transparent text-white placeholder-white/40 border border-white/40 focus:border-white focus:outline-none transition-colors"
               style={{
                 marginTop: "19px",
