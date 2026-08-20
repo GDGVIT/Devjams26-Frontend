@@ -9,17 +9,17 @@ export default function ProfilePage() {
   const router = useRouter();
 
   return (
-    <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto select-none p-4 sm:p-6 md:p-10 pb-20">
-      {/* Top Floating Graphics Banner (Group 1948755625) */}
+    <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto select-none pt-[clamp(100px,14vw,180px)] px-4 sm:px-6 md:px-10 pb-20">
+      {/* Top Full-Bleed Floating Graphics Banner (Group 1948755625) */}
       <div
-        className="relative pointer-events-none z-10 w-full max-w-[1440px] h-[clamp(90px,16vw,220px)] -mt-[clamp(16px,4vw,60px)] flex items-center justify-between overflow-visible px-2 sm:px-6 md:px-8"
+        className="absolute top-0 left-0 right-0 w-full h-[clamp(130px,18vw,220px)] pointer-events-none z-10 overflow-hidden select-none"
         aria-hidden="true"
       >
-        {/* 1. Left Pair: NotebookLLM + Cursor */}
-        <div className="relative w-[30%] max-w-[260px] h-full flex items-center justify-start">
+        {/* 1. Left Pair: NotebookLLM + Cursor (Bleeds to left edge) */}
+        <div className="absolute left-0 top-0 w-[clamp(190px,26vw,340px)] h-full flex items-center justify-start">
           {/* NotebookLLM */}
           <div
-            className="absolute left-0 top-[10%] w-[55%] aspect-square flex items-center justify-center"
+            className="absolute -left-6 sm:-left-10 top-2 w-[55%] max-w-[176px] aspect-square flex items-center justify-center"
             style={{
               mixBlendMode: "screen",
               filter: "brightness(1.15) saturate(1.05)",
@@ -37,7 +37,7 @@ export default function ProfilePage() {
 
           {/* Cursor (Overlapping to right of NotebookLLM) */}
           <div
-            className="absolute left-[38%] top-[12%] w-[58%] aspect-[171/144] flex items-center justify-center"
+            className="absolute left-[30%] sm:left-[35%] top-3 w-[55%] max-w-[171px] aspect-[171/144] flex items-center justify-center"
             style={{
               mixBlendMode: "screen",
               filter: "brightness(1.15) saturate(1.05)",
@@ -54,11 +54,11 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* 2. Middle Pair: Antigravity + Folder */}
-        <div className="relative w-[34%] max-w-[320px] h-full flex items-center justify-center">
+        {/* 2. Middle Pair: Antigravity + Folder (Centered) */}
+        <div className="absolute left-1/2 -translate-x-1/2 top-0 w-[clamp(230px,32vw,400px)] h-full flex items-center justify-center">
           {/* Antigravity Arch */}
           <div
-            className="absolute left-[5%] top-[5%] w-[65%] aspect-[299/276] flex items-center justify-center"
+            className="absolute left-[2%] sm:left-[5%] top-1 sm:top-2 w-[65%] max-w-[260px] aspect-[299/276] flex items-center justify-center"
             style={{
               mixBlendMode: "screen",
               filter: "brightness(1.12) saturate(1.05)",
@@ -76,7 +76,7 @@ export default function ProfilePage() {
 
           {/* Folder Graphic (Overlapping right of Antigravity) */}
           <div
-            className="absolute left-[45%] top-[15%] w-[52%] aspect-[149/121] flex items-center justify-center"
+            className="absolute left-[44%] sm:left-[48%] top-3 sm:top-4 w-[52%] max-w-[150px] aspect-[149/121] flex items-center justify-center"
             style={{
               mixBlendMode: "screen",
               filter: "brightness(1.12) saturate(1.05)",
@@ -93,11 +93,11 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* 3. Right Pair: Maps + Four-Petal */}
-        <div className="relative w-[30%] max-w-[260px] h-full flex items-center justify-end">
+        {/* 3. Right Pair: Maps + Four-Petal (Bleeds to right edge) */}
+        <div className="absolute right-0 top-0 w-[clamp(190px,26vw,340px)] h-full flex items-center justify-end">
           {/* Maps Pin */}
           <div
-            className="absolute right-[38%] top-[10%] w-[52%] aspect-[365/465] flex items-center justify-center"
+            className="absolute right-[30%] sm:right-[35%] top-1 sm:top-2 w-[50%] max-w-[165px] aspect-[365/465] flex items-center justify-center"
             style={{
               mixBlendMode: "screen",
               filter: "brightness(1.15) saturate(1.05)",
@@ -115,7 +115,7 @@ export default function ProfilePage() {
 
           {/* Four-Petal Flower Graphic (Overlapping right of Maps) */}
           <div
-            className="absolute right-0 top-[12%] w-[54%] aspect-square flex items-center justify-center"
+            className="absolute -right-6 sm:-right-10 top-3 w-[55%] max-w-[175px] aspect-square flex items-center justify-center"
             style={{
               mixBlendMode: "screen",
               filter: "brightness(1.15) saturate(1.05)",
@@ -132,8 +132,6 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
-
-      {/* Main Content Container (Frame 1948755611) */}
       <div className="w-full max-w-[1072px] mx-auto flex flex-col items-start gap-[clamp(20px,3.5vh,36px)] mt-2 z-20 px-1 sm:px-3 md:px-0">
         {/* Profile Page Title */}
         <h1
