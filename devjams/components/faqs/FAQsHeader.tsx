@@ -1,6 +1,6 @@
 "use client";
 
-import ResponsiveSvg from "../ResponsiveSvg";
+import AssetImage from "../AssetImage";
 import { motion } from "../gsap-motion";
 
 export function FAQsHeader() {
@@ -28,10 +28,11 @@ export function FAQsHeader() {
             zIndex: 10,
           }}
         >
-          <ResponsiveSvg
+          <AssetImage
             src="/assets/android.svg"
             alt="Android Track"
             fill
+            sizes="(max-width: 900px) 18vw, 160px"
             priority
             className="object-contain"
           />
@@ -45,10 +46,11 @@ export function FAQsHeader() {
             zIndex: 20,
           }}
         >
-          <ResponsiveSvg
+          <AssetImage
             src="/assets/web.svg"
             alt="Web Track"
             fill
+            sizes="(max-width: 900px) 18vw, 160px"
             priority
             className="object-contain"
           />
@@ -92,10 +94,11 @@ export function FAQsHeader() {
             zIndex: 10,
           }}
         >
-          <ResponsiveSvg
+          <AssetImage
             src="/assets/gemini.svg"
             alt="Gemini Track"
             fill
+            sizes="(max-width: 900px) 18vw, 160px"
             priority
             className="object-contain"
           />
@@ -108,10 +111,11 @@ export function FAQsHeader() {
             zIndex: 20,
           }}
         >
-          <ResponsiveSvg
+          <AssetImage
             src="/assets/cloud.svg"
             alt="Cloud Track"
             fill
+            sizes="(max-width: 900px) 18vw, 160px"
             priority
             className="object-contain"
           />

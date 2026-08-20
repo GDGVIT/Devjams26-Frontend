@@ -1,6 +1,6 @@
 "use client";
 
-import ResponsiveSvg from "../ResponsiveSvg";
+import AssetImage from "../AssetImage";
 import Image from "next/image";
 import { motion } from "../gsap-motion";
 
@@ -18,7 +18,7 @@ export function PreviousEventsDecorations({ index }: DecorationProps) {
         viewport={{ once: false, amount: 0.2 }}
         transition={{ duration: 0.6 }}
       >
-        <ResponsiveSvg
+        <AssetImage
           src="/assets/logo/triangle.svg"
           alt="Triangle Mesh Graphic"
           width={281}
@@ -39,7 +39,7 @@ export function PreviousEventsDecorations({ index }: DecorationProps) {
         transition={{ duration: 0.6 }}
       >
         {/* Top Circle */}
-        <ResponsiveSvg
+        <AssetImage
           src="/assets/logo/circle.svg"
           alt="Circle Mesh Graphic Top"
           width={170}
@@ -48,7 +48,7 @@ export function PreviousEventsDecorations({ index }: DecorationProps) {
         />
 
         {/* Bottom Circle */}
-        <ResponsiveSvg
+        <AssetImage
           src="/assets/logo/circle.svg"
           alt="Circle Mesh Graphic Bottom"
           width={170}
