@@ -52,42 +52,44 @@ export function scaleMobileShapeBoundsAtViewport(
   };
 }
 
+export const FRAME_TWO_MOBILE_LOGO_CENTER_X = 350;
 export const FRAME_TWO_MOBILE_SHAPES = {
   web: {
-    x: 225,
+    x: FRAME_TWO_MOBILE_LOGO_CENTER_X - 250 / 2,
     y: -5,
     width: 250,
     height: 250,
   },
   maps: {
-    x: 200,
+    x: FRAME_TWO_MOBILE_LOGO_CENTER_X - 300 / 2,
     y: 220,
     width: 300,
     height: 390,
   },
   android: {
-    x: 167.5,
+    x: FRAME_TWO_MOBILE_LOGO_CENTER_X - 365 / 2,
     y: 599.4519231,
     width: 365,
     height: 223.0961538,
   },
 } as const satisfies Record<string, ShapeBounds>;
 
+export const FRAME_FOUR_MOBILE_LOGO_CENTER_X = 30;
 export const FRAME_FOUR_MOBILE_SHAPES = {
   gear: {
-    x: -120,
+    x: FRAME_FOUR_MOBILE_LOGO_CENTER_X - 300 / 2,
     y: -20,
     width: 300,
     height: 316.3636364,
   },
   gemini: {
-    x: -120,
+    x: FRAME_FOUR_MOBILE_LOGO_CENTER_X - 300 / 2,
     y: 220,
     width: 300,
     height: 300,
   },
   cloud: {
-    x: -120,
+    x: FRAME_FOUR_MOBILE_LOGO_CENTER_X - 300 / 2,
     y: 610,
     width: 300,
     height: 219.0647482,
@@ -135,7 +137,17 @@ export type ShapeTransform = {
   scaleY: number;
 };
 
-export const FRAME_TWO_SHAPES = {
+export function alignShapeBoundsX(
+  shape: ShapeBounds,
+  centerX: number,
+): ShapeBounds {
+  return {
+    ...shape,
+    x: centerX - shape.width / 2,
+  };
+}
+
+export const FRAME_TWO_RAW_SHAPES = {
   web: {
     x: 866.7959,
     y: 0.4502,
@@ -155,27 +167,22 @@ export const FRAME_TWO_SHAPES = {
     height: 285.7433,
   },
 } as const satisfies Record<string, ShapeBounds>;
+
 export const FRAME_TWO_LOGO_CENTER_X =
-  Object.values(FRAME_TWO_SHAPES).reduce(
+  Object.values(FRAME_TWO_RAW_SHAPES).reduce(
     (center, shape) => center + shape.x + shape.width / 2,
     0,
-  ) / Object.values(FRAME_TWO_SHAPES).length;
+  ) / Object.values(FRAME_TWO_RAW_SHAPES).length;
 
-export const FRAME_TWO_MAPS_RIGHT_NUDGE = 40;
+export const FRAME_TWO_MAPS_RIGHT_NUDGE = 0;
 export const FRAME_TWO_MAPS_LEFT =
-  FRAME_TWO_LOGO_CENTER_X -
-  FRAME_TWO_SHAPES.maps.width / 2 +
-  FRAME_TWO_MAPS_RIGHT_NUDGE;
+  FRAME_TWO_LOGO_CENTER_X - FRAME_TWO_RAW_SHAPES.maps.width / 2;
 
-export function alignShapeBoundsX(
-  shape: ShapeBounds,
-  centerX: number,
-): ShapeBounds {
-  return {
-    ...shape,
-    x: centerX - shape.width / 2,
-  };
-}
+export const FRAME_TWO_SHAPES = {
+  web: alignShapeBoundsX(FRAME_TWO_RAW_SHAPES.web, FRAME_TWO_LOGO_CENTER_X),
+  maps: alignShapeBoundsX(FRAME_TWO_RAW_SHAPES.maps, FRAME_TWO_LOGO_CENTER_X),
+  android: alignShapeBoundsX(FRAME_TWO_RAW_SHAPES.android, FRAME_TWO_LOGO_CENTER_X),
+} as const satisfies Record<string, ShapeBounds>;
 
 export function frameTwoMapsOpacityAt(progress: number) {
   const p = Math.min(1, Math.max(0, progress));
@@ -250,7 +257,7 @@ export function frameThreeMapsShapeAtViewport(isMobile: boolean): ShapeBounds {
 
 export const FRAME_FOUR_LOGO_Z_INDEX = 20;
 export const FRAME_FOUR_LOGO_ORDER = ["gear", "gemini", "cloud"] as const;
-export const FRAME_FOUR_SHAPES = {
+export const FRAME_FOUR_RAW_SHAPES = {
   gear: {
     x: 75,
     y: 12.294572,
@@ -269,6 +276,18 @@ export const FRAME_FOUR_SHAPES = {
     width: 467.627,
     height: 285.7433,
   },
+} as const satisfies Record<string, ShapeBounds>;
+
+export const FRAME_FOUR_LOGO_CENTER_X =
+  Object.values(FRAME_FOUR_RAW_SHAPES).reduce(
+    (center, shape) => center + shape.x + shape.width / 2,
+    0,
+  ) / Object.values(FRAME_FOUR_RAW_SHAPES).length;
+
+export const FRAME_FOUR_SHAPES = {
+  gear: alignShapeBoundsX(FRAME_FOUR_RAW_SHAPES.gear, FRAME_FOUR_LOGO_CENTER_X),
+  gemini: alignShapeBoundsX(FRAME_FOUR_RAW_SHAPES.gemini, FRAME_FOUR_LOGO_CENTER_X),
+  cloud: alignShapeBoundsX(FRAME_FOUR_RAW_SHAPES.cloud, FRAME_FOUR_LOGO_CENTER_X),
 } as const satisfies Record<string, ShapeBounds>;
 
 export const FRAME_FOUR_CONTENT_ENTER_OFFSET = {

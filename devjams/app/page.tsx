@@ -298,7 +298,10 @@ export default function Home() {
       const transitionProgress = smoothScrollProgressAt(rawTransitionProgress);
 
       if (pageScroll < geometry.frameTwoLoadEnd) {
+        mapsFrameThreeX.set(0);
         mapsFrameThreeY.set(0);
+        mapsFrameThreeScaleX.set(1);
+        mapsFrameThreeScaleY.set(1);
         androidFrameThreeOpacity.set(1);
         frameThreeGeminiX.set(FRAME_THREE_EDGE_LOGO_OFFSETS.gemini);
         frameThreeGeminiRotate.set(-180);
@@ -617,13 +620,10 @@ export default function Home() {
       const frameTwoTargetScale = isMobile ? mobileFrameScale : frameScale;
       const frameTwoWebShape = isMobile
         ? FRAME_TWO_MOBILE_SHAPES.web
-        : alignShapeBoundsX(FRAME_TWO_SHAPES.web, FRAME_TWO_LOGO_CENTER_X);
+        : FRAME_TWO_SHAPES.web;
       const frameTwoAndroidShape = isMobile
         ? FRAME_TWO_MOBILE_SHAPES.android
-        : alignShapeBoundsX(
-            FRAME_TWO_SHAPES.android,
-            FRAME_TWO_LOGO_CENTER_X,
-          );
+        : FRAME_TWO_SHAPES.android;
       shapeTargetRef.current = {
         web: targetBounds(
           frameTwoWebShape,
@@ -658,7 +658,11 @@ export default function Home() {
         isMobile,
         viewportHeight: window.innerHeight,
         frameTwoLoadEnd:
-          framePageTop + frameRect.height - window.innerHeight,
+          framePageTop +
+          Math.max(
+            frameRect.height * 0.35,
+            frameRect.height - window.innerHeight * 0.65,
+          ),
         frameThreeTransitionEnd: halfVisibleScrollAt(
           frameThreePageTop,
           frameThreeRect.height,
@@ -1048,42 +1052,41 @@ export default function Home() {
             DevJams is the flagship hackathon organized by GDG-VIT, a 48-hour intensive coding event designed to push the boundaries of innovation and develop practical problem-solving skills.
           </p>
         </motion.div>
+
+        <motion.div
+          ref={mapsRef}
+          className="about-devjams__shape about-devjams__shape--pin"
+          style={{
+            left: isMobileViewport
+              ? FRAME_TWO_MOBILE_SHAPES.maps.x * mobileFrameScale
+              : FRAME_TWO_SHAPES.maps.x * frameScale,
+            top: isMobileViewport
+              ? FRAME_TWO_MOBILE_SHAPES.maps.y * mobileFrameVerticalScale
+              : FRAME_TWO_SHAPES.maps.y * frameScale,
+            width: isMobileViewport
+              ? FRAME_TWO_MOBILE_SHAPES.maps.width * mobileFrameScale
+              : FRAME_TWO_SHAPES.maps.width * frameScale,
+            height: isMobileViewport
+              ? FRAME_TWO_MOBILE_SHAPES.maps.height * mobileFrameVerticalScale
+              : FRAME_TWO_SHAPES.maps.height * frameScale,
+            opacity: mapsOpacity,
+            x: mapsFrameThreeX,
+            y: mapsFrameThreeY,
+            scaleX: mapsFrameThreeScaleX,
+            scaleY: mapsFrameThreeScaleY,
+            zIndex: isMobileViewport ? 5 : 20,
+          }}
+          aria-hidden="true"
+        >
+          <ResponsiveSvg
+            src="/assets/maps.svg"
+            alt=""
+            width={365}
+            height={465}
+            className="about-devjams__shape-image"
+          />
+        </motion.div>
       </section>
-
-      <motion.div
-        ref={mapsRef}
-        className="about-devjams__shape about-devjams__shape--pin"
-        style={{
-          left: isMobileViewport
-            ? FRAME_TWO_MOBILE_SHAPES.maps.x * mobileFrameScale
-            : FRAME_TWO_MAPS_LEFT * frameScale,
-          top: isMobileViewport
-            ? `calc(100vh + ${FRAME_TWO_MOBILE_SHAPES.maps.y * mobileFrameVerticalScale}px)`
-            : undefined,
-          width: isMobileViewport
-            ? FRAME_TWO_MOBILE_SHAPES.maps.width * mobileFrameScale
-            : undefined,
-          height: isMobileViewport
-            ? FRAME_TWO_MOBILE_SHAPES.maps.height * mobileFrameVerticalScale
-            : undefined,
-          opacity: mapsOpacity,
-          x: mapsFrameThreeX,
-          y: mapsFrameThreeY,
-          scaleX: mapsFrameThreeScaleX,
-          scaleY: mapsFrameThreeScaleY,
-          zIndex: isMobileViewport ? 5 : 20,
-        }}
-        aria-hidden="true"
-      >
-        <ResponsiveSvg
-          src="/assets/maps.svg"
-          alt=""
-          width={365}
-          height={465}
-          className="about-devjams__shape-image"
-        />
-      </motion.div>
-
       <section id="tracks" ref={frameThreeRef} className="frame-three">
         <h2 className="frame-three__title">
           <FoldText

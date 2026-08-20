@@ -32,7 +32,7 @@ body {
   width: min(1440px, 100vw);
   height: 1024px;
   background: #000;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .about-devjams__content {
@@ -95,8 +95,8 @@ body {
 }
 
 .about-devjams__shape--pin {
-  left: 911.1626px;
-  top: calc(100vh + 387.2815px);
+  left: 911.5371px;
+  top: 387.2815px;
   width: 364.106px;
   height: 464.3671px;
   z-index: 2;
@@ -281,7 +281,7 @@ body {
 @media (max-width: 1024px) {
   .about-devjams {
     height: 100svh;
-    overflow: hidden;
+    overflow: visible;
   }
 
 #home {
@@ -333,8 +333,8 @@ body {
   }
 
   .about-devjams__shape--pin {
-    left: calc(911.1626px * var(--frame-scale));
-    top: calc(100vh + (387.2815px * var(--frame-scale)));
+    left: calc(911.5371px * var(--frame-scale));
+    top: calc(387.2815px * var(--frame-scale));
     width: calc(364.106px * var(--frame-scale));
     height: calc(464.3671px * var(--frame-scale));
     z-index: 20;

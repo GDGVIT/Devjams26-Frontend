@@ -7,7 +7,9 @@ import {
   FRAME_ONE_ANIMATION_START_PROGRESS,
   FRAME_REFERENCE_WIDTH,
   FRAME_TWO_MOBILE_SHAPES,
+  FRAME_TWO_MOBILE_LOGO_CENTER_X,
   FRAME_TWO_SHAPES,
+  FRAME_TWO_RAW_SHAPES,
   FRAME_TWO_LOGO_CENTER_X,
   FRAME_TWO_MAPS_LEFT,
   FRAME_TWO_MAPS_RIGHT_NUDGE,
@@ -15,7 +17,10 @@ import {
   FRAME_FOUR_LOGO_ORDER,
   FRAME_FOUR_LOGO_Z_INDEX,
   FRAME_FOUR_SHAPES,
+  FRAME_FOUR_RAW_SHAPES,
+  FRAME_FOUR_LOGO_CENTER_X,
   FRAME_FOUR_MOBILE_SHAPES,
+  FRAME_FOUR_MOBILE_LOGO_CENTER_X,
   frameFourContentOffsetAt,
   frameFourSharedLogoTransformAt,
   frameScaleAtViewport,
@@ -197,36 +202,32 @@ test("Frame 2 map enters from the right while scaling into place", () => {
 });
 
 test("Frame 2 logos share one vertical center and smooth map visibility", () => {
-  const aligned = Object.values(FRAME_TWO_SHAPES).map((shape) =>
-    alignShapeBoundsX(shape, FRAME_TWO_LOGO_CENTER_X),
-  );
-  const centers = aligned.map((shape) => shape.x + shape.width / 2);
+  const shapes = Object.values(FRAME_TWO_SHAPES);
+  const centers = shapes.map((shape) => shape.x + shape.width / 2);
 
   assert.ok(centers.every((center) => Math.abs(center - FRAME_TWO_LOGO_CENTER_X) < 1e-9));
   assert.equal(
     FRAME_TWO_MAPS_LEFT,
-    FRAME_TWO_LOGO_CENTER_X -
-      FRAME_TWO_SHAPES.maps.width / 2 +
-      FRAME_TWO_MAPS_RIGHT_NUDGE,
+    FRAME_TWO_LOGO_CENTER_X - FRAME_TWO_RAW_SHAPES.maps.width / 2,
   );
   assert.equal(frameTwoMapsOpacityAt(0), 0);
   assert.ok(frameTwoMapsOpacityAt(0.5) > frameTwoMapsOpacityAt(0.4));
   assert.equal(frameTwoMapsOpacityAt(1), 1);
 });
-test("Frame 2 shape targets preserve the supplied Figma bounds", () => {
-  assert.deepEqual(FRAME_TWO_SHAPES.web, {
+test("Frame 2 shape targets preserve source heights and vertical spacing", () => {
+  assert.deepEqual(FRAME_TWO_RAW_SHAPES.web, {
     x: 866.7959,
     y: 0.4502,
     width: 453.8907,
     height: 453.8907,
   });
-  assert.deepEqual(FRAME_TWO_SHAPES.maps, {
+  assert.deepEqual(FRAME_TWO_RAW_SHAPES.maps, {
     x: 911.1626,
     y: 387.2815,
     width: 364.106,
     height: 464.3671,
   });
-  assert.deepEqual(FRAME_TWO_SHAPES.android, {
+  assert.deepEqual(FRAME_TWO_RAW_SHAPES.android, {
     x: 860,
     y: 739.2776,
     width: 467.627,
@@ -307,30 +308,48 @@ test("Gemini fades continuously across the requested scroll range", () => {
   assert.equal(geminiOpacityAt(1), 0);
 });
 
-test("Frame 4 uses the requested left-side logo order and mirrored bounds", () => {
+test("Frame 4 uses the requested left-side logo order and unified center alignment", () => {
   assert.deepEqual(FRAME_FOUR_LOGO_ORDER, ["gear", "gemini", "cloud"]);
-  assert.deepEqual(FRAME_FOUR_SHAPES, {
-    gear: {
-      x: 75,
-      y: 12.294572,
-      width: 514.7120538,
-      height: 514.7120538,
-    },
-    gemini: {
-      x: 143.80822,
-      y: 333.350487,
-      width: 405.249978,
-      height: 516.8405823,
-    },
-    cloud: {
-      x: 112.373,
-      y: 739.2776,
-      width: 467.627,
-      height: 285.7433,
-    },
-  });
+  const shapes = Object.values(FRAME_FOUR_SHAPES);
+  const centers = shapes.map((shape) => shape.x + shape.width / 2);
+  assert.ok(centers.every((center) => Math.abs(center - FRAME_FOUR_LOGO_CENTER_X) < 1e-9));
 });
 
+test("Frame 2 and Frame 4 logos maintain exact vertical center alignment across multiple viewports", () => {
+  const viewports = [
+    { w: 320, h: 568 },
+    { w: 360, h: 640 },
+    { w: 375, h: 812 },
+    { w: 390, h: 844 },
+    { w: 412, h: 915 },
+    { w: 700, h: 1000 },
+    { w: 768, h: 1024 },
+    { w: 1024, h: 768 },
+    { w: 1280, h: 800 },
+    { w: 1440, h: 900 },
+    { w: 1920, h: 1080 },
+    { w: 2560, h: 1440 },
+  ];
+
+  for (const { w, h } of viewports) {
+    const isMobile = w <= 700;
+    const frameScale = frameScaleAtViewport(w);
+    const mobileScale = mobileFrameScaleAtViewport(w);
+    const scale = isMobile ? mobileScale : frameScale;
+
+    // Frame 2
+    const f2Shapes = isMobile ? Object.values(FRAME_TWO_MOBILE_SHAPES) : Object.values(FRAME_TWO_SHAPES);
+    const f2Centers = f2Shapes.map((s) => (s.x + s.width / 2) * scale);
+    const f2MaxDiff = Math.max(...f2Centers) - Math.min(...f2Centers);
+    assert.ok(f2MaxDiff < 1e-6, `Frame 2 misalignment at ${w}x${h}: diff=${f2MaxDiff}`);
+
+    // Frame 4
+    const f4Shapes = isMobile ? Object.values(FRAME_FOUR_MOBILE_SHAPES) : Object.values(FRAME_FOUR_SHAPES);
+    const f4Centers = f4Shapes.map((s) => (s.x + s.width / 2) * scale);
+    const f4MaxDiff = Math.max(...f4Centers) - Math.min(...f4Centers);
+    assert.ok(f4MaxDiff < 1e-6, `Frame 4 misalignment at ${w}x${h}: diff=${f4MaxDiff}`);
+  }
+});
 
 test("Frame 4 content enters from the right and settles in place", () => {
   assert.equal(FRAME_FOUR_CONTENT_ENTER_OFFSET.x, 160);
