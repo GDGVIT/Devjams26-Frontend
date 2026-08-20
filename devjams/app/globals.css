@@ -930,17 +930,24 @@ body {
   }
 
   .frame-three__logo--gemini {
-    left: calc(174px * var(--mobile-scale, 1));
+    left: calc(156px * var(--mobile-scale, 1));
     top: calc(330px * var(--mobile-scale, 1));
-    width: calc(68px * var(--mobile-scale, 1));
-    height: calc(68px * var(--mobile-scale, 1));
+    width: calc(97.623px * var(--mobile-scale, 1));
+    height: calc(97.623px * var(--mobile-scale, 1));
   }
 
   .frame-three__logo--gear {
-    left: calc(230px * var(--mobile-scale, 1));
-    top: calc(330px * var(--mobile-scale, 1));
-    width: calc(65px * var(--mobile-scale, 1));
-    height: calc(68px * var(--mobile-scale, 1));
+    left: calc(234px * var(--mobile-scale, 1));
+    top: calc(320px * var(--mobile-scale, 1));
+    width: calc(116.903px * var(--mobile-scale, 1));
+    height: calc(116.902px * var(--mobile-scale, 1));
+  }
+  .frame-three__logo--cloud {
+    left: calc(375px * var(--mobile-scale, 1));
+    top: calc(535px * var(--mobile-scale, 1));
+    width: calc(383.611px * var(--mobile-scale, 1));
+    height: calc(280.09px * var(--mobile-scale, 1));
+    z-index: 0;
   }
 
   .frame-three__description {
@@ -956,13 +963,12 @@ body {
     letter-spacing: normal;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
   }
-
   /* Frame 4 - Mobile: Left-stacked logos, right-aligned content */
   .frame-four__content {
-    left: auto;
-    right: 20px;
-    width: calc(52% - 24px);
-    max-width: 210px;
+    left: calc(48% + 10px);
+    right: 16px;
+    width: calc(52% - 26px);
+    max-width: 175px;
     top: 50%;
     transform: translateY(-50%);
     align-items: flex-start;

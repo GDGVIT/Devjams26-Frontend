@@ -15,6 +15,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, typ
 import ResponsiveSvg from "../components/ResponsiveSvg";
 import {
   FRAME_FOUR_CONTENT_ENTER_OFFSET,
+  FRAME_FOUR_MOBILE_ROTATIONS,
   FRAME_FOUR_MOBILE_SHAPES,
   FRAME_FOUR_SHAPES,
   FRAME_ONE_ANIMATION_START_PROGRESS,
@@ -442,13 +443,25 @@ export default function Home() {
             );
 
       const transformAt = uniformShapeTransformAt;
-      const sourceGear = absoluteBounds(
+      const sourceBounds = (
+        shape: ShapeBounds,
+        sectionLeft: number,
+        sectionTop: number,
+      ): ShapeBounds =>
+        geometry.isMobile
+          ? absoluteMobileBounds(shape, sectionLeft, sectionTop)
+          : absoluteBounds(
+              shape,
+              sectionLeft,
+              sectionTop,
+              geometry.frameThreeScale,
+            );
+      const sourceGear = sourceBounds(
         geometry.isMobile
           ? FRAME_THREE_MOBILE_GEAR_SOURCE
           : FRAME_THREE_LOGOS.gear,
         geometry.frameThreePageLeft,
         geometry.frameThreePageTop,
-        geometry.frameThreeScale,
       );
       const targetGear = targetBounds(
         frameFourShapes.gear,
@@ -464,14 +477,16 @@ export default function Home() {
       frameThreeGearY.set(gearTransform.y);
       frameThreeGearScaleX.set(gearTransform.scaleX);
       frameThreeGearScaleY.set(gearTransform.scaleY);
-      frameThreeGearRotate.set(0);
+      frameThreeGearRotate.set(
+        geometry.isMobile ? FRAME_FOUR_MOBILE_ROTATIONS.gear * progress : 0,
+      );
       frameThreeGearOpacity.set(1);
-
-      const sourceGemini = absoluteBounds(
-        FRAME_THREE_LOGOS.gemini,
+      const sourceGemini = sourceBounds(
+        geometry.isMobile
+          ? FRAME_THREE_MOBILE_SHAPES.gemini
+          : FRAME_THREE_LOGOS.gemini,
         geometry.frameThreePageLeft,
         geometry.frameThreePageTop,
-        geometry.frameThreeScale,
       );
       const targetGemini = targetBounds(
         frameFourShapes.gemini,
@@ -490,12 +505,26 @@ export default function Home() {
       frameThreeGeminiRotate.set(0);
       frameThreeGeminiOpacity.set(1);
 
-      const cloudStart = absoluteBounds(
-        FRAME_FOUR_START_SHAPES.cloud,
-        geometry.frameFourPageLeft,
-        geometry.frameFourPageTop,
-        geometry.frameFourScale,
-      );
+      const cloudStart = geometry.isMobile
+        ? {
+            x: geometry.frameFourPageLeft + 375 * geometry.frameFourMobileScale,
+            y:
+              geometry.frameFourPageTop +
+              FRAME_FOUR_MOBILE_SHAPES.cloud.y *
+                mobileFrameVerticalScaleAtViewport(geometry.viewportHeight),
+            width:
+              FRAME_FOUR_MOBILE_SHAPES.cloud.width *
+              geometry.frameFourMobileScale,
+            height:
+              FRAME_FOUR_MOBILE_SHAPES.cloud.height *
+              mobileFrameVerticalScaleAtViewport(geometry.viewportHeight),
+          }
+        : absoluteBounds(
+            FRAME_FOUR_START_SHAPES.cloud,
+            geometry.frameFourPageLeft,
+            geometry.frameFourPageTop,
+            geometry.frameFourScale,
+          );
       const cloudTarget = targetBounds(
         frameFourShapes.cloud,
         geometry.frameFourPageLeft,

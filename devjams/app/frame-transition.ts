@@ -56,77 +56,82 @@ export const FRAME_TWO_MOBILE_LOGO_CENTER_X = 350;
 export const FRAME_TWO_MOBILE_SHAPES = {
   web: {
     x: FRAME_TWO_MOBILE_LOGO_CENTER_X - 250 / 2,
-    y: -5,
+    y: -10,
     width: 250,
     height: 250,
   },
   maps: {
-    x: FRAME_TWO_MOBILE_LOGO_CENTER_X - 300 / 2,
-    y: 220,
-    width: 300,
-    height: 390,
+    x: FRAME_TWO_MOBILE_LOGO_CENTER_X - 240 / 2,
+    y: 225,
+    width: 240,
+    height: 306,
   },
   android: {
-    x: FRAME_TWO_MOBILE_LOGO_CENTER_X - 365 / 2,
-    y: 599.4519231,
-    width: 365,
-    height: 223.0961538,
+    x: FRAME_TWO_MOBILE_LOGO_CENTER_X - 380 / 2,
+    y: 585,
+    width: 380,
+    height: 232,
   },
 } as const satisfies Record<string, ShapeBounds>;
 
-export const FRAME_FOUR_MOBILE_LOGO_CENTER_X = 30;
+export const FRAME_FOUR_MOBILE_ROTATIONS = {
+  gear: 15.364,
+  gemini: 0,
+  cloud: 0,
+} as const;
+
 export const FRAME_FOUR_MOBILE_SHAPES = {
   gear: {
-    x: FRAME_FOUR_MOBILE_LOGO_CENTER_X - 300 / 2,
-    y: -20,
-    width: 300,
-    height: 316.3636364,
+    x: -240,
+    y: -40,
+    width: 467.447,
+    height: 467.448,
   },
   gemini: {
-    x: FRAME_FOUR_MOBILE_LOGO_CENTER_X - 300 / 2,
-    y: 220,
-    width: 300,
-    height: 300,
+    x: -184.2405,
+    y: 260,
+    width: 358.481,
+    height: 358.481,
   },
   cloud: {
-    x: FRAME_FOUR_MOBILE_LOGO_CENTER_X - 300 / 2,
-    y: 610,
-    width: 300,
-    height: 219.0647482,
+    x: -203.611,
+    y: 535,
+    width: 383.611,
+    height: 280.09,
   },
 } as const satisfies Record<string, ShapeBounds>;
 
 export const FRAME_THREE_MOBILE_GEAR_SOURCE = {
-  x: 230,
-  y: 330,
-  width: 65,
-  height: 68,
+  x: 234,
+  y: 319.82,
+  width: 116.903,
+  height: 116.902,
 } as const satisfies ShapeBounds;
 
 export const FRAME_THREE_MOBILE_SHAPES = {
   web: {
-    x: 62,
+    x: 20,
     y: 330,
-    width: 68,
-    height: 68,
+    width: 96.549,
+    height: 96.549,
   },
   maps: {
-    x: 118,
+    x: 96.5,
     y: 330,
-    width: 66,
-    height: 68,
+    width: 75.723,
+    height: 96.574,
   },
   gemini: {
-    x: 174,
+    x: 156,
     y: 330,
-    width: 68,
-    height: 68,
+    width: 97.623,
+    height: 97.623,
   },
   gear: {
-    x: 230,
-    y: 330,
-    width: 65,
-    height: 68,
+    x: 234,
+    y: 319.82,
+    width: 116.903,
+    height: 116.902,
   },
 } as const satisfies Record<string, ShapeBounds>;
 
