@@ -20,9 +20,9 @@ export default function CreateTeamPage() {
   };
 
   return (
-    <main className="relative min-h-screen w-full bg-black text-white flex items-center justify-center overflow-x-hidden select-none">
-      {/* 1440x1024 Desktop Reference Frame Canvas */}
-      <div className="relative w-full max-w-[1440px] h-[1024px] overflow-hidden flex-shrink-0">
+    <main className="relative h-screen w-screen bg-black text-white flex items-center justify-center overflow-hidden select-none">
+      {/* 1440x1024 Desktop Reference Frame Canvas - Exact Screen Height Container */}
+      <div className="relative w-full max-w-[1440px] h-screen max-h-screen overflow-hidden flex-shrink-0">
         {/* Top Left GDG Lockup */}
         <header className="absolute top-8 left-[94px] z-30" aria-label="Google Developer Groups">
           <Link href="/" className="cursor-pointer flex items-center">
@@ -57,14 +57,14 @@ export default function CreateTeamPage() {
           </Link>
         </header>
 
-        {/* Group 1948755623 - Left Form Container (Vertically Centered with Screen Size) */}
+        {/* Group 1948755623 - Left Form Container (Exact Figma Dimensions & Gaps) */}
         <div
-          className="absolute z-20 flex flex-col justify-between"
+          className="absolute z-20 flex flex-col"
           style={{
             width: "590px",
+            height: "296px",
             left: "94px",
-            top: "50%",
-            transform: "translateY(-50%)",
+            top: "calc(50% - 296px / 2)",
           }}
         >
           {/* Title: Create A Team */}
@@ -82,15 +82,16 @@ export default function CreateTeamPage() {
             Create A Team
           </h1>
 
-          {/* Subtitle / Prompt: Enter Your Team's Name */}
+          {/* Subtitle / Prompt: Enter Your Team's Name (top: 455, gap: 10px from title bottom 445) */}
           <p
             className="text-white font-normal m-0 select-none"
             style={{
               fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
               fontSize: "24px",
               lineHeight: "1.2",
-              width: "561.3px",
-              height: "36px",
+              width: "561.303px",
+              height: "54px",
+              marginTop: "10px",
               display: "flex",
               alignItems: "center",
             }}
@@ -98,8 +99,8 @@ export default function CreateTeamPage() {
             Enter Your Team’s Name
           </p>
 
-          {/* Form with Input and Submit Button */}
-          <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-[590px]">
+          {/* Form with Input (top: 528, gap: 19px from subtitle bottom 509) and Submit Button (top: 612, gap: 25px from input bottom 587) */}
+          <form onSubmit={handleSubmit} className="flex flex-col w-[590px]">
             {/* Input Field */}
             <input
               type="text"
@@ -108,6 +109,7 @@ export default function CreateTeamPage() {
               placeholder="Enter team name"
               className="w-[590px] h-[59px] bg-transparent text-white placeholder-white/40 border border-white/40 focus:border-white focus:outline-none transition-colors"
               style={{
+                marginTop: "19px",
                 borderRadius: "9.08px",
                 padding: "7.26px 36.31px",
                 fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
@@ -124,6 +126,7 @@ export default function CreateTeamPage() {
               disabled={isSubmitting}
               className="w-[590px] h-[48px] bg-white text-black flex items-center justify-center cursor-pointer hover:bg-neutral-100 transition-all border-none"
               style={{
+                marginTop: "25px",
                 borderRadius: "35px",
                 padding: "9px 111px",
                 gap: "14px",
