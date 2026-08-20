@@ -931,20 +931,21 @@ body {
 
   .frame-three__logo--gemini {
     left: calc(156px * var(--mobile-scale, 1));
-    top: calc(330px * var(--mobile-scale, 1));
+    top: calc(281.19px * var(--mobile-scale, 1));
     width: calc(97.623px * var(--mobile-scale, 1));
     height: calc(97.623px * var(--mobile-scale, 1));
   }
 
   .frame-three__logo--gear {
     left: calc(234px * var(--mobile-scale, 1));
-    top: calc(320px * var(--mobile-scale, 1));
+    top: calc(271.55px * var(--mobile-scale, 1));
     width: calc(116.903px * var(--mobile-scale, 1));
     height: calc(116.902px * var(--mobile-scale, 1));
   }
+
   .frame-three__logo--cloud {
     left: calc(375px * var(--mobile-scale, 1));
-    top: calc(535px * var(--mobile-scale, 1));
+    top: calc(530px * var(--mobile-scale, 1));
     width: calc(383.611px * var(--mobile-scale, 1));
     height: calc(280.09px * var(--mobile-scale, 1));
     z-index: 0;

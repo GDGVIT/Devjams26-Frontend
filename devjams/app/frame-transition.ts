@@ -55,22 +55,22 @@ export function scaleMobileShapeBoundsAtViewport(
 export const FRAME_TWO_MOBILE_LOGO_CENTER_X = 350;
 export const FRAME_TWO_MOBILE_SHAPES = {
   web: {
-    x: FRAME_TWO_MOBILE_LOGO_CENTER_X - 250 / 2,
-    y: -10,
-    width: 250,
-    height: 250,
+    x: FRAME_TWO_MOBILE_LOGO_CENTER_X - 340 / 2,
+    y: -35,
+    width: 340,
+    height: 340,
   },
   maps: {
-    x: FRAME_TWO_MOBILE_LOGO_CENTER_X - 240 / 2,
-    y: 225,
-    width: 240,
-    height: 306,
+    x: FRAME_TWO_MOBILE_LOGO_CENTER_X - 190 / 2,
+    y: 350,
+    width: 190,
+    height: 242,
   },
   android: {
-    x: FRAME_TWO_MOBILE_LOGO_CENTER_X - 380 / 2,
-    y: 585,
-    width: 380,
-    height: 232,
+    x: FRAME_TWO_MOBILE_LOGO_CENTER_X - 360 / 2,
+    y: 590,
+    width: 360,
+    height: 220,
   },
 } as const satisfies Record<string, ShapeBounds>;
 
@@ -89,13 +89,13 @@ export const FRAME_FOUR_MOBILE_SHAPES = {
   },
   gemini: {
     x: -184.2405,
-    y: 260,
+    y: 255,
     width: 358.481,
     height: 358.481,
   },
   cloud: {
     x: -203.611,
-    y: 535,
+    y: 530,
     width: 383.611,
     height: 280.09,
   },
@@ -103,7 +103,7 @@ export const FRAME_FOUR_MOBILE_SHAPES = {
 
 export const FRAME_THREE_MOBILE_GEAR_SOURCE = {
   x: 234,
-  y: 319.82,
+  y: 271.549,
   width: 116.903,
   height: 116.902,
 } as const satisfies ShapeBounds;
@@ -111,25 +111,25 @@ export const FRAME_THREE_MOBILE_GEAR_SOURCE = {
 export const FRAME_THREE_MOBILE_SHAPES = {
   web: {
     x: 20,
-    y: 330,
+    y: 281.725,
     width: 96.549,
     height: 96.549,
   },
   maps: {
     x: 96.5,
-    y: 330,
+    y: 281.713,
     width: 75.723,
     height: 96.574,
   },
   gemini: {
     x: 156,
-    y: 330,
+    y: 281.1885,
     width: 97.623,
     height: 97.623,
   },
   gear: {
     x: 234,
-    y: 319.82,
+    y: 271.549,
     width: 116.903,
     height: 116.902,
   },

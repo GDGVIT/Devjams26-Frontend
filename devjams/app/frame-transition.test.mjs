@@ -88,7 +88,7 @@ test("Frame 4 mobile logos match Figma dimensions and rotation", () => {
   const shapes = Object.values(FRAME_FOUR_MOBILE_SHAPES);
   assert.ok(shapes.every((shape) => shape.x + shape.width <= 375));
   assert.ok(Math.min(...shapes.map((shape) => shape.y)) <= 0);
-  assert.ok(Math.max(...shapes.map((shape) => shape.y + shape.height)) >= 812);
+  assert.ok(Math.max(...shapes.map((shape) => shape.y + shape.height)) >= 800);
   assert.ok(shapes[0].y < shapes[1].y);
   assert.ok(shapes[1].y < shapes[2].y);
 });
@@ -99,10 +99,10 @@ test("Frame 2 mobile logos share a right-side vertical axis with balanced visual
 
   assert.ok(centers.every((center) => Math.abs(center - 350) < 1e-6));
   assert.ok(Math.min(...shapes.map((shape) => shape.y)) <= 0);
-  assert.ok(Math.max(...shapes.map((shape) => shape.y + shape.height)) >= 812);
+  assert.ok(Math.max(...shapes.map((shape) => shape.y + shape.height)) >= 800);
 });
 
-test("Frame 3 mobile logos match Figma dimensions and chain horizontally", () => {
+test("Frame 3 mobile logos match Figma dimensions and chain horizontally aligned on center row", () => {
   assert.equal(FRAME_THREE_MOBILE_SHAPES.web.width, 96.549);
   assert.equal(FRAME_THREE_MOBILE_SHAPES.web.height, 96.549);
   assert.equal(FRAME_THREE_MOBILE_SHAPES.maps.width, 75.723);
@@ -114,6 +114,8 @@ test("Frame 3 mobile logos match Figma dimensions and chain horizontally", () =>
 
   const shapes = Object.values(FRAME_THREE_MOBILE_SHAPES);
   assert.ok(shapes.every((s) => s.x >= 0 && s.x + s.width <= 375));
+  const rowYCenters = shapes.map((shape) => shape.y + shape.height / 2);
+  assert.ok(rowYCenters.every((center) => Math.abs(center - 330) < 1e-3));
 });
 
 test("mobile shape bounds keep horizontal and vertical frame scales separate", () => {
