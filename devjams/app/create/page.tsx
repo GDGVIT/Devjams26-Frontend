@@ -57,14 +57,14 @@ export default function CreateTeamPage() {
           </Link>
         </header>
 
-        {/* Group 1948755623 - Left Form Container */}
+        {/* Group 1948755623 - Left Form Container (Vertically Centered with Screen Size) */}
         <div
           className="absolute z-20 flex flex-col justify-between"
           style={{
             width: "590px",
-            height: "296px",
             left: "94px",
-            top: "calc(50% - 296px / 2)",
+            top: "50%",
+            transform: "translateY(-50%)",
           }}
         >
           {/* Title: Create A Team */}
