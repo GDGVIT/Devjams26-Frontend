@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import ResponsiveSvg from "../../components/ResponsiveSvg";
+import AssetImage from "../../components/AssetImage";
 import { motion } from "../../components/gsap-motion";
 
 export default function CreateTeamPage() {
@@ -182,7 +182,7 @@ export default function CreateTeamPage() {
           }}
           aria-hidden="true"
         >
-          <ResponsiveSvg
+          <AssetImage
             src="/assets/web.svg"
             alt="Web Track"
             width={454}
@@ -204,7 +204,7 @@ export default function CreateTeamPage() {
           }}
           aria-hidden="true"
         >
-          <ResponsiveSvg
+          <AssetImage
             src="/assets/maps.svg"
             alt="Google Maps"
             width={365}
@@ -226,7 +226,7 @@ export default function CreateTeamPage() {
           }}
           aria-hidden="true"
         >
-          <ResponsiveSvg
+          <AssetImage
             src="/assets/android.svg"
             alt="Android Track"
             width={468}
