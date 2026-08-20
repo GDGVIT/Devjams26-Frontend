@@ -20,12 +20,9 @@ export default function JoinPage() {
   };
 
   return (
-    <main className="relative min-h-screen w-full bg-black text-white flex items-center justify-center overflow-x-hidden overflow-y-auto select-none p-6 md:p-10 lg:p-12">
+    <main className="relative min-h-screen w-full bg-black text-white flex flex-col justify-between p-6 sm:p-10 lg:p-14 overflow-x-hidden select-none">
       {/* Top Left GDG Lockup */}
-      <header
-        className="absolute top-6 md:top-8 left-6 md:left-12 lg:left-[clamp(40px,6.5vw,94px)] z-30"
-        aria-label="Google Developer Groups"
-      >
+      <header className="relative z-30 w-fit" aria-label="Google Developer Groups">
         <Link href="/" className="cursor-pointer flex items-center">
           <motion.div
             className="hero-gdg-lockup"
@@ -58,13 +55,13 @@ export default function JoinPage() {
         </Link>
       </header>
 
-      {/* Main Responsive 2-Column Desktop Grid Container */}
-      <div className="relative w-full max-w-[1440px] min-h-[calc(100vh-64px)] flex flex-col md:flex-row items-center justify-between gap-8 lg:gap-16 px-4 md:px-8 lg:px-[clamp(24px,5vw,70px)] py-16">
-        {/* Left Form Container (Group 1948755623) */}
-        <div className="flex flex-col justify-center w-full max-w-[590px] z-20">
+      {/* Main Responsive Content Grid (No Hardcoded Screen Sizes) */}
+      <div className="w-full max-w-[1440px] mx-auto my-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center justify-between z-20 py-8">
+        {/* Left Column: Form Container */}
+        <div className="col-span-12 lg:col-span-7 flex flex-col justify-center max-w-[590px] w-full">
           {/* Title: Join A Team */}
           <h1
-            className="text-white font-bold tracking-normal leading-[1.1] select-none m-0 text-[clamp(36px,4.5vw,64px)]"
+            className="text-white font-bold tracking-tight leading-[1.08] text-4xl sm:text-5xl lg:text-6xl m-0"
             style={{
               fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
             }}
@@ -74,7 +71,7 @@ export default function JoinPage() {
 
           {/* Subtitle / Prompt: Enter Your Team's Code */}
           <p
-            className="text-white font-normal m-0 select-none text-[clamp(18px,1.8vw,24px)] leading-[1.3] mt-[clamp(8px,1.2vh,12px)]"
+            className="text-white/70 font-normal m-0 text-lg sm:text-xl lg:text-2xl mt-3 sm:mt-4 leading-normal"
             style={{
               fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
             }}
@@ -83,14 +80,14 @@ export default function JoinPage() {
           </p>
 
           {/* Form with Input and Submit Button */}
-          <form onSubmit={handleSubmit} className="flex flex-col w-full mt-[clamp(14px,2.2vh,24px)]">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5 sm:gap-6 w-full mt-6 sm:mt-8">
             {/* Input Field */}
             <input
               type="text"
               value={teamCode}
               onChange={(e) => setTeamCode(e.target.value)}
               placeholder="Enter code here"
-              className="w-full h-[clamp(50px,5.8vh,59px)] bg-transparent text-white placeholder-white/40 border border-white/40 focus:border-white focus:outline-none transition-colors rounded-[9.08px] px-[clamp(20px,2.5vw,36px)] py-2 text-[clamp(16px,1.5vw,20px)]"
+              className="w-full h-14 sm:h-[59px] bg-transparent text-white placeholder-white/40 border border-white/40 focus:border-white focus:outline-none transition-colors rounded-[9.08px] px-6 sm:px-9 text-lg sm:text-xl"
               style={{
                 fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
               }}
@@ -103,10 +100,10 @@ export default function JoinPage() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               disabled={isSubmitting}
-              className="w-full h-[clamp(44px,5vh,48px)] bg-white text-black flex items-center justify-center cursor-pointer hover:bg-neutral-100 transition-all border-none rounded-[35px] mt-[clamp(16px,2.6vh,26px)] px-6 md:px-12 gap-[14px]"
+              className="w-full h-12 sm:h-[48px] bg-white text-black flex items-center justify-center cursor-pointer hover:bg-neutral-100 transition-all border-none rounded-[35px] shadow-lg px-6 gap-3.5"
             >
               <span
-                className="text-[clamp(16px,1.6vw,24px)] leading-none text-center font-normal whitespace-nowrap"
+                className="text-lg sm:text-xl font-normal leading-none text-center whitespace-nowrap"
                 style={{
                   fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
                   letterSpacing: "0.02em",
@@ -115,12 +112,12 @@ export default function JoinPage() {
                 {isSubmitting ? "Continuing..." : "Continue To Team Page"}
               </span>
               <svg
-                width="22"
-                height="22"
+                width="20"
+                height="20"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-5 h-5 md:w-[22px] md:h-[22px] flex-shrink-0"
+                className="w-5 h-5 flex-shrink-0"
                 aria-hidden="true"
               >
                 <path
@@ -135,66 +132,65 @@ export default function JoinPage() {
           </form>
         </div>
 
-        {/* Right Side 3 Logos Stack (Fluid Responsive Desktop Column) */}
-        <div
-          className="relative pointer-events-none z-10 hidden md:flex flex-col items-center justify-center flex-shrink-0 w-[clamp(280px,32vw,468px)] min-h-[clamp(500px,80vh,880px)] overflow-visible"
-          aria-hidden="true"
-        >
-          {/* Web Track Logo */}
+        {/* Right Column: 3 Logos Stack (Proportionally Scaled with Screen Blend & Overlap) */}
+        <div className="col-span-12 lg:col-span-5 flex items-center justify-center lg:justify-end">
           <div
-            className="relative w-full flex-shrink-0 flex items-center justify-center"
-            style={{
-              width: "clamp(260px, 30vw, 454px)",
-              height: "clamp(260px, 30vw, 454px)",
-              mixBlendMode: "screen",
-            }}
+            className="relative pointer-events-none z-10 w-full max-w-[420px] lg:max-w-[460px] h-[480px] sm:h-[580px] lg:h-[680px] xl:h-[760px] flex items-center justify-center overflow-visible"
+            aria-hidden="true"
           >
-            <ResponsiveSvg
-              src="/assets/web.svg"
-              alt="Web Track"
-              width={454}
-              height={454}
-              priority
-              className="w-full h-full object-contain"
-            />
-          </div>
+            {/* Web Track Logo (Top, 70% visible, top overflow) */}
+            <div
+              className="absolute top-0 right-0 w-[84%] aspect-square flex items-center justify-center"
+              style={{
+                mixBlendMode: "screen",
+                filter: "brightness(1.12) saturate(1.05)",
+              }}
+            >
+              <ResponsiveSvg
+                src="/assets/web.svg"
+                alt="Web Track"
+                width={454}
+                height={454}
+                priority
+                className="w-full h-full object-contain"
+              />
+            </div>
 
-          {/* Maps Logo (Middle with vertical overlap) */}
-          <div
-            className="relative w-full flex-shrink-0 flex items-center justify-center -mt-[clamp(60px,8vw,110px)]"
-            style={{
-              width: "clamp(210px, 25vw, 364px)",
-              height: "clamp(260px, 31vw, 464px)",
-              mixBlendMode: "screen",
-            }}
-          >
-            <ResponsiveSvg
-              src="/assets/maps.svg"
-              alt="Google Maps"
-              width={365}
-              height={465}
-              priority
-              className="w-full h-full object-contain"
-            />
-          </div>
+            {/* Maps Logo (Middle with natural overlap) */}
+            <div
+              className="absolute top-[34%] right-[8%] w-[68%] aspect-[364/464] flex items-center justify-center"
+              style={{
+                mixBlendMode: "screen",
+                filter: "brightness(1.12) saturate(1.05)",
+              }}
+            >
+              <ResponsiveSvg
+                src="/assets/maps.svg"
+                alt="Google Maps"
+                width={365}
+                height={465}
+                priority
+                className="w-full h-full object-contain"
+              />
+            </div>
 
-          {/* Android Track Logo (Bottom with vertical overlap) */}
-          <div
-            className="relative w-full flex-shrink-0 flex items-center justify-center -mt-[clamp(50px,7vw,100px)]"
-            style={{
-              width: "clamp(260px, 31vw, 468px)",
-              height: "clamp(160px, 19vw, 286px)",
-              mixBlendMode: "screen",
-            }}
-          >
-            <ResponsiveSvg
-              src="/assets/android.svg"
-              alt="Android Track"
-              width={468}
-              height={286}
-              priority
-              className="w-full h-full object-contain"
-            />
+            {/* Android Track Logo (Bottom with natural overlap) */}
+            <div
+              className="absolute bottom-0 right-0 w-[88%] aspect-[468/286] flex items-center justify-center"
+              style={{
+                mixBlendMode: "screen",
+                filter: "brightness(1.12) saturate(1.05)",
+              }}
+            >
+              <ResponsiveSvg
+                src="/assets/android.svg"
+                alt="Android Track"
+                width={468}
+                height={286}
+                priority
+                className="w-full h-full object-contain"
+              />
+            </div>
           </div>
         </div>
       </div>
