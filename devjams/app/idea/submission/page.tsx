@@ -65,62 +65,33 @@ export default function IdeaSubmissionPage() {
 
   return (
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto select-none p-6 md:p-10 pb-20">
-      {/* Top Header: GDG Lockup (Left) & Profile (Right) */}
-      <header className="w-full max-w-[1280px] flex items-center justify-between z-30 mb-2">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 group transition-opacity hover:opacity-80"
-          aria-label="DevJams Home"
+      {/* Top Right Profile Link */}
+      <Link
+        href="/profile"
+        className="absolute right-6 top-6 md:right-10 md:top-8 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-white/90 hover:text-white transition-all group z-30"
+        aria-label="User Profile"
+      >
+        <span
+          className="text-[16px] md:text-[18px] font-medium tracking-wide"
+          style={{ fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif" }}
         >
-          <Image
-            src="/assets/gdg-logo-white.svg"
-            alt="GDG Logo"
-            width={46}
-            height={23}
-            priority
-            className="w-auto h-5 md:h-6 object-contain"
-          />
-          <span className="hidden sm:inline-block">
-            <Image
-              src="/assets/gdg-lockup-line.png"
-              alt="Google Developer Groups"
-              width={160}
-              height={18}
-              priority
-              className="h-3.5 md:h-4 w-auto object-contain opacity-90"
-            />
-          </span>
-        </Link>
-
-        {/* Profile Link */}
-        <Link
-          href="/profile"
-          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-white/90 hover:text-white transition-all group"
-          aria-label="User Profile"
+          Profile
+        </span>
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="text-white group-hover:scale-105 transition-transform"
         >
-          <span
-            className="text-[16px] md:text-[18px] font-medium tracking-wide"
-            style={{ fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif" }}
-          >
-            Profile
-          </span>
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="text-white group-hover:scale-105 transition-transform"
-          >
-            <circle cx="12" cy="8" r="4" />
-            <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
-          </svg>
-        </Link>
-      </header>
-
+          <circle cx="12" cy="8" r="4" />
+          <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
+        </svg>
+      </Link>
       {/* Top 4 Logos Blend Banner (Group 1948755624 - gear, web, gemini, cursor) */}
       <div
         className="relative pointer-events-none z-10 w-full max-w-[848px] h-[clamp(140px,22vw,314px)] -mt-[clamp(40px,8vw,135px)] flex items-center justify-center overflow-visible"
