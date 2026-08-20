@@ -70,7 +70,7 @@ export default function TeamPage() {
           </Link>
         </header>
 
-        {/* Group 1948755624 - Top 4 Logos Blend Banner (gear, web, gemini, maps/cursor) */}
+        {/* Group 1948755624 - Top 4 Logos Blend Banner (gear, web, gemini, cursor) */}
         <div
           className="absolute pointer-events-none z-10"
           style={{
@@ -94,7 +94,7 @@ export default function TeamPage() {
             }}
           >
             <ResponsiveSvg
-              src="/assets/gear.svg"
+              src="/assets/low-quality/gear.svg"
               alt="Gear"
               width={314}
               height={314}
@@ -116,7 +116,7 @@ export default function TeamPage() {
             }}
           >
             <ResponsiveSvg
-              src="/assets/web.svg"
+              src="/assets/low-quality/web.svg"
               alt="Web Track"
               width={232}
               height={232}
@@ -138,7 +138,7 @@ export default function TeamPage() {
             }}
           >
             <ResponsiveSvg
-              src="/assets/gemini.svg"
+              src="/assets/low-quality/gemini.svg"
               alt="Gemini Track"
               width={244}
               height={244}
@@ -147,7 +147,7 @@ export default function TeamPage() {
             />
           </div>
 
-          {/* 4. Maps / Cursor Logo (left: 974px in 1440 canvas, width: 170.37px, height: 205.22px, top: -62px -> local left: 678px, top: 73px) */}
+          {/* 4. Cursor Logo (left: 974px in 1440 canvas, width: 170.37px, height: 205.22px, top: -62px -> local left: 678px, top: 73px) */}
           <div
             className="absolute"
             style={{
@@ -160,8 +160,8 @@ export default function TeamPage() {
             }}
           >
             <ResponsiveSvg
-              src="/assets/maps.svg"
-              alt="Maps Cursor"
+              src="/assets/low-quality/cursor.svg"
+              alt="Cursor"
               width={170}
               height={205}
               priority

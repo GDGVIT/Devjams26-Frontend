@@ -20,9 +20,9 @@ export default function CreateTeamPage() {
   };
 
   return (
-    <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto select-none">
-      {/* 1440x1024 Desktop Reference Frame Canvas */}
-      <div className="relative w-full max-w-[1440px] min-h-[1024px] flex-shrink-0">
+    <main className="relative h-screen w-screen bg-black text-white flex items-center justify-center overflow-hidden select-none">
+      {/* 1440x1024 Desktop Reference Frame Canvas - Exact Screen Height Container */}
+      <div className="relative w-full max-w-[1440px] h-screen max-h-screen overflow-hidden flex-shrink-0">
         {/* Top Left GDG Lockup */}
         <header className="absolute top-8 left-[94px] z-30" aria-label="Google Developer Groups">
           <Link href="/" className="cursor-pointer flex items-center">
