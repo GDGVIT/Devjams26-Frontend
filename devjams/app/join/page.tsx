@@ -164,17 +164,24 @@ export default function JoinPage() {
         </form>
       </div>
 
-      {/* Right Side 3 Logos Box - Height exactly 100vh with all 3 logos perfectly stacked and fully visible */}
+      {/* Right Side 3 Logos Box - Scaled down with glowing blend and vertical overlap */}
       <div
-        className="absolute right-[5vw] top-0 bottom-0 pointer-events-none z-10 flex flex-col items-center justify-between py-[2vh] overflow-hidden"
+        className="absolute right-[5vw] top-0 bottom-0 pointer-events-none z-10 flex flex-col items-center justify-center py-[2vh] overflow-hidden"
         style={{
-          width: "min(460px, 32vw)",
+          width: "min(400px, 28vw)",
           height: "100vh",
         }}
         aria-hidden="true"
       >
         {/* Web Track Logo (Top) */}
-        <div className="relative w-full flex items-center justify-center flex-shrink-0" style={{ height: "35vh" }}>
+        <div
+          className="relative w-full flex items-center justify-center flex-shrink-0"
+          style={{
+            height: "29vh",
+            mixBlendMode: "screen",
+            filter: "brightness(1.12) saturate(1.05)",
+          }}
+        >
           <ResponsiveSvg
             src="/assets/web.svg"
             alt="Web Track"
@@ -185,8 +192,15 @@ export default function JoinPage() {
           />
         </div>
 
-        {/* Maps Logo (Middle) */}
-        <div className="relative w-full flex items-center justify-center flex-shrink-0 -my-[3vh]" style={{ height: "36vh" }}>
+        {/* Maps Logo (Middle with vertical overlap on Web and Android) */}
+        <div
+          className="relative w-full flex items-center justify-center flex-shrink-0 -my-[4.5vh]"
+          style={{
+            height: "31vh",
+            mixBlendMode: "screen",
+            filter: "brightness(1.12) saturate(1.05)",
+          }}
+        >
           <ResponsiveSvg
             src="/assets/maps.svg"
             alt="Google Maps"
@@ -198,7 +212,14 @@ export default function JoinPage() {
         </div>
 
         {/* Android Track Logo (Bottom) */}
-        <div className="relative w-full flex items-center justify-center flex-shrink-0" style={{ height: "26vh" }}>
+        <div
+          className="relative w-full flex items-center justify-center flex-shrink-0"
+          style={{
+            height: "22vh",
+            mixBlendMode: "screen",
+            filter: "brightness(1.12) saturate(1.05)",
+          }}
+        >
           <ResponsiveSvg
             src="/assets/android.svg"
             alt="Android Track"
