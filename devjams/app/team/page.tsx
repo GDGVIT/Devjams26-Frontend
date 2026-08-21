@@ -114,7 +114,7 @@ export default function TeamPage() {
 
           {/* 4. Cursor Logo */}
           <div
-            className="absolute left-[80%] top-[23.3%] w-[20%] aspect-[170/205] flex items-center justify-center"
+            className="absolute left-[80%] top-[23.3%] w-[20%] aspect-[41/53] flex items-center justify-center"
             style={{
               mixBlendMode: "screen",
               filter: "brightness(1.12) saturate(1.05)",
@@ -124,7 +124,7 @@ export default function TeamPage() {
               src="/assets/baked/cursor.png"
               alt="Cursor"
               width={170}
-              height={205}
+              height={220}
               priority
               className="w-full h-full object-contain"
             />

@@ -33,7 +33,7 @@ export default function ProfilePage() {
             />
           </div>
           <div
-            className="relative h-[clamp(75px,11vw,140px)] w-auto aspect-[171/144] flex items-center justify-center -ml-[30%]"
+            className="relative h-[clamp(75px,11vw,140px)] w-auto aspect-[41/53] flex items-center justify-center -ml-[30%]"
             style={{
               mixBlendMode: "screen",
               filter: "brightness(1.15) saturate(1.05)",
@@ -43,7 +43,7 @@ export default function ProfilePage() {
               src="/assets/baked/cursor.png"
               alt="Cursor"
               width={171}
-              height={144}
+              height={221}
               priority
               className="w-full h-full object-contain"
             />

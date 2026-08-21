@@ -154,7 +154,7 @@ export default function IdeaSubmissionPage() {
 
           {/* 4. Cursor Logo */}
           <div
-            className="absolute left-[80%] top-[23.3%] w-[20%] aspect-[170/205] flex items-center justify-center"
+            className="absolute left-[80%] top-[23.3%] w-[20%] aspect-[41/53] flex items-center justify-center"
             style={{
               mixBlendMode: "screen",
               filter: "brightness(1.12) saturate(1.05)",
@@ -164,7 +164,7 @@ export default function IdeaSubmissionPage() {
               src="/assets/baked/cursor.png"
               alt="Cursor"
               width={170}
-              height={205}
+              height={220}
               priority
               className="w-full h-full object-contain"
             />
@@ -172,8 +172,8 @@ export default function IdeaSubmissionPage() {
         </div>
       </div>
 
-      {/* Main Form Content Container (Frame 1948755618) */}
-      <div className="w-full max-w-[1072px] mx-auto flex flex-col items-center gap-[clamp(14px,2vh,24px)] mt-2 z-20 px-1 sm:px-3 md:px-0">
+      {/* Main Form Content Container (Frame 1948755618 - Centered in mobile) */}
+      <div className="w-full max-w-[1072px] mx-auto my-auto flex flex-col items-center justify-center gap-[clamp(14px,2vh,24px)] z-20 px-1 sm:px-3 md:px-0 py-6 sm:py-0">
         <h1
           className="text-white font-bold tracking-normal leading-[1.2] text-center capitalize m-0 select-none w-full text-[clamp(36px,4.5vw,64px)]"
           style={{
