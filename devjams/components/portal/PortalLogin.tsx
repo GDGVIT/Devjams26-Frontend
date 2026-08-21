@@ -34,7 +34,7 @@ export function PortalLogin() {
         </motion.h1>
 
         {/* Center Graphic Box: DevJams '26 Logo + Floating Track Icons (Group 1948755620) */}
-        <div className="relative w-full flex flex-col items-center justify-center my-2 sm:my-6 overflow-visible">
+        <div className="relative w-full flex flex-col items-center justify-center my-2 sm:my-6 overflow-visible px-4 sm:px-6 md:px-8">
           <HeroLogo />
           <HeroTrackIcons />
         </div>

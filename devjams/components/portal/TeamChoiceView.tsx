@@ -31,7 +31,7 @@ export function TeamChoiceView() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
-          className="w-full flex justify-center"
+          className="w-full flex justify-center px-4 sm:px-6 md:px-8 overflow-visible"
         >
           <DashboardGraphic />
         </motion.div>

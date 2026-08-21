@@ -5,7 +5,7 @@ import AssetImage from "@/components/AssetImage";
 
 export function DashboardGraphic() {
   return (
-    <div className="relative flex items-center justify-center pointer-events-none select-none max-w-full my-6 sm:my-10 scale-[0.88] min-[420px]:scale-100 sm:scale-110 md:scale-120 lg:scale-[1.28] origin-center">
+    <div className="relative flex items-center justify-center pointer-events-none select-none max-w-full my-4 sm:my-10 px-2 sm:px-6 scale-[0.68] min-[360px]:scale-[0.78] min-[420px]:scale-[0.90] sm:scale-110 md:scale-120 lg:scale-[1.28] origin-center">
       {/* Container with screen blend mode */}
       <div className="relative flex items-center justify-center mix-blend-screen">
         {/* Left Bracket { (With whitespace after) */}
