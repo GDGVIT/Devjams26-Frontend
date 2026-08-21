@@ -28,10 +28,11 @@ const logoLetters: LogoLetter[] = [
 
 export function HeroLogo() {
   return (
-    <div className="relative z-30 w-[955.5px] h-[170.98px] max-w-full scale-[0.30] min-[360px]:scale-[0.38] min-[440px]:scale-[0.52] sm:scale-[0.72] md:scale-[0.88] lg:scale-100 -my-10 min-[360px]:-my-6 sm:my-0 transition-all origin-center">
-      {logoLetters.map((letter, index) => (
-        <motion.div
-          key={index}
+    <div className="relative z-30 flex items-center justify-center w-full overflow-visible py-1 sm:py-4 px-2 sm:px-4">
+      <div className="relative w-[955.5px] h-[170.98px] flex-shrink-0 scale-[0.28] min-[360px]:scale-[0.33] min-[400px]:scale-[0.39] min-[460px]:scale-[0.50] sm:scale-[0.72] md:scale-[0.88] lg:scale-100 origin-center transition-transform">
+        {logoLetters.map((letter, index) => (
+          <motion.div
+            key={index}
           initial={{ opacity: 0, y: -30, scale: 0.85 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           whileHover={{ y: -6, scale: 1.04, transition: { duration: 0.2 } }}
@@ -59,6 +60,7 @@ export function HeroLogo() {
           />
         </motion.div>
       ))}
+      </div>
     </div>
   );
 }

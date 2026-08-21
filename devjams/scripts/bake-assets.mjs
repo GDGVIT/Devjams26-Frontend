@@ -39,7 +39,7 @@ const TARGETS = [
   { src: "cloud.svg", out: "cloud.png", width: 784, height: 572 },
   { src: "maps.svg", out: "maps.png", width: 730, height: 930 },
   { src: "dino-menu.svg", out: "dino-menu.png", width: 130, height: 138 },
-  { src: "cursor.svg", out: "cursor.png", width: 513, height: 432 },
+  { src: "cursor.svg", out: "cursor.png", width: 410, height: 530 },
   { src: "notebookllm.svg", out: "notebookllm.png", width: 342, height: 360 },
   { src: "antigravity.svg", out: "antigravity.png", width: 598, height: 552 },
   { src: "folder.svg", out: "folder.png", width: 447, height: 363 },

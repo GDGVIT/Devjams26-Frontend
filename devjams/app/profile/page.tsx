@@ -33,7 +33,7 @@ export default function ProfilePage() {
             />
           </div>
           <div
-            className="relative h-[clamp(75px,11vw,140px)] w-auto aspect-[171/144] flex items-center justify-center -ml-[30%]"
+            className="relative h-[clamp(75px,11vw,140px)] w-auto aspect-[41/53] flex items-center justify-center -ml-[30%]"
             style={{
               mixBlendMode: "screen",
               filter: "brightness(1.15) saturate(1.05)",
@@ -43,7 +43,7 @@ export default function ProfilePage() {
               src="/assets/baked/cursor.png"
               alt="Cursor"
               width={171}
-              height={144}
+              height={221}
               priority
               className="w-full h-full object-contain"
             />
@@ -124,9 +124,9 @@ export default function ProfilePage() {
       </div>
 
       {/* Main Content Container (Semantic Main) */}
-      <main className="w-full max-w-[1072px] mx-auto flex flex-col items-start gap-[clamp(20px,3.5vh,36px)] z-20 pt-[clamp(85px,12vw,155px)] px-4 sm:px-6 md:px-0">
+      <main className="w-full max-w-[1072px] mx-auto flex flex-col items-start gap-[clamp(18px,3vh,36px)] z-20 pt-[clamp(75px,11vw,155px)] px-4 sm:px-6 md:px-0">
         <h1
-          className="text-white font-bold tracking-normal leading-[1.2] text-center capitalize m-0 select-none w-full text-[clamp(32px,5vw,64px)]"
+          className="text-white font-bold tracking-normal leading-[1.2] text-center capitalize m-0 select-none w-full text-[clamp(36px,4.5vw,64px)]"
           style={{
             fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
           }}
@@ -135,7 +135,7 @@ export default function ProfilePage() {
         </h1>
 
         {/* Section 1: Contact Details */}
-        <div className="w-full flex flex-col items-start gap-3 sm:gap-6">
+        <div className="w-full flex flex-col items-start gap-2.5 sm:gap-6">
           <h2
             className="text-white font-normal capitalize text-[clamp(24px,3.5vw,48px)] leading-[1.3] m-0"
             style={{
@@ -150,7 +150,7 @@ export default function ProfilePage() {
             {/* Name Field */}
             <div className="w-full flex flex-col items-start gap-2">
               <label
-                className="text-white font-normal capitalize text-[clamp(18px,2vw,32px)] leading-[1.3]"
+                className="text-white font-normal capitalize text-[clamp(16px,2vw,32px)] leading-[1.3]"
                 style={{
                   fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
                 }}
@@ -158,7 +158,7 @@ export default function ProfilePage() {
                 Name
               </label>
               <div
-                className="w-full bg-[#343434] text-white/60 rounded-[8px] px-4 sm:px-6 py-2.5 sm:py-3.5 min-h-[48px] sm:min-h-[56px] flex items-center text-[clamp(16px,1.8vw,24px)] font-normal select-text"
+                className="w-full bg-[#343434] text-white/60 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center text-[clamp(12px,1.6vw,24px)] font-normal select-text"
                 style={{
                   fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
                 }}
@@ -170,7 +170,7 @@ export default function ProfilePage() {
             {/* Email Address Field */}
             <div className="w-full flex flex-col items-start gap-2">
               <label
-                className="text-white font-normal capitalize text-[clamp(18px,2vw,32px)] leading-[1.3]"
+                className="text-white font-normal capitalize text-[clamp(16px,2vw,32px)] leading-[1.3]"
                 style={{
                   fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
                 }}
@@ -178,7 +178,7 @@ export default function ProfilePage() {
                 Email Address
               </label>
               <div
-                className="w-full bg-[#343434] text-white/60 rounded-[8px] px-4 sm:px-6 py-2.5 sm:py-3.5 min-h-[48px] sm:min-h-[56px] flex items-center text-[clamp(16px,1.8vw,24px)] font-normal select-text"
+                className="w-full bg-[#343434] text-white/60 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center text-[clamp(12px,1.6vw,24px)] font-normal select-text"
                 style={{
                   fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
                 }}
@@ -193,7 +193,7 @@ export default function ProfilePage() {
             {/* Team Name Field */}
             <div className="w-full flex flex-col items-start gap-2">
               <label
-                className="text-white font-normal capitalize text-[clamp(18px,2vw,32px)] leading-[1.3]"
+                className="text-white font-normal capitalize text-[clamp(16px,2vw,32px)] leading-[1.3]"
                 style={{
                   fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
                 }}
@@ -201,7 +201,7 @@ export default function ProfilePage() {
                 Team Name
               </label>
               <div
-                className="w-full bg-[#343434] text-white/60 rounded-[8px] px-4 sm:px-6 py-2.5 sm:py-3.5 min-h-[48px] sm:min-h-[56px] flex items-center text-[clamp(16px,1.8vw,24px)] font-normal select-text"
+                className="w-full bg-[#343434] text-white/60 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center text-[clamp(12px,1.6vw,24px)] font-normal select-text"
                 style={{
                   fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
                 }}
@@ -213,7 +213,7 @@ export default function ProfilePage() {
             {/* Team Code Field */}
             <div className="w-full flex flex-col items-start gap-2">
               <label
-                className="text-white font-normal capitalize text-[clamp(18px,2vw,32px)] leading-[1.3]"
+                className="text-white font-normal capitalize text-[clamp(16px,2vw,32px)] leading-[1.3]"
                 style={{
                   fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
                 }}
@@ -221,7 +221,7 @@ export default function ProfilePage() {
                 Team Code
               </label>
               <div
-                className="w-full bg-[#343434] text-white/60 rounded-[8px] px-4 sm:px-6 py-2.5 sm:py-3.5 min-h-[48px] sm:min-h-[56px] flex items-center text-[clamp(16px,1.8vw,24px)] font-normal select-text"
+                className="w-full bg-[#343434] text-white/60 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center text-[clamp(12px,1.6vw,24px)] font-normal select-text"
                 style={{
                   fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
                 }}
@@ -233,7 +233,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Section 2: Attendance History (Frame 1948755614) */}
-        <div className="w-full flex flex-col items-start gap-3 sm:gap-5 mt-1 sm:mt-2">
+        <div className="w-full flex flex-col items-start gap-2.5 sm:gap-5 mt-1 sm:mt-2">
           <h2
             className="text-white font-normal capitalize text-[clamp(24px,3.5vw,48px)] leading-[1.3] m-0"
             style={{
@@ -247,7 +247,7 @@ export default function ProfilePage() {
           <div className="w-full max-w-[465px] flex flex-col items-start gap-2 sm:gap-2.5">
             {/* 1. Morning Half */}
             <div
-              className="w-full bg-[#343434] text-white/60 rounded-[8px] px-4 sm:px-6 py-2.5 sm:py-3.5 min-h-[48px] sm:min-h-[56px] flex items-center justify-between text-[clamp(16px,1.8vw,24px)] font-normal"
+              className="w-full bg-[#343434] text-white/60 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center justify-between text-[clamp(12px,1.6vw,24px)] font-normal"
               style={{
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
               }}
@@ -257,7 +257,7 @@ export default function ProfilePage() {
 
             {/* 2. Evening Half */}
             <div
-              className="w-full bg-[#343434] text-white/60 rounded-[8px] px-4 sm:px-6 py-2.5 sm:py-3.5 min-h-[48px] sm:min-h-[56px] flex items-center justify-between text-[clamp(16px,1.8vw,24px)] font-normal"
+              className="w-full bg-[#343434] text-white/60 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center justify-between text-[clamp(12px,1.6vw,24px)] font-normal"
               style={{
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
               }}
@@ -267,7 +267,7 @@ export default function ProfilePage() {
 
             {/* 3. Overnight */}
             <div
-              className="w-full bg-[#343434] text-white/60 rounded-[8px] px-4 sm:px-6 py-2.5 sm:py-3.5 min-h-[48px] sm:min-h-[56px] flex items-center justify-between text-[clamp(16px,1.8vw,24px)] font-normal"
+              className="w-full bg-[#343434] text-white/60 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center justify-between text-[clamp(12px,1.6vw,24px)] font-normal"
               style={{
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
               }}
@@ -284,11 +284,11 @@ export default function ProfilePage() {
             onClick={() => router.back()}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="bg-white text-black font-medium text-[clamp(16px,1.8vw,23px)] rounded-[35px] px-5 sm:px-6 py-2 flex items-center justify-center gap-2 cursor-pointer border-none shadow-md hover:bg-neutral-100 transition-all"
+            className="bg-white text-black font-medium text-[clamp(12px,1.6vw,23px)] rounded-full px-4 sm:px-6 py-1.5 sm:py-2 flex items-center justify-center gap-2 cursor-pointer border-none shadow-md hover:bg-neutral-100 transition-all"
             style={{
               fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
-              minWidth: "120px",
-              height: "44px",
+              minWidth: "95px",
+              height: "32px",
             }}
           >
             {/* Back Arrow Vector (←) */}

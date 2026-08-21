@@ -5,9 +5,9 @@ import AssetImage from "@/components/AssetImage";
 
 export function DashboardGraphic() {
   return (
-    <div className="relative flex items-center justify-center pointer-events-none select-none max-w-full my-6 sm:my-10 scale-[0.88] min-[420px]:scale-100 sm:scale-110 md:scale-120 lg:scale-[1.28] origin-center">
-      {/* Container with screen blend mode */}
-      <div className="relative flex items-center justify-center mix-blend-screen">
+    <div className="relative w-full max-w-full flex items-center justify-center pointer-events-none select-none my-2 sm:my-8 px-4 sm:px-6 overflow-visible">
+      {/* Single Unified Center-Aligned Container with all 6 elements (Left Bracket, Umbrella, Gemini, Maps, Antigravity, Right Bracket) */}
+      <div className="relative flex items-center justify-center mix-blend-screen scale-[0.52] min-[360px]:scale-[0.58] min-[400px]:scale-[0.68] min-[480px]:scale-[0.82] sm:scale-100 md:scale-110 lg:scale-[1.22] origin-center flex-shrink-0 transition-transform">
         {/* Left Bracket { (With whitespace after) */}
         <div className="relative flex items-center justify-center mr-2 sm:mr-4 md:mr-6 z-10 w-[55px] sm:w-[85px] md:w-[105px] h-[200px] sm:h-[275px] md:h-[325px]">
           <Image

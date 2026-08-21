@@ -64,7 +64,7 @@ export default function IdeaSubmissionPage() {
   };
 
   return (
-    <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto select-none p-6 md:p-10 pb-20">
+    <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto select-none p-4 sm:p-6 md:p-10 pb-20">
       {/* Top Right Profile Link */}
       <Link
         href="/profile"
@@ -92,9 +92,9 @@ export default function IdeaSubmissionPage() {
           <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
         </svg>
       </Link>
-      {/* Top 4 Logos Blend Banner (Group 1948755624 - gear, web, gemini, cursor) */}
+      {/* 4 Logos Blend Banner: Top on Desktop, Anchored to bottom of screen (60% visible) on Mobile */}
       <div
-        className="relative pointer-events-none z-10 w-full max-w-[848px] h-[clamp(140px,22vw,314px)] -mt-[clamp(40px,8vw,135px)] flex items-center justify-center overflow-visible"
+        className="fixed md:relative bottom-0 md:bottom-auto left-1/2 md:left-auto -translate-x-1/2 md:translate-x-0 translate-y-[40%] md:translate-y-0 pointer-events-none z-10 w-full max-w-[340px] md:max-w-[848px] h-[124px] md:h-[clamp(140px,22vw,314px)] md:-mt-[clamp(24px,5vw,135px)] flex items-center justify-center overflow-visible flex-shrink-0"
         aria-hidden="true"
       >
         <div className="relative w-full h-full flex items-center justify-center">
@@ -154,7 +154,7 @@ export default function IdeaSubmissionPage() {
 
           {/* 4. Cursor Logo */}
           <div
-            className="absolute left-[80%] top-[23.3%] w-[20%] aspect-[170/205] flex items-center justify-center"
+            className="absolute left-[80%] top-[23.3%] w-[20%] aspect-[41/53] flex items-center justify-center"
             style={{
               mixBlendMode: "screen",
               filter: "brightness(1.12) saturate(1.05)",
@@ -164,7 +164,7 @@ export default function IdeaSubmissionPage() {
               src="/assets/baked/cursor.png"
               alt="Cursor"
               width={170}
-              height={205}
+              height={220}
               priority
               className="w-full h-full object-contain"
             />
@@ -172,8 +172,8 @@ export default function IdeaSubmissionPage() {
         </div>
       </div>
 
-      {/* Main Form Content Container (Frame 1948755618) */}
-      <div className="w-full max-w-[1072px] flex flex-col items-center gap-[clamp(16px,2vh,24px)] mt-2 z-20">
+      {/* Main Form Content Container (Frame 1948755618 - Centered in mobile) */}
+      <div className="w-full max-w-[1072px] mx-auto my-auto flex flex-col items-center justify-center gap-[clamp(14px,2vh,24px)] z-20 px-1 sm:px-3 md:px-0 py-6 sm:py-0">
         <h1
           className="text-white font-bold tracking-normal leading-[1.2] text-center capitalize m-0 select-none w-full text-[clamp(36px,4.5vw,64px)]"
           style={{
@@ -186,13 +186,13 @@ export default function IdeaSubmissionPage() {
         {/* Form Fields Container (Frame 1948755617) */}
         <form
           onSubmit={handleSubmit}
-          className="w-full flex flex-col items-start gap-[clamp(18px,2.5vh,28px)] mt-2"
+          className="w-full flex flex-col items-start gap-[clamp(14px,2.2vh,28px)] mt-1 sm:mt-2"
         >
           {/* Field 1: Short Description (Frame 1948755613) */}
-          <div className="w-full flex flex-col items-start gap-2.5">
+          <div className="w-full flex flex-col items-start gap-1.5 sm:gap-2.5">
             <label
               htmlFor="shortDescription"
-              className="text-white font-normal capitalize text-[clamp(20px,2.2vw,32px)] leading-[1.3]"
+              className="text-white font-normal capitalize text-[clamp(16px,2vw,32px)] leading-[1.3]"
               style={{
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
               }}
@@ -204,7 +204,7 @@ export default function IdeaSubmissionPage() {
               value={shortDescription}
               onChange={(e) => setShortDescription(e.target.value)}
               placeholder="Brief summary of your project..."
-              className="w-full bg-[#343434] text-white rounded-[8px] px-5 sm:px-7 py-3 text-[16px] sm:text-[18px] focus:outline-none focus:ring-1 focus:ring-white/40 resize-none h-[82px] transition-all placeholder:text-neutral-500"
+              className="w-full bg-[#343434] text-white rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-7 py-2 sm:py-3 text-[clamp(12px,1.6vw,18px)] focus:outline-none focus:ring-1 focus:ring-white/40 resize-none min-h-[41px] sm:min-h-[82px] h-[41px] sm:h-[82px] transition-all placeholder:text-neutral-500"
               style={{
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
               }}
@@ -212,10 +212,10 @@ export default function IdeaSubmissionPage() {
           </div>
 
           {/* Field 2: Long Description (Frame 1948755614) */}
-          <div className="w-full flex flex-col items-start gap-2.5">
+          <div className="w-full flex flex-col items-start gap-1.5 sm:gap-2.5">
             <label
               htmlFor="longDescription"
-              className="text-white font-normal capitalize text-[clamp(20px,2.2vw,32px)] leading-[1.3]"
+              className="text-white font-normal capitalize text-[clamp(16px,2vw,32px)] leading-[1.3]"
               style={{
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
               }}
@@ -227,7 +227,7 @@ export default function IdeaSubmissionPage() {
               value={longDescription}
               onChange={(e) => setLongDescription(e.target.value)}
               placeholder="Detailed architecture, features, problem statement and solution..."
-              className="w-full bg-[#343434] text-white rounded-[8px] px-5 sm:px-7 py-3 text-[16px] sm:text-[18px] focus:outline-none focus:ring-1 focus:ring-white/40 resize-none h-[125px] transition-all placeholder:text-neutral-500"
+              className="w-full bg-[#343434] text-white rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-7 py-2 sm:py-3 text-[clamp(12px,1.6vw,18px)] focus:outline-none focus:ring-1 focus:ring-white/40 resize-none min-h-[85px] sm:min-h-[125px] h-[85px] sm:h-[125px] transition-all placeholder:text-neutral-500"
               style={{
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
               }}
@@ -235,10 +235,10 @@ export default function IdeaSubmissionPage() {
           </div>
 
           {/* Field 3: Links (Frame 1948755615) */}
-          <div className="w-full flex flex-col items-start gap-2.5">
+          <div className="w-full flex flex-col items-start gap-1.5 sm:gap-2.5">
             <label
               htmlFor="links"
-              className="text-white font-normal capitalize text-[clamp(20px,2.2vw,32px)] leading-[1.3]"
+              className="text-white font-normal capitalize text-[clamp(16px,2vw,32px)] leading-[1.3]"
               style={{
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
               }}
@@ -251,7 +251,7 @@ export default function IdeaSubmissionPage() {
               value={links}
               onChange={(e) => setLinks(e.target.value)}
               placeholder="GitHub repo, Figma, demo URLs (comma separated)..."
-              className="w-full bg-[#343434] text-white rounded-[8px] px-5 sm:px-7 py-3 text-[16px] sm:text-[18px] focus:outline-none focus:ring-1 focus:ring-white/40 h-[56px] transition-all placeholder:text-neutral-500"
+              className="w-full bg-[#343434] text-white rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-7 py-1.5 sm:py-3 text-[clamp(12px,1.6vw,18px)] focus:outline-none focus:ring-1 focus:ring-white/40 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] transition-all placeholder:text-neutral-500"
               style={{
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
               }}
@@ -259,9 +259,9 @@ export default function IdeaSubmissionPage() {
           </div>
 
           {/* Field 4: Tracks (Frame 1948755616) */}
-          <div className="w-full flex flex-col items-start gap-2.5 relative" ref={dropdownRef}>
+          <div className="w-full flex flex-col items-start gap-1.5 sm:gap-2.5 relative" ref={dropdownRef}>
             <label
-              className="text-white font-normal capitalize text-[clamp(20px,2.2vw,32px)] leading-[1.3]"
+              className="text-white font-normal capitalize text-[clamp(16px,2vw,32px)] leading-[1.3]"
               style={{
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
               }}
@@ -272,19 +272,19 @@ export default function IdeaSubmissionPage() {
             {/* Custom Interactive Chip Dropdown Input Box (Frame 1948754657) */}
             <div
               onClick={() => setIsTracksOpen((prev) => !prev)}
-              className="w-full min-h-[56px] bg-[#343434] text-white rounded-[8px] px-4 sm:px-6 py-2.5 flex items-center justify-between cursor-pointer border border-transparent hover:border-white/20 transition-all select-none"
+              className="w-full min-h-[32px] sm:min-h-[56px] bg-[#343434] text-white rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-1.5 sm:py-2.5 flex items-center justify-between cursor-pointer border border-transparent hover:border-white/20 transition-all select-none"
             >
               {/* Chips container */}
-              <div className="flex flex-wrap items-center gap-2.5">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2.5">
                 {selectedTracks.length === 0 ? (
-                  <span className="text-neutral-500 text-[16px] sm:text-[18px]">
+                  <span className="text-neutral-500 text-[12px] sm:text-[18px]">
                     Select tracks...
                   </span>
                 ) : (
                   selectedTracks.map((track) => (
                     <span
                       key={track}
-                      className="inline-flex items-center gap-2 px-3.5 py-1 rounded-[22px] border border-white/60 text-white text-[14px] sm:text-[16px] font-normal transition-colors bg-black/20"
+                      className="inline-flex items-center gap-1 sm:gap-2 px-2.5 sm:px-3.5 py-0.5 sm:py-1 rounded-full border border-white/60 text-white text-[9px] sm:text-[16px] font-normal transition-colors bg-black/20"
                       style={{
                         fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
                       }}
@@ -296,7 +296,7 @@ export default function IdeaSubmissionPage() {
                       {track}
                       {/* Close 'x' icon (Vectors 1185, 1186) */}
                       <span
-                        className="inline-flex items-center justify-center w-4 h-4 rounded-full text-white/80 hover:text-white hover:bg-white/20 transition-colors"
+                        className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full text-white/80 hover:text-white hover:bg-white/20 transition-colors"
                         aria-label={`Remove ${track}`}
                       >
                         ×
@@ -308,8 +308,8 @@ export default function IdeaSubmissionPage() {
 
               {/* Vector 1184 - Dropdown arrow */}
               <svg
-                width="20"
-                height="11"
+                width="16"
+                height="9"
                 viewBox="0 0 20 11"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -369,25 +369,25 @@ export default function IdeaSubmissionPage() {
             </AnimatePresence>
           </div>
 
-          {/* Submit Button (Frame 1948754781) */}
+          {/* Submit Button (Component 62) */}
           <div className="pt-2">
             <motion.button
               type="submit"
               disabled={isSubmitting}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className="bg-white text-black font-medium text-[clamp(18px,2vw,23px)] rounded-[35px] px-6 py-2.5 flex items-center justify-center gap-2.5 cursor-pointer border-none shadow-md hover:bg-neutral-100 transition-all disabled:opacity-60"
+              className="bg-white text-black font-medium text-[clamp(12px,1.6vw,23px)] rounded-full px-4 sm:px-6 py-1.5 sm:py-2.5 flex items-center justify-center gap-2 cursor-pointer border-none shadow-md hover:bg-neutral-100 transition-all disabled:opacity-60"
               style={{
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
-                minWidth: "154px",
-                height: "44px",
+                minWidth: "95px",
+                height: "32px",
               }}
             >
               <span>{isSubmitting ? "Submitting..." : submitted ? "Submitted!" : "Submit"}</span>
               {/* North-East Arrow Vector */}
               <svg
-                width="16"
-                height="16"
+                width="12"
+                height="12"
                 viewBox="0 0 16 16"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"

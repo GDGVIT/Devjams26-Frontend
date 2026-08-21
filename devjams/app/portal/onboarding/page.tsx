@@ -267,6 +267,19 @@ const COUNTRY_CODES = [
   { code: "+263", country: "Zimbabwe", flag: "🇿🇼" },
 ];
 
+export const mhBlocks = Array.from({ length: 20 }, (_, i) => `MH-${String.fromCharCode(65 + i)}`).filter(
+  (block) => !["MH-I", "MH-O", "MH-S"].includes(block)
+);
+
+export const lhBlocks = [
+  ...Array.from({ length: 10 }, (_, i) => `LH-${String.fromCharCode(65 + i)}`).filter(
+    (block) => block !== "LH-I"
+  ),
+  "LH-S",
+].filter((v, i, a) => a.indexOf(v) === i);
+
+export const allHostelBlocks = [...mhBlocks, ...lhBlocks, "Day Boarder"];
+
 export default function OnboardingPage() {
   const router = useRouter();
 
@@ -319,8 +332,14 @@ export default function OnboardingPage() {
       setError("Please select your gender.");
       return;
     }
-    if (!email.trim()) {
-      setError("Please enter your email address.");
+
+    if (!hostelBlock.trim()) {
+      setError("Please select your hostel block or Day Boarder.");
+      return;
+    }
+
+    if (hostelBlock !== "Day Boarder" && !roomNumber.trim()) {
+      setError("Please enter your room number.");
       return;
     }
 
@@ -347,7 +366,7 @@ export default function OnboardingPage() {
   return (
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col justify-between overflow-x-hidden p-4 sm:p-8 select-none">
       {/* Top-Left Web Graphic */}
-      <div className="absolute -top-16 -left-16 sm:-top-20 sm:-left-20 w-36 h-36 sm:w-52 sm:h-52 md:w-64 md:h-64 pointer-events-none z-0 opacity-40 sm:opacity-70">
+      <div className="absolute -top-16 -left-16 sm:-top-20 sm:-left-20 w-36 h-36 sm:w-52 sm:h-52 md:w-64 md:h-64 pointer-events-none z-0">
         <AssetImage
           src="/assets/web.svg"
           alt="Web Track Decoration"
@@ -359,7 +378,7 @@ export default function OnboardingPage() {
       </div>
 
       {/* Top-Right Gear Graphic */}
-      <div className="absolute -top-16 -right-16 sm:-top-20 sm:-right-20 w-40 h-40 sm:w-56 sm:h-56 md:w-72 md:h-72 pointer-events-none z-0 opacity-40 sm:opacity-70">
+      <div className="absolute -top-16 -right-16 sm:-top-20 sm:-right-20 w-40 h-40 sm:w-56 sm:h-56 md:w-72 md:h-72 pointer-events-none z-0">
         <AssetImage
           src="/assets/gear.svg"
           alt="Gear Decoration"
@@ -369,7 +388,6 @@ export default function OnboardingPage() {
           className="w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(251,188,4,0.3)]"
         />
       </div>
-
       {/* Main Container */}
       <div className="relative z-20 max-w-4xl w-full mx-auto my-auto py-6 sm:py-10">
         {/* Title */}
@@ -525,27 +543,85 @@ export default function OnboardingPage() {
 
               <div>
                 <label className="block text-sm sm:text-base font-normal text-white mb-2">
-                  Hostel Block:
+                  Hostel Block
                 </label>
-                <input
-                  type="text"
-                  placeholder="e.g. D Block"
+                <select
                   value={hostelBlock}
-                  onChange={(e) => setHostelBlock(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white placeholder-neutral-500 text-sm sm:text-base focus:outline-none transition-all"
-                />
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setHostelBlock(val);
+                    if (val === "Day Boarder") {
+                      setRoomNumber("N/A");
+                    } else if (roomNumber === "N/A") {
+                      setRoomNumber("");
+                    }
+                  }}
+                  required
+                  className="w-full px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white text-sm sm:text-base focus:outline-none transition-all cursor-pointer"
+                >
+                  <option value="" disabled className="bg-[#1E1E22] text-neutral-500">
+                    Select Block
+                  </option>
+                  {gender === "Male" ? (
+                    <>
+                      <optgroup label="Men's Hostel" className="bg-[#1E1E22] text-amber-400 font-semibold">
+                        {mhBlocks.map((block) => (
+                          <option key={block} value={block} className="bg-[#1E1E22] text-white font-normal">
+                            {block}
+                          </option>
+                        ))}
+                      </optgroup>
+                      <option value="Day Boarder" className="bg-[#1E1E22] text-white">
+                        Day Boarder
+                      </option>
+                    </>
+                  ) : gender === "Female" ? (
+                    <>
+                      <optgroup label="Ladies' Hostel" className="bg-[#1E1E22] text-amber-400 font-semibold">
+                        {lhBlocks.map((block) => (
+                          <option key={block} value={block} className="bg-[#1E1E22] text-white font-normal">
+                            {block}
+                          </option>
+                        ))}
+                      </optgroup>
+                      <option value="Day Boarder" className="bg-[#1E1E22] text-white">
+                        Day Boarder
+                      </option>
+                    </>
+                  ) : (
+                    <>
+                      <optgroup label="Men's Hostel" className="bg-[#1E1E22] text-amber-400 font-semibold">
+                        {mhBlocks.map((block) => (
+                          <option key={block} value={block} className="bg-[#1E1E22] text-white font-normal">
+                            {block}
+                          </option>
+                        ))}
+                      </optgroup>
+                      <optgroup label="Ladies' Hostel" className="bg-[#1E1E22] text-amber-400 font-semibold">
+                        {lhBlocks.map((block) => (
+                          <option key={block} value={block} className="bg-[#1E1E22] text-white font-normal">
+                            {block}
+                          </option>
+                        ))}
+                      </optgroup>
+                      <option value="Day Boarder" className="bg-[#1E1E22] text-white">
+                        Day Boarder
+                      </option>
+                    </>
+                  )}
+                </select>
               </div>
-
               <div>
                 <label className="block text-sm sm:text-base font-normal text-white mb-2">
                   Room Number
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. 402"
+                  placeholder={hostelBlock === "Day Boarder" ? "N/A (Day Boarder)" : "e.g. 402"}
                   value={roomNumber}
+                  disabled={hostelBlock === "Day Boarder"}
                   onChange={(e) => setRoomNumber(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white placeholder-neutral-500 text-sm sm:text-base focus:outline-none transition-all"
+                  className="w-full px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white placeholder-neutral-500 text-sm sm:text-base focus:outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </div>
             </div>

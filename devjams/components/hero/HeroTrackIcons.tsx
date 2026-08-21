@@ -19,8 +19,9 @@ const trackIcons: TrackIcon[] = [
 
 export function HeroTrackIcons() {
   return (
-    <div className="relative z-10 flex items-center justify-center -mt-4 min-[380px]:-mt-8 sm:-mt-14 md:-mt-20 scale-[0.65] min-[380px]:scale-[0.78] sm:scale-90 md:scale-100 origin-center pointer-events-none max-w-full">
-      {trackIcons.map((icon, index) => (
+    <div className="relative z-10 flex items-center justify-center w-full overflow-visible -mt-4 min-[380px]:-mt-8 sm:-mt-14 md:-mt-20 pointer-events-none px-2 sm:px-4">
+      <div className="relative flex items-center justify-center scale-[0.55] min-[360px]:scale-[0.62] min-[400px]:scale-[0.72] sm:scale-90 md:scale-100 origin-center flex-shrink-0">
+        {trackIcons.map((icon, index) => (
         <motion.div
           key={index}
           initial={{ opacity: 0, y: 40, scale: 0.8 }}
@@ -51,6 +52,7 @@ export function HeroTrackIcons() {
           </motion.div>
         </motion.div>
       ))}
+      </div>
     </div>
   );
 }
