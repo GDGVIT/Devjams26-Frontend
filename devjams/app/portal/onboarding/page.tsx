@@ -734,7 +734,7 @@ export default function OnboardingPage() {
               disabled={loading}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className="group w-full sm:w-auto min-w-[320px] sm:min-w-[440px] md:min-w-[500px] h-[58px] sm:h-[64px] px-8 sm:px-14 rounded-full bg-[#2A2A2E]/90 hover:bg-white text-white hover:text-black border border-white/10 hover:border-transparent font-normal flex items-center justify-center gap-3 transition-colors duration-200 cursor-pointer disabled:opacity-50 select-none shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
+              className="group w-full sm:w-auto min-w-[320px] sm:min-w-[440px] md:min-w-[500px] h-[58px] sm:h-[64px] px-8 sm:px-14 rounded-full bg-[#2A2A2E]/90 text-white border border-white/10 font-normal flex items-center justify-center gap-3 transition-colors duration-200 cursor-pointer disabled:opacity-50 select-none shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
               style={{
                 fontFamily: '"Google Sans", var(--font-google-sans), sans-serif',
                 fontSize: "22.5px",

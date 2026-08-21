@@ -527,7 +527,7 @@ export default function TeamPage() {
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="bg-[#343434] hover:bg-white text-white hover:text-black border border-white/10 hover:border-transparent rounded-full flex items-center justify-center cursor-pointer shadow-md transition-all px-5 sm:px-8 py-1.5 sm:py-2.5 min-w-[140px] h-8 sm:h-11 gap-2"
+              className="bg-[#343434] text-white border border-white/10 rounded-full flex items-center justify-center cursor-pointer shadow-md transition-all px-5 sm:px-8 py-1.5 sm:py-2.5 min-w-[140px] h-8 sm:h-11 gap-2"
             >
               <span
                 className="text-[clamp(12px,1.6vw,20px)] leading-none font-medium text-center"

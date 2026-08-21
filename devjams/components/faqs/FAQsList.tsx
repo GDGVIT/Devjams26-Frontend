@@ -16,10 +16,10 @@ export function FAQsList({ category }: FAQsListProps) {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -12 }}
         transition={{ duration: 0.35, ease: "easeOut" }}
-        className="w-full max-w-[920px] mx-auto flex flex-col items-start text-left px-2 sm:px-4 z-10"
+        className="w-full max-w-[920px] mx-auto flex flex-col items-start text-left px-2 sm:px-4 z-10 pt-2 sm:pt-4"
       >
         {/* Question & Answer List */}
-        <div className="w-full flex flex-col gap-5 sm:gap-7 md:gap-8 items-start text-left">
+        <div className="w-full flex flex-col gap-8 sm:gap-10 md:gap-12 items-start text-left">
           {category.items.map((item, index) => (
             <motion.div
               key={item.id}

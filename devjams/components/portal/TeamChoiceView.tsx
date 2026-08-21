@@ -73,7 +73,7 @@ export function TeamChoiceView() {
               type="button"
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
-              className="group w-full max-w-[320px] sm:max-w-none sm:w-auto sm:min-w-[340px] md:min-w-[380px] h-7 sm:h-[58px] md:h-[64px] px-3 sm:px-12 rounded-full bg-[#343434] hover:bg-white text-white hover:text-black border border-white/10 hover:border-transparent font-normal flex items-center justify-center gap-2 sm:gap-4 transition-colors duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer select-none text-[12px] sm:text-[18px] md:text-[22.5px]"
+              className="group w-full max-w-[320px] sm:max-w-none sm:w-auto sm:min-w-[340px] md:min-w-[380px] h-7 sm:h-[58px] md:h-[64px] px-3 sm:px-12 rounded-full bg-[#343434] text-white border border-white/10 font-normal flex items-center justify-center gap-2 sm:gap-4 transition-colors duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer select-none text-[12px] sm:text-[18px] md:text-[22.5px]"
               style={{
                 fontFamily: '"Google Sans", var(--font-google-sans), sans-serif',
               }}
