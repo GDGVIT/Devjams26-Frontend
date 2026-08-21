@@ -108,7 +108,7 @@ export function JoinTeamModal({ isOpen, onClose }: JoinTeamModalProps) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 py-3 px-4 rounded-full bg-[#2A2A2E]/90 hover:bg-white text-white hover:text-black border border-white/10 hover:border-transparent font-normal text-sm transition-colors duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.5)] disabled:opacity-50 cursor-pointer"
+            className="w-full mt-2 py-3 px-4 rounded-full bg-[#2A2A2E]/90 text-white border border-white/10 font-normal text-sm transition-colors duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.5)] disabled:opacity-50 cursor-pointer"
           >
             {loading ? "Joining Team..." : "Join Team & Continue →"}
           </button>

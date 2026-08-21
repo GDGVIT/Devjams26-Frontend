@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "../../components/gsap-motion";
+import { GDGLockup } from "@/components/portal/GDGLockup";
 import { portalApi, type UserSession } from "@/services/portalApi";
 
 export default function ProfilePage() {
@@ -58,6 +59,14 @@ export default function ProfilePage() {
 
   return (
     <div className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start select-none overflow-x-hidden pb-20">
+      {/* Top Left GDG Lockup */}
+      <header
+        className="absolute top-6 md:top-8 left-[clamp(20px,5vw,60px)] z-40"
+        aria-label="Google Developer Groups"
+      >
+        <GDGLockup />
+      </header>
+
       {/* Top Floating Graphics Banner: Left (notebookllm + cursor), Center (antigravity + folder), Right (maps + four-petal) */}
       <div
         className="absolute top-0 left-0 right-0 w-full pointer-events-none z-10 select-none overflow-visible"

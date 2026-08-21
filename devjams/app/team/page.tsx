@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "../../components/gsap-motion";
+import { GDGLockup } from "@/components/portal/GDGLockup";
 import { portalApi, type BackendTeamMember } from "@/services/portalApi";
 import { memberActionFor } from "../team-member-actions";
 
@@ -160,6 +161,14 @@ export default function TeamPage() {
 
   return (
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto select-none p-4 sm:p-6 md:p-10 pb-20">
+      {/* Top Left GDG Lockup */}
+      <header
+        className="absolute top-6 md:top-8 left-[clamp(20px,5vw,60px)] z-30"
+        aria-label="Google Developer Groups"
+      >
+        <GDGLockup />
+      </header>
+
       {/* Top Right Profile Link */}
       <Link
         href="/profile"
@@ -527,7 +536,7 @@ export default function TeamPage() {
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="bg-[#343434] hover:bg-white text-white hover:text-black border border-white/10 hover:border-transparent rounded-full flex items-center justify-center cursor-pointer shadow-md transition-all px-5 sm:px-8 py-1.5 sm:py-2.5 min-w-[140px] h-8 sm:h-11 gap-2"
+              className="bg-[#343434] text-white border border-white/10 rounded-full flex items-center justify-center cursor-pointer shadow-md transition-all px-5 sm:px-8 py-1.5 sm:py-2.5 min-w-[140px] h-8 sm:h-11 gap-2"
             >
               <span
                 className="text-[clamp(12px,1.6vw,20px)] leading-none font-medium text-center"

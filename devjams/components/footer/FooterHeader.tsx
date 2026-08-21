@@ -13,7 +13,7 @@ function SocialButtons({ className = "" }: { className?: string }) {
     >
       {/* Medium */}
       <a
-        href="https://medium.com"
+        href="https://medium.com/gdg-vit"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Medium"
@@ -26,7 +26,7 @@ function SocialButtons({ className = "" }: { className?: string }) {
 
       {/* Instagram */}
       <a
-        href="https://instagram.com"
+        href="https://www.instagram.com/gdgvitvellore"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Instagram"
@@ -41,7 +41,7 @@ function SocialButtons({ className = "" }: { className?: string }) {
 
       {/* X / Twitter */}
       <a
-        href="https://x.com"
+        href="https://x.com/gdgvitvellore"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="X (Twitter)"
@@ -54,7 +54,7 @@ function SocialButtons({ className = "" }: { className?: string }) {
 
       {/* LinkedIn */}
       <a
-        href="https://linkedin.com"
+        href="https://www.linkedin.com/company/dscvit"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="LinkedIn"

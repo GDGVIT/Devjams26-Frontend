@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "../gsap-motion";
 import { DashboardGraphic } from "./DashboardGraphic";
+import { GDGLockup } from "./GDGLockup";
 import { portalApi } from "@/services/portalApi";
 
 export function TeamChoiceView() {
@@ -31,6 +32,14 @@ export function TeamChoiceView() {
 
   return (
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-center overflow-hidden px-4 py-8 select-none">
+      {/* Top Left GDG Lockup */}
+      <header
+        className="absolute top-6 md:top-8 left-[clamp(20px,5vw,60px)] z-40"
+        aria-label="Google Developer Groups"
+      >
+        <GDGLockup />
+      </header>
+
       {/* Ambient background glows */}
       <div className="absolute -top-32 -left-32 w-[520px] h-[520px] bg-gradient-to-br from-blue-600/15 via-purple-600/10 to-transparent rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute -bottom-32 -right-32 w-[580px] h-[580px] bg-gradient-to-tl from-amber-600/15 via-emerald-600/10 to-transparent rounded-full blur-[150px] pointer-events-none" />
@@ -73,7 +82,7 @@ export function TeamChoiceView() {
               type="button"
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
-              className="group w-full max-w-[320px] sm:max-w-none sm:w-auto sm:min-w-[340px] md:min-w-[380px] h-7 sm:h-[58px] md:h-[64px] px-3 sm:px-12 rounded-full bg-[#343434] hover:bg-white text-white hover:text-black border border-white/10 hover:border-transparent font-normal flex items-center justify-center gap-2 sm:gap-4 transition-colors duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer select-none text-[12px] sm:text-[18px] md:text-[22.5px]"
+              className="group w-full max-w-[320px] sm:max-w-none sm:w-auto sm:min-w-[340px] md:min-w-[380px] h-7 sm:h-[58px] md:h-[64px] px-3 sm:px-12 rounded-full bg-[#343434] text-white border border-white/10 font-normal flex items-center justify-center gap-2 sm:gap-4 transition-colors duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer select-none text-[12px] sm:text-[18px] md:text-[22.5px]"
               style={{
                 fontFamily: '"Google Sans", var(--font-google-sans), sans-serif',
               }}

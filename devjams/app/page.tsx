@@ -595,6 +595,9 @@ export default function Home() {
       const frameThreePageLeft = frameThreeRect.left + window.scrollX;
       const frameFourPageTop = frameFourRect.top + window.scrollY;
       const frameFourPageLeft = frameFourRect.left + window.scrollX;
+      const frameThreeMobileLeft =
+        frameThreePageLeft +
+        (isMobile ? (currentViewportWidth - 375 * mobileFrameScale) / 2 : 0);
       const targetBounds = (
         shape: ShapeBounds,
         sectionLeft: number,
@@ -656,7 +659,7 @@ export default function Home() {
         frameTwoHeight: frameRect.height,
         frameFourStart: frameFourPageTop,
         frameFourHeight: frameFourRect.height,
-        frameThreePageLeft,
+        frameThreePageLeft: isMobile ? frameThreeMobileLeft : frameThreePageLeft,
         frameThreePageTop,
         frameThreeScale: frameScale,
         heroTrackScale,
@@ -673,14 +676,14 @@ export default function Home() {
         frameTwoMaps: readNaturalBounds(maps),
         frameThreeWeb: targetBounds(
           isMobile ? FRAME_THREE_MOBILE_SHAPES.web : FRAME_THREE_LOGOS.web,
-          frameThreePageLeft,
+          isMobile ? frameThreeMobileLeft : frameThreePageLeft,
           frameThreePageTop,
           isMobile ? mobileFrameScale : frameScale,
           false,
         ),
         frameThreeMaps: targetBounds(
           frameThreeMapsShapeAtViewport(isMobile),
-          frameThreePageLeft,
+          isMobile ? frameThreeMobileLeft : frameThreePageLeft,
           frameThreePageTop,
           isMobile ? mobileFrameScale : frameScale,
           false,
@@ -803,7 +806,7 @@ export default function Home() {
               />
             </span>
             <span className="hero-gdg-lockup__name">
-              Vellore Institute of Technology
+              On Campus VIT Vellore
             </span>
           </motion.div>
           </div>

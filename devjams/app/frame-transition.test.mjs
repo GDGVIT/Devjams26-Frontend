@@ -72,7 +72,7 @@ test("shape bounds scaling preserves zero and identity behavior", () => {
   assert.deepEqual(scaleShapeBounds(bounds, 1), bounds);
 });
 
-test("Frame 4 mobile logos match scaled dimensions, shifted gear/gemini up, and cloud way down with 10% increased size", () => {
+test("Frame 4 mobile logos match scaled dimensions, shifted gear/gemini up, and cloud connected below gemini with 10% increased size", () => {
   assert.equal(mobileFrameScaleAtViewport(375), 1);
   assert.equal(mobileFrameScaleAtViewport(320), 320 / 375);
   assert.equal(mobileFrameVerticalScaleAtViewport(812), 1);
@@ -88,8 +88,8 @@ test("Frame 4 mobile logos match scaled dimensions, shifted gear/gemini up, and 
   const shapes = Object.values(FRAME_FOUR_MOBILE_SHAPES);
   assert.ok(shapes.every((shape) => shape.x + shape.width <= 375));
   assert.ok(Math.min(...shapes.map((shape) => shape.y)) <= 0);
-  // Cloud is placed down at the bottom of the frame (y >= 1100)
-  assert.ok(FRAME_FOUR_MOBILE_SHAPES.cloud.y >= 1100);
+  // Cloud is placed directly below Gemini (y = 480)
+  assert.equal(FRAME_FOUR_MOBILE_SHAPES.cloud.y, 480);
   // Order: gear (top) < gemini (middle) < cloud (bottom)
   assert.ok(FRAME_FOUR_MOBILE_SHAPES.gear.y < FRAME_FOUR_MOBILE_SHAPES.gemini.y);
   assert.ok(FRAME_FOUR_MOBILE_SHAPES.gemini.y < FRAME_FOUR_MOBILE_SHAPES.cloud.y);
@@ -134,6 +134,20 @@ test("Frame 3 mobile logos match Figma dimensions and chain horizontally aligned
   assert.ok(shapes.every((s) => s.x >= 0 && s.x + s.width <= 375));
   const rowYCenters = shapes.map((shape) => shape.y + shape.height / 2);
   assert.ok(rowYCenters.every((center) => Math.abs(center - 330) < 1e-3));
+});
+
+test("Frame 3 mobile logos have equal horizontal overlap between adjacent logos", () => {
+  const web = FRAME_THREE_MOBILE_SHAPES.web;
+  const maps = FRAME_THREE_MOBILE_SHAPES.maps;
+  const gemini = FRAME_THREE_MOBILE_SHAPES.gemini;
+  const gear = FRAME_THREE_MOBILE_SHAPES.gear;
+
+  const overlapWebMaps = web.x + web.width - maps.x;
+  const overlapMapsGemini = maps.x + maps.width - gemini.x;
+  const overlapGeminiGear = gemini.x + gemini.width - gear.x;
+
+  assert.ok(Math.abs(overlapWebMaps - overlapMapsGemini) < 1e-3);
+  assert.ok(Math.abs(overlapMapsGemini - overlapGeminiGear) < 1e-3);
 });
 
 test("mobile shape bounds keep horizontal and vertical frame scales separate", () => {
