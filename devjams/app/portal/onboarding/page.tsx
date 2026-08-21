@@ -5,6 +5,24 @@ import { useRouter } from "next/navigation";
 import { motion } from "@/components/gsap-motion";
 import AssetImage from "@/components/AssetImage";
 import { portalApi } from "@/services/portalApi";
+const COUNTRY_CODES = [
+  { code: "+91", country: "India", flag: "🇮🇳" },
+  { code: "+1", country: "USA / Canada", flag: "🇺🇸" },
+  { code: "+44", country: "UK", flag: "🇬🇧" },
+  { code: "+61", country: "Australia", flag: "🇦🇺" },
+  { code: "+65", country: "Singapore", flag: "🇸🇬" },
+  { code: "+971", country: "UAE", flag: "🇦🇪" },
+  { code: "+49", country: "Germany", flag: "🇩🇪" },
+  { code: "+33", country: "France", flag: "🇫🇷" },
+  { code: "+81", country: "Japan", flag: "🇯🇵" },
+  { code: "+86", country: "China", flag: "🇨🇳" },
+  { code: "+966", country: "Saudi Arabia", flag: "🇸🇦" },
+  { code: "+60", country: "Malaysia", flag: "🇲🇾" },
+  { code: "+62", country: "Indonesia", flag: "🇮🇩" },
+  { code: "+880", country: "Bangladesh", flag: "🇧🇩" },
+  { code: "+94", country: "Sri Lanka", flag: "🇱🇰" },
+  { code: "+977", country: "Nepal", flag: "🇳🇵" },
+];
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -12,7 +30,11 @@ export default function OnboardingPage() {
   // Form State matching the reference screenshot (lazy initialized from stored data)
   const [name, setName] = useState(() => portalApi.getInternalOnboarding()?.name || "");
   const [registrationNumber, setRegistrationNumber] = useState(() => portalApi.getInternalOnboarding()?.registrationNumber || "");
-  const [contactNumber, setContactNumber] = useState(() => portalApi.getInternalOnboarding()?.contactNumber || "");
+  const [countryCode, setCountryCode] = useState("+91");
+  const [contactNumber, setContactNumber] = useState(() => {
+    const existing = portalApi.getInternalOnboarding()?.contactNumber || "";
+    return existing.replace(/^\+\d+\s*/, "");
+  });
   const [email, setEmail] = useState(() => portalApi.getInternalOnboarding()?.email || "");
   const [gender, setGender] = useState(() => portalApi.getInternalOnboarding()?.gender || "");
   const [hostelBlock, setHostelBlock] = useState(() => portalApi.getInternalOnboarding()?.hostelBlock || "");
@@ -29,12 +51,29 @@ export default function OnboardingPage() {
       setError("Please enter your name.");
       return;
     }
-    if (!registrationNumber.trim()) {
-      setError("Please enter your registration number.");
+
+    // Reg No validation: 2 digits, 3 letters (case-insensitive), 4 digits (e.g. 25BCE2055)
+    const regNoPattern = /^[0-9]{2}[A-Za-z]{3}[0-9]{4}$/;
+    if (!regNoPattern.test(registrationNumber.trim())) {
+      setError("Registration Number must be 2 digits, 3 letters, and 4 digits (e.g. 25BCE2055).");
       return;
     }
-    if (!contactNumber.trim()) {
-      setError("Please enter your contact number.");
+
+    const cleanPhone = contactNumber.trim().replace(/\D/g, "");
+    if (!cleanPhone || cleanPhone.length < 7 || cleanPhone.length > 15) {
+      setError("Please enter a valid contact number.");
+      return;
+    }
+
+    // General email format validation (accepting any valid domain)
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email.trim())) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    if (!gender.trim()) {
+      setError("Please select your gender.");
       return;
     }
     if (!email.trim()) {
@@ -47,7 +86,7 @@ export default function OnboardingPage() {
       await portalApi.saveInternalOnboarding({
         name: name.trim(),
         registrationNumber: registrationNumber.trim().toUpperCase(),
-        contactNumber: contactNumber.trim(),
+        contactNumber: `${countryCode} ${contactNumber.trim()}`,
         email: email.trim().toLowerCase(),
         gender: gender.trim(),
         hostelBlock: hostelBlock.trim(),
@@ -129,7 +168,7 @@ export default function OnboardingPage() {
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Alex Rivera"
+                  placeholder="e.g. Neeraj"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -143,10 +182,11 @@ export default function OnboardingPage() {
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. 23BCE1234"
+                  placeholder="e.g. 25BCE2055"
                   value={registrationNumber}
-                  onChange={(e) => setRegistrationNumber(e.target.value)}
+                  onChange={(e) => setRegistrationNumber(e.target.value.toUpperCase().slice(0, 9))}
                   required
+                  maxLength={9}
                   className="w-full px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white placeholder-neutral-500 text-sm sm:text-base focus:outline-none transition-all uppercase"
                 />
               </div>
@@ -168,14 +208,27 @@ export default function OnboardingPage() {
                 <label className="block text-sm sm:text-base font-normal text-white mb-2">
                   Contact Number
                 </label>
-                <input
-                  type="tel"
-                  placeholder="e.g. +91 9876543210"
-                  value={contactNumber}
-                  onChange={(e) => setContactNumber(e.target.value)}
-                  required
-                  className="w-full px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white placeholder-neutral-500 text-sm sm:text-base focus:outline-none transition-all"
-                />
+                <div className="flex items-center gap-2">
+                  <select
+                    value={countryCode}
+                    onChange={(e) => setCountryCode(e.target.value)}
+                    className="w-[125px] sm:w-[140px] px-3 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white text-sm sm:text-base focus:outline-none transition-all cursor-pointer flex-shrink-0"
+                  >
+                    {COUNTRY_CODES.map((c) => (
+                      <option key={c.code} value={c.code} className="bg-[#1E1E22] text-white">
+                        {c.flag} {c.code}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    type="tel"
+                    placeholder="9876543210"
+                    value={contactNumber}
+                    onChange={(e) => setContactNumber(e.target.value.replace(/[^\d\s-]/g, ""))}
+                    required
+                    className="flex-1 px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white placeholder-neutral-500 text-sm sm:text-base focus:outline-none transition-all"
+                  />
+                </div>
               </div>
 
               <div>
@@ -184,7 +237,7 @@ export default function OnboardingPage() {
                 </label>
                 <input
                   type="email"
-                  placeholder="e.g. alex@vitstudent.ac.in"
+                  placeholder="e.g. neeraj@vitstudent.ac.in"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -209,13 +262,22 @@ export default function OnboardingPage() {
                 <label className="block text-sm sm:text-base font-normal text-white mb-2">
                   Gender
                 </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Male / Female"
+                <select
                   value={gender}
                   onChange={(e) => setGender(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white placeholder-neutral-500 text-sm sm:text-base focus:outline-none transition-all"
-                />
+                  required
+                  className="w-full px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white text-sm sm:text-base focus:outline-none transition-all cursor-pointer"
+                >
+                  <option value="" disabled className="bg-[#1E1E22] text-neutral-500">
+                    Select Gender
+                  </option>
+                  <option value="Male" className="bg-[#1E1E22] text-white">
+                    Male
+                  </option>
+                  <option value="Female" className="bg-[#1E1E22] text-white">
+                    Female
+                  </option>
+                </select>
               </div>
 
               <div>
