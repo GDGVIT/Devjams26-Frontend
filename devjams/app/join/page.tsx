@@ -88,7 +88,7 @@ export default function JoinPage() {
               />
             </span>
             <span className="hero-gdg-lockup__name">
-              Vellore Institute of Technology
+              On Campus VIT Vellore
             </span>
           </motion.div>
         </Link>

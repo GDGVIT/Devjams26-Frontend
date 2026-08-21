@@ -7,6 +7,7 @@ import { HeroLogo } from "../hero/HeroLogo";
 import { HeroTrackIcons } from "../hero/HeroTrackIcons";
 import { portalAuthErrorMessage } from "../../app/portal-auth-state";
 import { nextPortalRoute, portalApi } from "../../services/portalApi";
+import { GDGLockup } from "./GDGLockup";
 
 export function PortalLogin() {
   const router = useRouter();
@@ -62,6 +63,14 @@ export function PortalLogin() {
 
   return (
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-center overflow-hidden px-4 py-8 select-none">
+      {/* Top Left GDG Lockup */}
+      <header
+        className="absolute top-6 md:top-8 left-[clamp(20px,5vw,60px)] z-40"
+        aria-label="Google Developer Groups"
+      >
+        <GDGLockup />
+      </header>
+
       <div className="absolute -top-32 -left-32 w-[520px] h-[520px] bg-gradient-to-br from-amber-600/20 via-orange-600/10 to-transparent rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute -bottom-32 -right-32 w-[580px] h-[580px] bg-gradient-to-tl from-emerald-600/15 via-yellow-600/10 to-transparent rounded-full blur-[150px] pointer-events-none" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-blue-900/10 rounded-full blur-[160px] pointer-events-none" />
@@ -101,7 +110,7 @@ export function PortalLogin() {
               onClick={() => beginGoogleLogin("internal")}
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
-              className="group w-full max-w-[266px] sm:max-w-none sm:w-auto sm:min-w-[340px] md:min-w-[420px] h-7 sm:h-[58px] md:h-[64px] px-3 sm:px-10 rounded-full bg-[#343434] hover:bg-white text-white hover:text-black border border-white/10 hover:border-transparent font-normal flex items-center justify-center gap-2 sm:gap-4 transition-colors duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer select-none text-[12px] sm:text-[18px] md:text-[22.5px] disabled:opacity-60"
+              className="group w-full max-w-[266px] sm:max-w-none sm:w-auto sm:min-w-[340px] md:min-w-[420px] h-7 sm:h-[58px] md:h-[64px] px-3 sm:px-10 rounded-full bg-[#343434] text-white border border-white/10 font-normal flex items-center justify-center gap-2 sm:gap-4 transition-colors duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer select-none text-[12px] sm:text-[18px] md:text-[22.5px] disabled:opacity-60"
               style={{ fontFamily: '"Google Sans", var(--font-google-sans), sans-serif' }}
             >
               <span className="whitespace-nowrap">{loading ? "Redirecting to Google..." : "Continue As Internal Participant"}</span>

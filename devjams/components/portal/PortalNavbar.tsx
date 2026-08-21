@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { portalApi, type UserSession } from "../../services/portalApi";
+import { GDGLockup } from "./GDGLockup";
 
 export function PortalNavbar() {
   const router = useRouter();
@@ -17,17 +18,10 @@ export function PortalNavbar() {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-black/70 backdrop-blur-xl">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         {/* Brand Lockup */}
-        <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2 group">
-            <span className="text-xl font-bold tracking-tight text-white group-hover:text-amber-400 transition-colors">
-              DevJams<span className="text-amber-400">’26</span>
-            </span>
-            <span className="hidden sm:inline-block px-2 py-0.5 rounded-full bg-white/10 text-neutral-300 text-[11px] font-medium border border-white/10">
-              Idea Portal
-            </span>
-          </Link>
+        <div className="flex items-center gap-4 sm:gap-6">
+          <GDGLockup className="!top-0 origin-left scale-[0.75] sm:scale-[0.85]" animate={false} />
 
           {/* Navigation Links */}
           <nav className="hidden md:flex items-center gap-1">

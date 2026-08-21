@@ -68,9 +68,9 @@ export const FRAME_TWO_MOBILE_RAW_SHAPES = {
   },
   android: {
     x: 160,
-    y: 530,
+    y: 460,
     width: 380,
-    height: 280,
+    height: 350,
   },
 } as const satisfies Record<string, ShapeBounds>;
 
@@ -110,7 +110,7 @@ export const FRAME_FOUR_MOBILE_RAW_SHAPES = {
   },
   cloud: {
     x: -162.8888,
-    y: 1150,
+    y: 480,
     width: 270.0621,
     height: 197.1834,
   },
@@ -140,25 +140,25 @@ export const FRAME_FOUR_MOBILE_SHAPES = {
 export const FRAME_THREE_MOBILE_ROW_Y = 330;
 export const FRAME_THREE_MOBILE_RAW_SHAPES = {
   web: {
-    x: 20,
+    x: 22.0485,
     y: 281.7255,
     width: 96.549,
     height: 96.549,
   },
   maps: {
-    x: 96.5,
+    x: 99.9658,
     y: 281.713,
     width: 75.723,
     height: 96.574,
   },
   gemini: {
-    x: 156,
+    x: 157.0571,
     y: 281.1885,
     width: 97.623,
     height: 97.623,
   },
   gear: {
-    x: 234,
+    x: 236.0485,
     y: 271.549,
     width: 116.903,
     height: 116.902,

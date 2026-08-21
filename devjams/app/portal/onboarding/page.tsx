@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "@/components/gsap-motion";
 import AssetImage from "@/components/AssetImage";
+import { GDGLockup } from "@/components/portal/GDGLockup";
 import { isOnboardingComplete, portalApi, type ParticipantType } from "@/services/portalApi";
 const COUNTRY_CODES = [
   { code: "+91", country: "India", flag: "🇮🇳" },
@@ -424,6 +425,14 @@ export default function OnboardingPage() {
 
   return (
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col justify-between overflow-x-hidden p-4 sm:p-8 select-none">
+      {/* Top Left GDG Lockup */}
+      <header
+        className="absolute top-6 md:top-8 left-[clamp(20px,5vw,60px)] z-40"
+        aria-label="Google Developer Groups"
+      >
+        <GDGLockup />
+      </header>
+
       {/* Top-Left Web Graphic */}
       <div className="absolute -top-16 -left-16 sm:-top-20 sm:-left-20 w-36 h-36 sm:w-52 sm:h-52 md:w-64 md:h-64 pointer-events-none z-0">
         <AssetImage
@@ -734,7 +743,7 @@ export default function OnboardingPage() {
               disabled={loading}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className="group w-full sm:w-auto min-w-[320px] sm:min-w-[440px] md:min-w-[500px] h-[58px] sm:h-[64px] px-8 sm:px-14 rounded-full bg-[#2A2A2E]/90 hover:bg-white text-white hover:text-black border border-white/10 hover:border-transparent font-normal flex items-center justify-center gap-3 transition-colors duration-200 cursor-pointer disabled:opacity-50 select-none shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
+              className="group w-full sm:w-auto min-w-[320px] sm:min-w-[440px] md:min-w-[500px] h-[58px] sm:h-[64px] px-8 sm:px-14 rounded-full bg-[#2A2A2E]/90 text-white border border-white/10 font-normal flex items-center justify-center gap-3 transition-colors duration-200 cursor-pointer disabled:opacity-50 select-none shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
               style={{
                 fontFamily: '"Google Sans", var(--font-google-sans), sans-serif',
                 fontSize: "22.5px",

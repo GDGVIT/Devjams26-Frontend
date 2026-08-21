@@ -6,10 +6,13 @@ import AssetImage from "@/components/AssetImage";
 export function DashboardGraphic() {
   return (
     <div className="relative w-full max-w-full flex items-center justify-center pointer-events-none select-none my-2 sm:my-8 px-4 sm:px-6 overflow-visible">
-      {/* Single Unified Center-Aligned Container with all 6 elements (Left Bracket, Umbrella, Gemini, Maps, Antigravity, Right Bracket) */}
-      <div className="relative flex items-center justify-center mix-blend-screen scale-[0.52] min-[360px]:scale-[0.58] min-[400px]:scale-[0.68] min-[480px]:scale-[0.82] sm:scale-100 md:scale-110 lg:scale-[1.22] origin-center flex-shrink-0 transition-transform">
-        {/* Left Bracket { (With whitespace after) */}
-        <div className="relative flex items-center justify-center mr-2 sm:mr-4 md:mr-6 z-10 w-[55px] sm:w-[85px] md:w-[105px] h-[200px] sm:h-[275px] md:h-[325px]">
+      {/* Single Unified Center-Aligned Container with deeply overlapping elements matching Figma specs */}
+      <div className="relative flex items-center justify-center scale-[0.68] min-[360px]:scale-[0.75] min-[400px]:scale-[0.84] min-[480px]:scale-[0.96] sm:scale-[1.18] md:scale-[1.28] lg:scale-[1.38] xl:scale-[1.45] origin-center flex-shrink-0 transition-transform">
+        {/* Left Bracket { */}
+        <div
+          className="relative flex items-center justify-center -mr-5 sm:-mr-8 md:-mr-11 z-10 w-[48px] sm:w-[75px] md:w-[95px] h-[170px] sm:h-[250px] md:h-[300px]"
+          style={{ mixBlendMode: "plus-lighter" }}
+        >
           <AssetImage
             src="/assets/leftbracket.svg"
             alt="Left Bracket"
@@ -20,8 +23,11 @@ export function DashboardGraphic() {
           />
         </div>
 
-        {/* Umbrella Arcs (Subtle overlap) */}
-        <div className="relative flex items-center justify-center -mr-2 sm:-mr-3 md:-mr-4 z-20 w-[115px] sm:w-[175px] md:w-[210px] h-[85px] sm:h-[130px] md:h-[155px]">
+        {/* Umbrella Arcs */}
+        <div
+          className="relative flex items-center justify-center -mr-9 sm:-mr-15 md:-mr-18 z-20 w-[110px] sm:w-[170px] md:w-[210px] h-[80px] sm:h-[125px] md:h-[155px]"
+          style={{ mixBlendMode: "plus-lighter" }}
+        >
           <AssetImage
             src="/assets/umbrella.svg"
             alt="Umbrella Graphic"
@@ -32,8 +38,11 @@ export function DashboardGraphic() {
           />
         </div>
 
-        {/* Gemini / Star Track (Subtle overlap) */}
-        <div className="relative flex items-center justify-center -mr-2 sm:-mr-3 md:-mr-4 z-30 w-[105px] sm:w-[160px] md:w-[190px] h-[105px] sm:h-[160px] md:h-[190px]">
+        {/* Gemini / Star Track */}
+        <div
+          className="relative flex items-center justify-center -mr-9 sm:-mr-15 md:-mr-18 z-30 w-[100px] sm:w-[155px] md:w-[190px] h-[100px] sm:h-[155px] md:h-[190px]"
+          style={{ mixBlendMode: "plus-lighter" }}
+        >
           <Image
             src="/assets/gemini.svg"
             alt="Gemini Star"
@@ -44,8 +53,11 @@ export function DashboardGraphic() {
           />
         </div>
 
-        {/* Maps Pin (Subtle overlap) */}
-        <div className="relative flex items-center justify-center -mr-2 sm:-mr-3 md:-mr-4 z-40 w-[110px] sm:w-[170px] md:w-[205px] h-[135px] sm:h-[200px] md:h-[240px]">
+        {/* Maps Pin */}
+        <div
+          className="relative flex items-center justify-center -mr-9 sm:-mr-15 md:-mr-18 z-40 w-[105px] sm:w-[165px] md:w-[200px] h-[130px] sm:h-[200px] md:h-[245px]"
+          style={{ mixBlendMode: "plus-lighter" }}
+        >
           <AssetImage
             src="/assets/maps.svg"
             alt="Maps Pin"
@@ -56,8 +68,11 @@ export function DashboardGraphic() {
           />
         </div>
 
-        {/* Antigravity Arch (With whitespace before right bracket) */}
-        <div className="relative flex items-center justify-center mr-2 sm:mr-4 md:mr-6 z-30 w-[105px] sm:w-[160px] md:w-[190px] h-[105px] sm:h-[160px] md:h-[190px]">
+        {/* Antigravity Arch */}
+        <div
+          className="relative flex items-center justify-center -mr-5 sm:-mr-8 md:-mr-11 z-30 w-[105px] sm:w-[165px] md:w-[200px] h-[105px] sm:h-[165px] md:h-[200px]"
+          style={{ mixBlendMode: "plus-lighter" }}
+        >
           <Image
             src="/assets/antigravity.svg"
             alt="Antigravity Graphic"
@@ -69,7 +84,10 @@ export function DashboardGraphic() {
         </div>
 
         {/* Right Bracket } */}
-        <div className="relative flex items-center justify-center z-20 w-[55px] sm:w-[85px] md:w-[105px] h-[200px] sm:h-[275px] md:h-[325px]">
+        <div
+          className="relative flex items-center justify-center z-20 w-[48px] sm:w-[75px] md:w-[95px] h-[170px] sm:h-[250px] md:h-[300px]"
+          style={{ mixBlendMode: "plus-lighter" }}
+        >
           <AssetImage
             src="/assets/rightbracket.svg"
             alt="Right Bracket"

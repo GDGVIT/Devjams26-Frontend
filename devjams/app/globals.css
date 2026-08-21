@@ -597,34 +597,6 @@ body {
     height: 125svh;
     min-height: 750px;
   }
-
-  /* About DevJams: content takes the left 70%, right 30% stays open */
-  .about-devjams__content {
-    left: 0;
-    top: 150px;
-    width: 70%;
-    box-sizing: border-box;
-    padding: 0 12px 0 20px;
-  }
-
-  /* About VIT: content takes the right 70%, left 30% stays open */
-  .frame-four__content {
-    left: 30%;
-    top: 150px;
-    width: 70%;
-    box-sizing: border-box;
-    padding: 0 20px 0 12px;
-  }
-
-  .about-devjams__title,
-  .frame-four__title {
-    font-size: clamp(30px, 8.6vw, 44px);
-  }
-
-  .about-devjams__description,
-  .frame-four__description {
-    font-size: clamp(16px, 4.6vw, 24px);
-  }
 }
 
 .hero-header {
@@ -798,7 +770,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transform: translateY(42px);
+  transform: translateY(48px);
 }
 
 .hero-nav__backdrop {
@@ -866,17 +838,18 @@ body {
 
 .hero-cta-title {
   width: 546px;
-  height: 61px;
-  margin: 16px 0 0;
+  height: auto;
+  min-height: 52px;
+  margin: 24px 0 0;
   position: relative;
-  top: -20px;
+  top: 0;
   z-index: 40;
   color: #fff;
   font-family: "Google Sans", sans-serif;
   font-size: 48px;
   font-style: normal;
   font-weight: 700;
-  line-height: 1;
+  line-height: 1.15;
   letter-spacing: -0.05em;
   text-align: center;
 }
@@ -886,9 +859,13 @@ body {
   filter: brightness(1.12) saturate(1.05);
 }
 
+.hero-idea-link {
+  margin-top: 24px;
+}
+
 .hero-idea-border-glow {
   position: relative;
-  top: 8px;
+  top: 0;
   z-index: 30;
   width: min(243px, calc(100vw - 32px));
   height: 55px;
@@ -916,9 +893,13 @@ body {
   .hero-cta-title {
     width: calc(100% - 32px);
     height: auto;
-    margin-top: 16px;
-    top: -36px;
+    margin-top: 28px;
+    top: 0;
     font-size: clamp(26px, 7.5vw, 38px);
+  }
+
+  .hero-idea-link {
+    margin-top: 24px;
   }
 
   .hero-idea-border-glow {
@@ -933,37 +914,13 @@ body {
 
 @media (max-width: 700px) {
   .hero-content {
-    transform: translateY(28px);
+    transform: translateY(36px);
+    padding-top: 48px;
   }
 
   .hero-track-icons {
-    margin-top: -150px;
+    margin-top: -140px;
     scale: clamp(0.28, calc((100vw - 32px) / 980px), 0.68) !important;
-  }
-
-  /* About GDG: slightly larger track SVGs and description closer to title */
-  .frame-three__logo--gemini {
-    width: calc(261px * var(--frame-scale) * 1.4);
-    height: calc(261px * var(--frame-scale) * 1.4);
-  }
-
-  .frame-three__logo--gear {
-    width: calc(312px * var(--frame-scale) * 1.4);
-    height: calc(312px * var(--frame-scale) * 1.4);
-  }
-
-  .transition-target--tracks-web {
-    width: calc(67.96875px * var(--mobile-frame-scale) * 1.4);
-    height: calc(67.96875px * var(--mobile-frame-vertical-scale) * 1.4);
-  }
-
-  .transition-target--tracks-maps {
-    width: calc(65.625px * var(--mobile-frame-scale) * 1.4);
-    height: calc(67.96875px * var(--mobile-frame-vertical-scale) * 1.4);
-  }
-
-  .frame-three__description {
-    top: clamp(138px, 21vh, 200px);
   }
 }
 @media (max-width: 700px) {
@@ -1119,8 +1076,7 @@ body {
   /* Frame 2 - Mobile: Left-aligned content, right-stacked logos */
   .about-devjams__content {
     left: 20px;
-    top: 50%;
-    transform: translateY(-50%);
+    top: calc(50svh - 110px);
     width: calc(52% - 20px);
     max-width: 200px;
     align-items: flex-start;
@@ -1154,14 +1110,7 @@ body {
 
   /* Frame 3 - Mobile: Top title, middle 4-logo row, bottom description */
   .frame-three__title {
-    /* Anchored to the logo row rather than to the top of the section. The row
-       sits at a fixed 271.549px (scaled), so a top-relative title drifted away
-       from it — measured 80px from the top with a 156px void beneath, against
-       a 41px gap on the other side of the row. Positioning by the bottom edge
-       keeps the gap at 45px whatever the title wraps to, and lands the whole
-       title/row/paragraph group on the section's centre line. */
-    top: auto;
-    bottom: calc(100% - (271.549px * var(--mobile-scale, 1)) + 45px);
+    top: clamp(200px, 26vh, 230px);
     left: 16px;
     width: calc(100% - 32px);
     height: auto;
@@ -1174,22 +1123,23 @@ body {
   }
 
   .frame-three__logos {
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(375px, 100vw);
     top: 0;
-    width: 100%;
     height: 100%;
     pointer-events: none;
   }
 
   .frame-three__logo--gemini {
-    left: calc(156px * var(--mobile-scale, 1));
+    left: calc(157.06px * var(--mobile-scale, 1));
     top: calc(281.1885px * var(--mobile-scale, 1));
     width: calc(97.623px * var(--mobile-scale, 1));
     height: calc(97.623px * var(--mobile-scale, 1));
   }
 
   .frame-three__logo--gear {
-    left: calc(234px * var(--mobile-scale, 1));
+    left: calc(236.05px * var(--mobile-scale, 1));
     top: calc(271.549px * var(--mobile-scale, 1));
     width: calc(116.903px * var(--mobile-scale, 1));
     height: calc(116.902px * var(--mobile-scale, 1));
@@ -1197,23 +1147,16 @@ body {
 
   .frame-three__logo--cloud {
     left: calc(375px * var(--mobile-scale, 1));
-    top: calc(1150px * var(--mobile-scale, 1));
+    top: calc(100svh + (480px * var(--mobile-scale, 1)));
     width: calc(270.0621px * var(--mobile-scale, 1));
     height: calc(197.1834px * var(--mobile-scale, 1));
     z-index: 0;
   }
 
   .frame-three__description {
-    /* Also measured from the logo row, for the same reason: a vh-based offset
-       drifted relative to a row that is fixed, so the gap under the logos
-       changed with the phone's height. 40px keeps it even with the 45px above
-       the row. */
-    top: calc((271.549px + 116.902px) * var(--mobile-scale, 1) + 40px);
+    top: clamp(405px, 51vh, 425px);
     left: 50%;
     transform: translateX(-50%);
-    /* 12-14.5px was below a comfortable reading size for body copy on a phone.
-       Widening the column as well, so the larger type does not cost line
-       breaks. */
     width: min(360px, calc(100% - 32px));
     height: auto;
     margin: 0;
@@ -1225,12 +1168,10 @@ body {
   }
   /* Frame 4 - Mobile: Left-stacked logos, right-aligned content */
   .frame-four__content {
-    left: calc(48% + 10px);
-    right: 16px;
-    width: calc(52% - 26px);
-    max-width: 175px;
-    top: 50%;
-    transform: translateY(-50%);
+    left: 42%;
+    top: clamp(140px, 25vh, 220px);
+    max-width: 260px;
+    width: calc(58% - 16px);
     align-items: flex-start;
     text-align: left;
     gap: 14px;
@@ -1242,10 +1183,11 @@ body {
     height: auto;
     margin: 0;
     text-align: left;
-    font-size: clamp(28px, 8.5vw, 40px);
+    font-size: clamp(28px, 8vw, 38px);
     font-weight: 700;
     line-height: 1.08;
     letter-spacing: -0.02em;
+    white-space: nowrap;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
   }
 
