@@ -36,15 +36,16 @@ const outDir = path.join(root, "public", "assets", "baked");
 const TARGETS = [
   { src: "android.svg", out: "android.png", width: 936, height: 572 },
   { src: "web.svg", out: "web.png", width: 908, height: 908 },
-  { src: "cloud.svg", out: "cloud.png", width: 784, height: 572 },
+  { src: "cloud.svg", out: "cloud.png", width: 936, height: 684 },
   { src: "maps.svg", out: "maps.png", width: 730, height: 930 },
   { src: "dino-menu.svg", out: "dino-menu.png", width: 130, height: 138 },
   { src: "cursor.svg", out: "cursor.png", width: 410, height: 530 },
   { src: "notebookllm.svg", out: "notebookllm.png", width: 342, height: 360 },
-  { src: "antigravity.svg", out: "antigravity.png", width: 598, height: 552 },
-  { src: "folder.svg", out: "folder.png", width: 447, height: 363 },
   { src: "logo/triangle.svg", out: "logo/triangle.png", width: 600, height: 600 },
   { src: "logo/circle.svg", out: "logo/circle.png", width: 480, height: 480 },
+  { src: "leftbracket.svg", out: "leftbracket.png", width: 256, height: 664 },
+  { src: "rightbracket.svg", out: "rightbracket.png", width: 256, height: 664 },
+  { src: "umbrella.svg", out: "umbrella.png", width: 512, height: 368 },
 ];
 
 const CHROME_CANDIDATES = [

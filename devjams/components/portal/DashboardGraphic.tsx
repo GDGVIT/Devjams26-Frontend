@@ -10,8 +10,8 @@ export function DashboardGraphic() {
       <div className="relative flex items-center justify-center mix-blend-screen scale-[0.52] min-[360px]:scale-[0.58] min-[400px]:scale-[0.68] min-[480px]:scale-[0.82] sm:scale-100 md:scale-110 lg:scale-[1.22] origin-center flex-shrink-0 transition-transform">
         {/* Left Bracket { (With whitespace after) */}
         <div className="relative flex items-center justify-center mr-2 sm:mr-4 md:mr-6 z-10 w-[55px] sm:w-[85px] md:w-[105px] h-[200px] sm:h-[275px] md:h-[325px]">
-          <Image
-            src="/assets/leftbracket.svg.svg"
+          <AssetImage
+            src="/assets/leftbracket.svg"
             alt="Left Bracket"
             width={110}
             height={285}
@@ -22,8 +22,8 @@ export function DashboardGraphic() {
 
         {/* Umbrella Arcs (Subtle overlap) */}
         <div className="relative flex items-center justify-center -mr-2 sm:-mr-3 md:-mr-4 z-20 w-[115px] sm:w-[175px] md:w-[210px] h-[85px] sm:h-[130px] md:h-[155px]">
-          <Image
-            src="/assets/umbrella.svg.svg"
+          <AssetImage
+            src="/assets/umbrella.svg"
             alt="Umbrella Graphic"
             width={310}
             height={222}
@@ -59,7 +59,7 @@ export function DashboardGraphic() {
         {/* Antigravity Arch (With whitespace before right bracket) */}
         <div className="relative flex items-center justify-center mr-2 sm:mr-4 md:mr-6 z-30 w-[105px] sm:w-[160px] md:w-[190px] h-[105px] sm:h-[160px] md:h-[190px]">
           <Image
-            src="/assets/antigravity.svg.svg"
+            src="/assets/antigravity.svg"
             alt="Antigravity Graphic"
             width={299}
             height={276}
@@ -70,8 +70,8 @@ export function DashboardGraphic() {
 
         {/* Right Bracket } */}
         <div className="relative flex items-center justify-center z-20 w-[55px] sm:w-[85px] md:w-[105px] h-[200px] sm:h-[275px] md:h-[325px]">
-          <Image
-            src="/assets/rightbracet.svg.svg"
+          <AssetImage
+            src="/assets/rightbracket.svg"
             alt="Right Bracket"
             width={110}
             height={285}

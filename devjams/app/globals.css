@@ -1015,16 +1015,13 @@ body {
     height: 100vh;
     border: 0;
     padding: 0;
-    background: rgba(0, 0, 0, 0.68);
-  }
-
-  /* This element is always in the DOM and only fades out, so an unconditional
-     backdrop-filter would keep a full-viewport blur layer alive for the whole
-     session — one of the more expensive things to hand a phone GPU. Scoped to
-     the open state via the aria-hidden the button already sets, so the fade
-     still plays. */
-  .hero-nav__backdrop[aria-hidden="false"] {
-    backdrop-filter: blur(4px);
+    /* Deliberately a flat scrim rather than backdrop-filter: blur(). A blur
+       can only be composited once if the backdrop holds still, and this one
+       never does — the hero track icons run infinite float tweens, so the
+       whole viewport had to be re-blurred every frame for as long as the menu
+       was open. That is what made the sheet crawl on a phone. The heavier
+       scrim gives the same separation for one cheap paint. */
+    background: rgba(0, 0, 0, 0.82);
   }
 
   .hero-nav {
@@ -1033,8 +1030,11 @@ body {
     right: 0;
     left: auto;
     width: var(--hero-nav-open-width);
+    /* No min-height: 100vh alongside this. On mobile 100vh is the toolbar-less
+       height, so it always won over 100dvh and made the sheet taller than the
+       visible viewport — turning it into a scrolling container that had to be
+       re-laid-out while it slid in. */
     height: 100dvh;
-    min-height: 100vh;
     padding: 96px 20px 24px;
     border: 1px solid rgba(255, 255, 255, 0.32);
     border-right: 0;
@@ -1190,12 +1190,15 @@ body {
     top: clamp(420px, 58vh, 500px);
     left: 50%;
     transform: translateX(-50%);
-    width: min(320px, calc(100% - 36px));
+    /* 12-14.5px was below a comfortable reading size for body copy on a phone.
+       Widening the column as well, so the larger type does not cost line
+       breaks. */
+    width: min(360px, calc(100% - 32px));
     height: auto;
     margin: 0;
     text-align: center;
-    font-size: clamp(12px, 3.4vw, 14.5px);
-    line-height: 1.45;
+    font-size: clamp(15px, 4.2vw, 18px);
+    line-height: 1.5;
     letter-spacing: normal;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
   }
