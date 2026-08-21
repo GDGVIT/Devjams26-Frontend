@@ -44,6 +44,18 @@ export default function ProfilePage() {
 
   const isCheckedIn = profile?.isCheckedIn;
 
+  const profileFields = profile?.participantType === "external"
+    ? [
+        ["Gender", profile?.gender],
+        ["College Name", profile?.collegeName],
+        ["College Address", profile?.collegeAddress],
+        ["College Roll Number", profile?.collegeRollNumber],
+      ]
+    : [
+        ["Hostel Block", profile?.hostelBlock],
+        ["Room Number", profile?.roomNumber],
+      ];
+
   return (
     <div className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start select-none overflow-x-hidden pb-20">
       {/* Top Floating Graphics Banner: Left (notebookllm + cursor), Center (antigravity + folder), Right (maps + four-petal) */}
@@ -235,30 +247,31 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Row 2: Registration Number & Phone */}
+          {/* Row 2: Internal registration number and phone */}
           <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-14 mt-1 sm:mt-2">
-            {/* Reg No Field */}
-            <div className="w-full flex flex-col items-start gap-2">
-              <label
-                className="text-white font-normal capitalize text-[clamp(16px,2vw,32px)] leading-[1.3]"
-                style={{
-                  fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
-                }}
-              >
-                Registration Number
-              </label>
-              <div
-                className="w-full bg-[#343434] text-white/90 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center text-[clamp(12px,1.6vw,22px)] font-normal select-text"
-                style={{
-                  fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
-                }}
-              >
-                {loading ? "Loading..." : profile?.registrationNumber || "N/A"}
+            {profile?.participantType === "internal" && (
+              <div className="w-full flex flex-col items-start gap-2">
+                <label
+                  className="text-white font-normal capitalize text-[clamp(16px,2vw,32px)] leading-[1.3]"
+                  style={{
+                    fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+                  }}
+                >
+                  Registration Number
+                </label>
+                <div
+                  className="w-full bg-[#343434] text-white/90 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center text-[clamp(12px,1.6vw,22px)] font-normal select-text"
+                  style={{
+                    fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+                  }}
+                >
+                  {loading ? "Loading..." : profile.registrationNumber || "N/A"}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Phone Field */}
-            <div className="w-full flex flex-col items-start gap-2">
+            <div className={`w-full flex flex-col items-start gap-2 ${profile?.participantType === "external" ? "md:col-span-2" : ""}`}>
               <label
                 className="text-white font-normal capitalize text-[clamp(16px,2vw,32px)] leading-[1.3]"
                 style={{
@@ -278,47 +291,27 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Row 3: Hostel Block & Room Number */}
           <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-14 mt-1 sm:mt-2">
-            {/* Hostel Block */}
-            <div className="w-full flex flex-col items-start gap-2">
-              <label
-                className="text-white font-normal capitalize text-[clamp(16px,2vw,32px)] leading-[1.3]"
-                style={{
-                  fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
-                }}
-              >
-                Hostel Block
-              </label>
-              <div
-                className="w-full bg-[#343434] text-white/90 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center text-[clamp(12px,1.6vw,22px)] font-normal select-text"
-                style={{
-                  fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
-                }}
-              >
-                {loading ? "Loading..." : profile?.hostelBlock || "N/A"}
+            {profileFields.map(([label, value]) => (
+              <div key={label} className="w-full flex flex-col items-start gap-2">
+                <label
+                  className="text-white font-normal capitalize text-[clamp(16px,2vw,32px)] leading-[1.3]"
+                  style={{
+                    fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+                  }}
+                >
+                  {label}
+                </label>
+                <div
+                  className="w-full bg-[#343434] text-white/90 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center text-[clamp(12px,1.6vw,22px)] font-normal select-text"
+                  style={{
+                    fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+                  }}
+                >
+                  {loading ? "Loading..." : value || "N/A"}
+                </div>
               </div>
-            </div>
-
-            {/* Room Number */}
-            <div className="w-full flex flex-col items-start gap-2">
-              <label
-                className="text-white font-normal capitalize text-[clamp(16px,2vw,32px)] leading-[1.3]"
-                style={{
-                  fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
-                }}
-              >
-                Room Number
-              </label>
-              <div
-                className="w-full bg-[#343434] text-white/90 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center text-[clamp(12px,1.6vw,22px)] font-normal select-text"
-                style={{
-                  fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
-                }}
-              >
-                {loading ? "Loading..." : profile?.roomNumber || "N/A"}
-              </div>
-            </div>
+            ))}
           </div>
 
           {/* Row 4: Team Name & Team Code */}

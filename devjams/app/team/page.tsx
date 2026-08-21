@@ -19,7 +19,7 @@ export default function TeamPage() {
   const [memberMenu, setMemberMenu] = useState<BackendTeamMember | null>(null);
   const [leaveConfirmationOpen, setLeaveConfirmationOpen] = useState(false);
   const [members, setMembers] = useState<BackendTeamMember[]>([]);
-  const [currentEmail, setCurrentEmail] = useState("");
+  const [currentParticipantId, setCurrentParticipantId] = useState("");
   const [isLeader, setIsLeader] = useState(false);
   const [actionError, setActionError] = useState("");
   const [isManagingMembers, setIsManagingMembers] = useState(false);
@@ -41,17 +41,18 @@ export default function TeamPage() {
         }
 
         setIsLeader(!!me.isTeamLeader);
-        setCurrentEmail(me.email);
+        setCurrentParticipantId(me.id);
 
         const team = await portalApi.fetchTeam();
         if (team) {
           setTeamName(team.team_name || me.teamName || "My Team");
-          setTeamCode(team.join_code || "");
+          setTeamCode(team.invite_code || "");
           if (team.members && Array.isArray(team.members)) {
             setMembers(team.members);
           } else {
             setMembers([
               {
+                id: me.id,
                 name: me.name || "Team Leader",
                 email: me.email,
               },
@@ -62,6 +63,7 @@ export default function TeamPage() {
           setTeamCode("");
           setMembers([
             {
+              id: me.id,
               name: me.name || "Team Leader",
               email: me.email,
             },
@@ -85,12 +87,12 @@ export default function TeamPage() {
   };
 
   const confirmRemoveMember = async () => {
-    if (!memberToRemove) return;
+    if (!memberToRemove?.id) return;
     setActionError("");
     setIsManagingMembers(true);
     try {
-      await portalApi.removeTeamMember(memberToRemove.email);
-      setMembers((previous) => previous.filter((member) => member.email !== memberToRemove.email));
+      await portalApi.removeTeamMember(memberToRemove.id);
+      setMembers((previous) => previous.filter((member) => member.id !== memberToRemove.id));
       setMemberToRemove(null);
     } catch (err: unknown) {
       setActionError(err instanceof Error ? err.message : "Could not remove team member.");
@@ -100,10 +102,11 @@ export default function TeamPage() {
   };
 
   const transferLeadership = async (member: BackendTeamMember) => {
+    if (!member.id) return;
     setActionError("");
     setIsManagingMembers(true);
     try {
-      await portalApi.transferTeamLeadership(member.email);
+      await portalApi.transferTeamLeadership(member.id);
       setIsLeader(false);
       setMemberMenu(null);
       await refreshMembers();
@@ -315,7 +318,7 @@ export default function TeamPage() {
               </div>
             </div>
 
-            {/* Team Code Field */}
+            {/* Invite Code Field */}
             <div className="w-full md:w-[clamp(280px,30vw,406px)] flex flex-col gap-2">
               <span
                 className="text-white font-normal leading-normal capitalize text-[clamp(16px,2vw,32px)]"
@@ -323,10 +326,10 @@ export default function TeamPage() {
                   fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
                 }}
               >
-                Join Code
+                Invite Code
               </span>
 
-              {/* Team Code Box with Copy Clipboard Button */}
+              {/* Invite Code Box with Copy Clipboard Button */}
               <div className="w-full h-8 sm:h-14 bg-[#343434] rounded-[4px] sm:rounded-lg flex items-center justify-between px-3.5 sm:px-6 md:px-7">
                 <span
                   className="text-white/80 font-normal text-[clamp(12px,1.6vw,24px)] leading-none"
@@ -408,11 +411,11 @@ export default function TeamPage() {
               <div className="text-sm text-neutral-400">No members registered yet.</div>
             ) : (
               members.map((member, index) => {
-                const action = memberActionFor(member, currentEmail, isLeader);
-                const isMemberMenuOpen = memberMenu?.email === member.email;
+                const action = memberActionFor(member, currentParticipantId, isLeader);
+                const isMemberMenuOpen = memberMenu?.id === member.id;
                 return (
                   <div
-                    key={member.email || index}
+                    key={member.id || member.email || index}
                     className="w-full h-10 sm:h-14 bg-[#343434] rounded-[4px] sm:rounded-lg flex flex-row justify-between items-center px-3.5 sm:px-6 md:px-7 box-border flex-shrink-0"
                   >
                     <div className="flex items-center gap-3 min-w-0">

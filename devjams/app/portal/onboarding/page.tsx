@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "@/components/gsap-motion";
 import AssetImage from "@/components/AssetImage";
-import { portalApi } from "@/services/portalApi";
+import { isOnboardingComplete, portalApi, type ParticipantType } from "@/services/portalApi";
 const COUNTRY_CODES = [
   { code: "+91", country: "India", flag: "🇮🇳" },
 
@@ -283,18 +283,37 @@ export const allHostelBlocks = [...mhBlocks, ...lhBlocks, "Day Boarder"];
 export default function OnboardingPage() {
   const router = useRouter();
 
-  // Form State matching the reference screenshot (lazy initialized from stored data)
-  const [name, setName] = useState(() => portalApi.getInternalOnboarding()?.name || "");
-  const [registrationNumber, setRegistrationNumber] = useState(() => portalApi.getInternalOnboarding()?.registrationNumber || "");
+  // Form state is hydrated from the authenticated profile when available.
+  const storedOnboarding = portalApi.getOnboarding();
+  const [participantType, setParticipantType] = useState<ParticipantType>(
+    () => storedOnboarding?.participantType || portalApi.getSession()?.participantType || "internal"
+  );
+  const [name, setName] = useState(() => storedOnboarding?.name || "");
+  const [registrationNumber, setRegistrationNumber] = useState<string>(
+    () => storedOnboarding?.participantType === "internal" ? storedOnboarding.registrationNumber : ""
+  );
   const [countryCode, setCountryCode] = useState("+91");
   const [contactNumber, setContactNumber] = useState(() => {
-    const existing = portalApi.getInternalOnboarding()?.contactNumber || "";
+    const existing = storedOnboarding?.contactNumber || "";
     return existing.replace(/^\+\d+\s*/, "");
   });
-  const [email, setEmail] = useState(() => portalApi.getInternalOnboarding()?.email || "");
-  const [gender, setGender] = useState(() => portalApi.getInternalOnboarding()?.gender || "");
-  const [hostelBlock, setHostelBlock] = useState(() => portalApi.getInternalOnboarding()?.hostelBlock || "");
-  const [roomNumber, setRoomNumber] = useState(() => portalApi.getInternalOnboarding()?.roomNumber || "");
+  const [email, setEmail] = useState(() => storedOnboarding?.email || "");
+  const [gender, setGender] = useState(() => storedOnboarding?.gender || "");
+  const [hostelBlock, setHostelBlock] = useState(
+    () => storedOnboarding?.participantType === "internal" ? storedOnboarding.hostelBlock : ""
+  );
+  const [roomNumber, setRoomNumber] = useState(
+    () => storedOnboarding?.participantType === "internal" ? storedOnboarding.roomNumber : ""
+  );
+  const [collegeName, setCollegeName] = useState(
+    () => storedOnboarding?.participantType === "external" ? storedOnboarding.collegeName : ""
+  );
+  const [collegeAddress, setCollegeAddress] = useState(
+    () => storedOnboarding?.participantType === "external" ? storedOnboarding.collegeAddress : ""
+  );
+  const [collegeRollNumber, setCollegeRollNumber] = useState(
+    () => storedOnboarding?.participantType === "external" ? storedOnboarding.collegeRollNumber : ""
+  );
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -313,17 +332,26 @@ export default function OnboardingPage() {
             router.push("/team");
             return;
           }
-          if (me.phone && me.hostelBlock && me.gender) {
+          if (isOnboardingComplete(me)) {
             router.push("/portal/join-create");
             return;
           }
+          setParticipantType(me.participantType);
           if (me.name) setName((prev) => prev || me.name);
-          if (me.registrationNumber) setRegistrationNumber((prev) => prev || me.registrationNumber || "");
+          if (me.participantType === "internal" && me.registrationNumber) {
+            setRegistrationNumber((prev) => prev || me.registrationNumber || "");
+          }
           if (me.email) setEmail((prev) => prev || me.email);
           if (me.phone) setContactNumber((prev) => prev || me.phone?.replace(/^\+\d+\s*/, "") || "");
           if (me.gender) setGender((prev) => prev || me.gender || "");
-          if (me.hostelBlock) setHostelBlock((prev) => prev || me.hostelBlock || "");
-          if (me.roomNumber) setRoomNumber((prev) => prev || me.roomNumber || "");
+          if (me.participantType === "external") {
+            if (me.collegeName) setCollegeName((prev) => prev || me.collegeName || "");
+            if (me.collegeAddress) setCollegeAddress((prev) => prev || me.collegeAddress || "");
+            if (me.collegeRollNumber) setCollegeRollNumber((prev) => prev || me.collegeRollNumber || "");
+          } else {
+            if (me.hostelBlock) setHostelBlock((prev) => prev || me.hostelBlock || "");
+            if (me.roomNumber) setRoomNumber((prev) => prev || me.roomNumber || "");
+          }
         }
       } catch {
         // Continue with onboarding form
@@ -341,27 +369,49 @@ export default function OnboardingPage() {
       return;
     }
 
-    if (!hostelBlock.trim()) {
-      setError("Please select your hostel block or Day Boarder.");
-      return;
-    }
+    if (participantType === "external") {
+      if (!collegeName.trim() || !collegeAddress.trim() || !collegeRollNumber.trim()) {
+        setError("Please provide your college name, address, and roll number.");
+        return;
+      }
+    } else {
+      if (!hostelBlock.trim()) {
+        setError("Please select your hostel block or Day Boarder.");
+        return;
+      }
 
-    if (hostelBlock !== "Day Boarder" && !roomNumber.trim()) {
-      setError("Please enter your room number.");
-      return;
+      if (hostelBlock !== "Day Boarder" && !roomNumber.trim()) {
+        setError("Please enter your room number.");
+        return;
+      }
     }
 
     setLoading(true);
     try {
-      await portalApi.saveOnboarding({
+      const identity = {
         name: name.trim(),
-        registrationNumber: registrationNumber.trim().toUpperCase(),
         contactNumber: `${countryCode} ${contactNumber.trim()}`,
         email: email.trim().toLowerCase(),
         gender: gender.trim(),
-        hostelBlock: hostelBlock.trim(),
-        roomNumber: hostelBlock === "Day Boarder" ? "N/A" : roomNumber.trim(),
-      });
+      };
+      await portalApi.saveOnboarding(
+        participantType === "external"
+          ? {
+              ...identity,
+              participantType: "external",
+              collegeName: collegeName.trim(),
+              collegeAddress: collegeAddress.trim(),
+              collegeRollNumber: collegeRollNumber.trim(),
+            }
+          : {
+              ...identity,
+              participantType: "internal",
+              registrationNumber: registrationNumber.trim().toUpperCase(),
+              hostelBlock: hostelBlock.trim(),
+              roomNumber: hostelBlock === "Day Boarder" ? "N/A" : roomNumber.trim(),
+            }
+      );
+
 
 
       router.push("/portal/join-create");
@@ -445,18 +495,20 @@ export default function OnboardingPage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm sm:text-base font-normal text-white mb-2">
-                  Registration Number
-                </label>
-                <input
-                  type="text"
-                  value={registrationNumber}
-                  readOnly
-                  aria-readonly="true"
-                  className="w-full px-4 py-3 rounded-xl bg-[#242424] border border-white/10 text-white/70 text-sm sm:text-base cursor-not-allowed uppercase"
-                />
-              </div>
+              {participantType === "internal" && (
+                <div>
+                  <label className="block text-sm sm:text-base font-normal text-white mb-2">
+                    Registration Number
+                  </label>
+                  <input
+                    type="text"
+                    value={registrationNumber}
+                    readOnly
+                    aria-readonly="true"
+                    className="w-full px-4 py-3 rounded-xl bg-[#242424] border border-white/10 text-white/70 text-sm sm:text-base cursor-not-allowed uppercase"
+                  />
+                </div>
+              )}
             </div>
           </div>
 
@@ -513,7 +565,7 @@ export default function OnboardingPage() {
             </div>
           </div>
 
-          {/* SECTION 3: Hostel Details */}
+          {/* SECTION 3: Participant-specific details */}
           <div className="space-y-3 sm:space-y-4">
             <h2
               className="text-xl sm:text-2xl font-medium text-white tracking-tight"
@@ -521,9 +573,9 @@ export default function OnboardingPage() {
                 fontFamily: '"Google Sans", var(--font-google-sans), sans-serif',
               }}
             >
-              Hostel Details
+              {participantType === "external" ? "College Details" : "Hostel Details"}
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+            <div className={`grid grid-cols-1 gap-4 sm:gap-6 ${participantType === "external" ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}>
               <div>
                 <label className="block text-sm sm:text-base font-normal text-white mb-2">
                   Gender
@@ -546,89 +598,132 @@ export default function OnboardingPage() {
                 </select>
               </div>
 
-              <div>
-                <label className="block text-sm sm:text-base font-normal text-white mb-2">
-                  Hostel Block
-                </label>
-                <select
-                  value={hostelBlock}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setHostelBlock(val);
-                    if (val === "Day Boarder") {
-                      setRoomNumber("N/A");
-                    } else if (roomNumber === "N/A") {
-                      setRoomNumber("");
-                    }
-                  }}
-                  required
-                  className="w-full px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white text-sm sm:text-base focus:outline-none transition-all cursor-pointer"
-                >
-                  <option value="" disabled className="bg-[#1E1E22] text-neutral-500">
-                    Select Block
-                  </option>
-                  {gender === "Male" ? (
-                    <>
-                      <optgroup label="Men's Hostel" className="bg-[#1E1E22] text-amber-400 font-semibold">
-                        {mhBlocks.map((block) => (
-                          <option key={block} value={block} className="bg-[#1E1E22] text-white font-normal">
-                            {block}
-                          </option>
-                        ))}
-                      </optgroup>
-                      <option value="Day Boarder" className="bg-[#1E1E22] text-white">
-                        Day Boarder
+              {participantType === "external" ? (
+                <>
+                  <div>
+                    <label className="block text-sm sm:text-base font-normal text-white mb-2">
+                      College Name
+                    </label>
+                    <input
+                      type="text"
+                      value={collegeName}
+                      onChange={(e) => setCollegeName(e.target.value)}
+                      required
+                      className="w-full px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white placeholder-neutral-500 text-sm sm:text-base focus:outline-none transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm sm:text-base font-normal text-white mb-2">
+                      College Address
+                    </label>
+                    <input
+                      type="text"
+                      value={collegeAddress}
+                      onChange={(e) => setCollegeAddress(e.target.value)}
+                      required
+                      className="w-full px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white placeholder-neutral-500 text-sm sm:text-base focus:outline-none transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm sm:text-base font-normal text-white mb-2">
+                      College Roll Number
+                    </label>
+                    <input
+                      type="text"
+                      value={collegeRollNumber}
+                      onChange={(e) => setCollegeRollNumber(e.target.value)}
+                      required
+                      className="w-full px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white placeholder-neutral-500 text-sm sm:text-base focus:outline-none transition-all"
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <label className="block text-sm sm:text-base font-normal text-white mb-2">
+                      Hostel Block
+                    </label>
+                    <select
+                      value={hostelBlock}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setHostelBlock(val);
+                        if (val === "Day Boarder") {
+                          setRoomNumber("N/A");
+                        } else if (roomNumber === "N/A") {
+                          setRoomNumber("");
+                        }
+                      }}
+                      required
+                      className="w-full px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white text-sm sm:text-base focus:outline-none transition-all cursor-pointer"
+                    >
+                      <option value="" disabled className="bg-[#1E1E22] text-neutral-500">
+                        Select Block
                       </option>
-                    </>
-                  ) : gender === "Female" ? (
-                    <>
-                      <optgroup label="Ladies' Hostel" className="bg-[#1E1E22] text-amber-400 font-semibold">
-                        {lhBlocks.map((block) => (
-                          <option key={block} value={block} className="bg-[#1E1E22] text-white font-normal">
-                            {block}
+                      {gender === "Male" ? (
+                        <>
+                          <optgroup label="Men's Hostel" className="bg-[#1E1E22] text-amber-400 font-semibold">
+                            {mhBlocks.map((block) => (
+                              <option key={block} value={block} className="bg-[#1E1E22] text-white font-normal">
+                                {block}
+                              </option>
+                            ))}
+                          </optgroup>
+                          <option value="Day Boarder" className="bg-[#1E1E22] text-white">
+                            Day Boarder
                           </option>
-                        ))}
-                      </optgroup>
-                      <option value="Day Boarder" className="bg-[#1E1E22] text-white">
-                        Day Boarder
-                      </option>
-                    </>
-                  ) : (
-                    <>
-                      <optgroup label="Men's Hostel" className="bg-[#1E1E22] text-amber-400 font-semibold">
-                        {mhBlocks.map((block) => (
-                          <option key={block} value={block} className="bg-[#1E1E22] text-white font-normal">
-                            {block}
+                        </>
+                      ) : gender === "Female" ? (
+                        <>
+                          <optgroup label="Ladies' Hostel" className="bg-[#1E1E22] text-amber-400 font-semibold">
+                            {lhBlocks.map((block) => (
+                              <option key={block} value={block} className="bg-[#1E1E22] text-white font-normal">
+                                {block}
+                              </option>
+                            ))}
+                          </optgroup>
+                          <option value="Day Boarder" className="bg-[#1E1E22] text-white">
+                            Day Boarder
                           </option>
-                        ))}
-                      </optgroup>
-                      <optgroup label="Ladies' Hostel" className="bg-[#1E1E22] text-amber-400 font-semibold">
-                        {lhBlocks.map((block) => (
-                          <option key={block} value={block} className="bg-[#1E1E22] text-white font-normal">
-                            {block}
+                        </>
+                      ) : (
+                        <>
+                          <optgroup label="Men's Hostel" className="bg-[#1E1E22] text-amber-400 font-semibold">
+                            {mhBlocks.map((block) => (
+                              <option key={block} value={block} className="bg-[#1E1E22] text-white font-normal">
+                                {block}
+                              </option>
+                            ))}
+                          </optgroup>
+                          <optgroup label="Ladies' Hostel" className="bg-[#1E1E22] text-amber-400 font-semibold">
+                            {lhBlocks.map((block) => (
+                              <option key={block} value={block} className="bg-[#1E1E22] text-white font-normal">
+                                {block}
+                              </option>
+                            ))}
+                          </optgroup>
+                          <option value="Day Boarder" className="bg-[#1E1E22] text-white">
+                            Day Boarder
                           </option>
-                        ))}
-                      </optgroup>
-                      <option value="Day Boarder" className="bg-[#1E1E22] text-white">
-                        Day Boarder
-                      </option>
-                    </>
-                  )}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm sm:text-base font-normal text-white mb-2">
-                  Room Number
-                </label>
-                <input
-                  type="text"
-                  placeholder={hostelBlock === "Day Boarder" ? "N/A (Day Boarder)" : "e.g. 402"}
-                  value={roomNumber}
-                  disabled={hostelBlock === "Day Boarder"}
-                  onChange={(e) => setRoomNumber(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white placeholder-neutral-500 text-sm sm:text-base focus:outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                />
-              </div>
+                        </>
+                      )}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm sm:text-base font-normal text-white mb-2">
+                      Room Number
+                    </label>
+                    <input
+                      type="text"
+                      placeholder={hostelBlock === "Day Boarder" ? "N/A (Day Boarder)" : "e.g. 402"}
+                      value={roomNumber}
+                      disabled={hostelBlock === "Day Boarder"}
+                      onChange={(e) => setRoomNumber(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white placeholder-neutral-500 text-sm sm:text-base focus:outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
