@@ -10,7 +10,7 @@ globalThis.localStorage = {
   removeItem: (key) => storage.delete(key),
 };
 
-test("joins a team with the upstream eight-digit join code contract", async () => {
+test("joins a team with a case-insensitive six-character invite code", async () => {
   let joinRequest;
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async (url, options = {}) => {
@@ -29,8 +29,8 @@ test("joins a team with the upstream eight-digit join code contract", async () =
   };
 
   try {
-    await portalApi.joinTeam("12345678");
-    assert.deepEqual(JSON.parse(String(joinRequest.body)), { join_code: "12345678" });
+    await portalApi.joinTeam(" a1b2c3 ");
+    assert.deepEqual(JSON.parse(String(joinRequest.body)), { invite_code: "A1B2C3" });
   } finally {
     globalThis.fetch = originalFetch;
   }

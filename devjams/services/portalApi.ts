@@ -16,6 +16,9 @@ export interface UserSession {
   gender?: string;
   hostelBlock?: string;
   roomNumber?: string;
+  collegeName?: string;
+  collegeAddress?: string;
+  collegeRollNumber?: string;
   isTeamLeader?: boolean;
   teamId?: string | null;
   teamName?: string | null;
@@ -29,11 +32,15 @@ export interface BackendParticipantMe {
   id: string;
   name: string;
   email: string;
+  participant_type: ParticipantType;
   gender?: string;
   registration_number?: string;
   phone?: string;
   hostel_block?: string;
   room_number?: string;
+  college_name?: string;
+  college_address?: string;
+  college_roll_number?: string;
   is_team_leader?: boolean;
   team_id?: string | null;
   team_name?: string | null;
@@ -64,7 +71,7 @@ export interface BackendTeamIdea {
 export interface BackendTeam {
   team_id: string;
   team_name: string;
-  join_code?: string;
+  invite_code?: string;
   idea?: BackendTeamIdea;
   idea_submitted?: boolean;
   round?: number;
@@ -75,6 +82,7 @@ export interface BackendTeam {
 }
 
 export interface InternalOnboardingData {
+  participantType: "internal";
   name: string;
   registrationNumber: string;
   contactNumber: string;
@@ -82,6 +90,53 @@ export interface InternalOnboardingData {
   gender: string;
   hostelBlock: string;
   roomNumber: string;
+}
+
+export interface ExternalOnboardingData {
+  participantType: "external";
+  name: string;
+  contactNumber: string;
+  email: string;
+  gender: string;
+  collegeName: string;
+  collegeAddress: string;
+  collegeRollNumber: string;
+}
+
+export type OnboardingData = InternalOnboardingData | ExternalOnboardingData;
+
+type OnboardingStatus = Pick<
+  UserSession,
+  | "participantType"
+  | "phone"
+  | "gender"
+  | "hostelBlock"
+  | "collegeName"
+  | "collegeAddress"
+  | "collegeRollNumber"
+>;
+
+const hasValue = (value?: string): boolean => Boolean(value?.trim());
+
+export function isOnboardingComplete(session: OnboardingStatus): boolean {
+  if (session.participantType === "external") {
+    return (
+      hasValue(session.phone) &&
+      hasValue(session.gender) &&
+      hasValue(session.collegeName) &&
+      hasValue(session.collegeAddress) &&
+      hasValue(session.collegeRollNumber)
+    );
+  }
+
+  return hasValue(session.phone) && hasValue(session.gender) && hasValue(session.hostelBlock);
+}
+
+export function nextPortalRoute(
+  session: OnboardingStatus & Pick<UserSession, "teamId">
+): string {
+  if (session.teamId) return "/team";
+  return isOnboardingComplete(session) ? "/portal/join-create" : "/portal/onboarding";
 }
 
 export interface TeamMember {
@@ -246,6 +301,7 @@ export const portalApi = {
         name: string;
         email: string;
         role: string;
+        participant_type: ParticipantType;
         registration_number?: string;
       };
     }>("/auth/participant/google/exchange", {
@@ -271,8 +327,6 @@ export const portalApi = {
   // Client-side authentication with Go backend POST /auth/participant
   async loginParticipant(email: string, accessKey?: string): Promise<UserSession> {
     const cleanedEmail = email.trim().toLowerCase();
-    const isInternal =
-      cleanedEmail.endsWith("@vitstudent.ac.in") || cleanedEmail.endsWith("@vit.ac.in");
     const key = accessKey || portalApi.getEventAccessKey();
 
     try {
@@ -283,6 +337,7 @@ export const portalApi = {
           name: string;
           email: string;
           role: string;
+          participant_type: ParticipantType;
           registration_number?: string;
         };
       }>("/auth/participant", {
@@ -306,13 +361,15 @@ export const portalApi = {
         return profile;
       }
 
-      // Fallback if profile fetch returned null
+      // The authentication response remains usable when a profile refresh is unavailable.
       const session: UserSession = {
-        id: resp.user?.id || `${isInternal ? "int" : "ext"}_${Date.now()}`,
-        name: resp.user?.name || cleanedEmail.split("@")[0].replace(".", " ").toUpperCase(),
-        email: resp.user?.email || cleanedEmail,
-        participantType: isInternal ? "internal" : "external",
-        registrationNumber: resp.user?.registration_number,
+        id: resp.user.id,
+        name: resp.user.name,
+        email: resp.user.email,
+        participantType: resp.user.participant_type,
+        ...(resp.user.participant_type === "internal"
+          ? { registrationNumber: resp.user.registration_number }
+          : {}),
         token: resp.token,
         createdAt: new Date().toISOString(),
       };
@@ -361,19 +418,24 @@ export const portalApi = {
         method: "GET",
       });
 
-      const isInternal =
-        data.email?.endsWith("@vitstudent.ac.in") || data.email?.endsWith("@vit.ac.in");
-
       const session: UserSession = {
         id: data.id,
         name: data.name,
         email: data.email,
-        participantType: isInternal ? "internal" : "external",
-        registrationNumber: data.registration_number,
+        participantType: data.participant_type,
+        ...(data.participant_type === "internal"
+          ? {
+              registrationNumber: data.registration_number,
+              hostelBlock: data.hostel_block,
+              roomNumber: data.room_number,
+            }
+          : {
+              collegeName: data.college_name,
+              collegeAddress: data.college_address,
+              collegeRollNumber: data.college_roll_number,
+            }),
         gender: data.gender,
         phone: data.phone,
-        hostelBlock: data.hostel_block,
-        roomNumber: data.room_number,
         isTeamLeader: data.is_team_leader,
         teamId: data.team_id,
         teamName: data.team_name,
@@ -421,11 +483,11 @@ export const portalApi = {
   async getParticipantTeam(): Promise<BackendTeam | null> {
     return portalApi.fetchTeam();
   },
-  // Join a team through its upstream eight-digit numeric join code.
-  async joinTeam(joinCode: string): Promise<{ team_id: string; team_name: string; team_size: number }> {
-    const normalizedJoinCode = joinCode.trim();
-    if (!/^\d{8}$/.test(normalizedJoinCode)) {
-      throw new Error("Enter the eight-digit numeric join code.");
+  // Join a team with its six-character case-insensitive invite code.
+  async joinTeam(inviteCode: string): Promise<{ team_id: string; team_name: string; team_size: number }> {
+    const normalizedInviteCode = inviteCode.trim().toUpperCase();
+    if (!/^[A-Z0-9]{6}$/.test(normalizedInviteCode)) {
+      throw new Error("Enter the six-character alphanumeric invite code.");
     }
 
     const response = await portalApi.request<{
@@ -435,7 +497,7 @@ export const portalApi = {
       team_size: number;
     }>("/participant/team/join", {
       method: "POST",
-      body: JSON.stringify({ join_code: normalizedJoinCode }),
+      body: JSON.stringify({ invite_code: normalizedInviteCode }),
     });
 
     const session = portalApi.getSession();
@@ -449,10 +511,10 @@ export const portalApi = {
     return response;
   },
 
-  async transferTeamLeadership(memberEmail: string): Promise<void> {
+  async transferTeamLeadership(memberId: string): Promise<void> {
     await portalApi.request<unknown>("/participant/team/leader", {
       method: "PATCH",
-      body: JSON.stringify({ member_email: memberEmail }),
+      body: JSON.stringify({ member_id: memberId }),
     });
     const session = portalApi.getSession();
     if (session) {
@@ -461,10 +523,10 @@ export const portalApi = {
     }
   },
 
-  async removeTeamMember(memberEmail: string): Promise<void> {
+  async removeTeamMember(memberId: string): Promise<void> {
     await portalApi.request<unknown>("/participant/team/members", {
       method: "DELETE",
-      body: JSON.stringify({ member_email: memberEmail }),
+      body: JSON.stringify({ member_id: memberId }),
     });
   },
 
@@ -489,13 +551,13 @@ export const portalApi = {
   async createTeam(
     name: string,
     members: Array<{ registration_number?: string; email?: string }> = []
-  ): Promise<{ team_id: string; team_name: string; join_code: string; team_size: number }> {
+  ): Promise<{ team_id: string; team_name: string; invite_code: string; team_size: number }> {
     try {
       const resp = await portalApi.request<{
         message: string;
         team_id: string;
         team_name: string;
-        join_code: string;
+        invite_code: string;
         team_size: number;
       }>("/participant/team", {
         method: "POST",
@@ -538,11 +600,11 @@ export const portalApi = {
         portalApi.saveSession(session);
       }
 
-      const mockJoinCode = String(Date.now()).slice(-8).padStart(8, "0");
+      const mockInviteCode = Date.now().toString(36).slice(-6).toUpperCase().padStart(6, "0");
       const mockTeam: BackendTeam = {
         team_id: teamId,
         team_name: name.trim(),
-        join_code: mockJoinCode,
+        invite_code: mockInviteCode,
         round: 1,
         checked_in: false,
         members: [
@@ -562,7 +624,7 @@ export const portalApi = {
       return {
         team_id: teamId,
         team_name: name.trim(),
-        join_code: mockJoinCode,
+        invite_code: mockInviteCode,
         team_size: 1,
       };
     }
@@ -615,15 +677,25 @@ export const portalApi = {
 
   // Save only mutable onboarding fields. Name, registration number, and email
   // are always the authenticated participant identity returned by the backend.
-  async saveOnboarding(data: InternalOnboardingData): Promise<UserSession> {
+  async saveOnboarding(data: OnboardingData): Promise<UserSession> {
+    const profileUpdate = data.participantType === "external"
+      ? {
+          phone: data.contactNumber.trim(),
+          gender: data.gender.trim(),
+          college_name: data.collegeName.trim(),
+          college_address: data.collegeAddress.trim(),
+          college_roll_number: data.collegeRollNumber.trim(),
+        }
+      : {
+          phone: data.contactNumber.trim(),
+          gender: data.gender.trim(),
+          hostel_block: data.hostelBlock.trim(),
+          room_number: data.roomNumber.trim(),
+        };
+
     await portalApi.request<void>("/participant/me", {
       method: "PATCH",
-      body: JSON.stringify({
-        phone: data.contactNumber.trim(),
-        gender: data.gender.trim(),
-        hostel_block: data.hostelBlock.trim(),
-        room_number: data.roomNumber.trim(),
-      }),
+      body: JSON.stringify(profileUpdate),
     });
     const session = await portalApi.fetchMe();
     if (!session) {
@@ -640,26 +712,42 @@ export const portalApi = {
     return session;
   },
 
-  getInternalOnboarding(): InternalOnboardingData | null {
+  getOnboarding(): OnboardingData | null {
     if (typeof window !== "undefined") {
       const raw = localStorage.getItem(STORAGE_KEY_ONBOARDING);
       if (raw) {
         try {
-          return JSON.parse(raw) as InternalOnboardingData;
+          const data = JSON.parse(raw) as Partial<OnboardingData>;
+          if (data.participantType === "internal" || data.participantType === "external") {
+            return data as OnboardingData;
+          }
         } catch {}
       }
     }
     const session = portalApi.getSession();
     if (!session) return null;
-    return {
+
+    const identity = {
       name: session.name || "",
       registrationNumber: session.registrationNumber || "",
       contactNumber: session.phone || "",
       email: session.email || "",
       gender: session.gender || "",
-      hostelBlock: session.hostelBlock || "",
-      roomNumber: session.roomNumber || "",
     };
+    return session.participantType === "external"
+      ? {
+          ...identity,
+          participantType: "external",
+          collegeName: session.collegeName || "",
+          collegeAddress: session.collegeAddress || "",
+          collegeRollNumber: session.collegeRollNumber || "",
+        }
+      : {
+          ...identity,
+          participantType: "internal",
+          hostelBlock: session.hostelBlock || "",
+          roomNumber: session.roomNumber || "",
+        };
   },
 
   saveSession(session: UserSession): void {

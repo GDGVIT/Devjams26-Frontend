@@ -1,12 +1,12 @@
 export type TeamMemberAction = "leave" | "manage" | null;
 
 export function memberActionFor(
-  member: { email: string },
-  currentEmail: string,
+  member: { id?: string },
+  currentParticipantId: string,
   isLeader: boolean
 ): TeamMemberAction {
-  if (member.email.toLowerCase() === currentEmail.toLowerCase()) {
+  if (member.id && member.id === currentParticipantId) {
     return "leave";
   }
-  return isLeader ? "manage" : null;
+  return isLeader && member.id ? "manage" : null;
 }
