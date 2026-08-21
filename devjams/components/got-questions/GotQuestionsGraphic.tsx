@@ -111,26 +111,6 @@ export function GotQuestionsGraphic({
           </linearGradient>
         ))}
 
-        {/* Base linear gradient across the top boundary of the triangle */}
-        <linearGradient
-          id="triangleBaseGradient"
-          gradientUnits="userSpaceOnUse"
-          x1="0"
-          y1="0"
-          x2="1000"
-          y2="0"
-        >
-          <stop offset="0%" stopColor="#DC4855" />
-          <stop offset="35%" stopColor="#AD5AAA" />
-          <stop offset="70%" stopColor="#4E80EB" />
-          <stop offset="100%" stopColor="#38BDF8" />
-        </linearGradient>
-
-        {/* Ultra-soft Gaussian blur for seamless, diffuse liquid color blending */}
-        <filter id="meshGlow" x="-15%" y="-15%" width="130%" height="130%">
-          <feGaussianBlur stdDeviation="48" result="blur" />
-        </filter>
-
         {/* Dynamic triangle / full-screen expanding clip path */}
         <clipPath id="triangleClip">
           <motion.path d={trianglePath} />
@@ -144,40 +124,22 @@ export function GotQuestionsGraphic({
         ))}
       </motion.g>
 
-      {/* Triangle fill that seamlessly expands into full-screen liquid mesh gradient */}
+      {/*
+        Triangle fill that seamlessly expands into the full-screen liquid mesh.
+
+        The mesh is a pre-blurred image rather than nine ellipses under an
+        feGaussianBlur. The artwork never changes — only the clip does — but
+        keeping the filter inline meant the browser re-ran a 48px blur over a
+        full-screen region on every scroll frame, which is what made this
+        section crawl on mobile. Source lives in assets-src/faq-mesh.svg.
+      */}
       <g clipPath="url(#triangleClip)">
-        {/* Base Gradient Layer */}
-        <rect width="1000" height="650" fill="url(#triangleBaseGradient)" />
-
-        {/* High-diffusion mesh blobs using the exact color tokens */}
-        <g filter="url(#meshGlow)">
-          {/* Upper Left Coral Red */}
-          <ellipse cx="140" cy="180" rx="380" ry="320" fill="#DC4855" opacity="0.95" />
-
-          {/* Lower Left Coral Red extending down to apex */}
-          <ellipse cx="200" cy="460" rx="360" ry="340" fill="#DC4855" opacity="0.95" />
-          
-          {/* Apex Point Warm Sunset Red/Orange */}
-          <ellipse cx="260" cy="620" rx="300" ry="240" fill="#F27D1E" opacity="0.9" />
-
-          {/* Center-Bottom Sunset Amber Glow */}
-          <ellipse cx="480" cy="470" rx="340" ry="280" fill="#F27D1E" opacity="0.85" />
-          
-          {/* Center Warm Golden Yellow Burst */}
-          <ellipse cx="550" cy="400" rx="300" ry="260" fill="#F2C81E" opacity="0.8" />
-          
-          {/* Upper-Center Purple / Violet Aura */}
-          <ellipse cx="460" cy="90" rx="360" ry="240" fill="#AD5AAA" opacity="0.9" />
-          
-          {/* Top-Right Sky Blue Aura */}
-          <ellipse cx="820" cy="100" rx="380" ry="260" fill="#4E80EB" opacity="0.95" />
-          
-          {/* Mid-Right Emerald Green Transition */}
-          <ellipse cx="780" cy="360" rx="340" ry="300" fill="#0EBC61" opacity="0.85" />
-          
-          {/* Lower-Right Green / Amber Hue */}
-          <ellipse cx="680" cy="520" rx="280" ry="240" fill="#0EBC61" opacity="0.7" />
-        </g>
+        <image
+          href="/assets/baked/faq-mesh.png"
+          width="1000"
+          height="650"
+          preserveAspectRatio="none"
+        />
       </g>
     </svg>
   );
