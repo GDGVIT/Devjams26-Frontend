@@ -2,8 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { memberActionFor } from "./team-member-actions.ts";
 
-const me = { id: "64d8f9237bfc2f0e8f000001", name: "Me", email: "me@example.com" };
-const teammate = { id: "64d8f9237bfc2f0e8f000002", name: "Teammate", email: "teammate@example.com" };
+const me = { id: "64d8f9237bfc2f0e8f000001", name: "Me", email: "me@participant.test" };
+const teammate = { id: "64d8f9237bfc2f0e8f000002", name: "Teammate", email: "teammate@participant.test" };
 
 test("self member row exposes leave action by participant ID", () => {
   assert.equal(memberActionFor(me, me.id, false), "leave");

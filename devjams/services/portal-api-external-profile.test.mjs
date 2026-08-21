@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { backendUrl } from "./test-environment.mjs";
 import { nextPortalRoute, portalApi } from "./portalApi.ts";
 
 const storage = new Map();
@@ -144,12 +145,12 @@ test("serializes participant IDs for team management", async () => {
 
   assert.deepEqual(requests, [
     {
-      url: "http://localhost:8080/participant/team/leader",
+      url: `${backendUrl}/participant/team/leader`,
       method: "PATCH",
       body: { member_id: "64d8f9237bfc2f0e8f000001" },
     },
     {
-      url: "http://localhost:8080/participant/team/members",
+      url: `${backendUrl}/participant/team/members`,
       method: "DELETE",
       body: { member_id: "64d8f9237bfc2f0e8f000002" },
     },

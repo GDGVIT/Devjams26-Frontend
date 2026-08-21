@@ -201,7 +201,11 @@ const STORAGE_KEY_TEAM = "devjams26_portal_team";
 
 export const portalApi = {
   getBaseUrl(): string {
-    return process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
+    const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL?.trim();
+    if (!baseUrl) {
+      throw new Error("NEXT_PUBLIC_BACKEND_URL must be set");
+    }
+    return baseUrl.replace(/\/+$/, "");
   },
 
   getEventAccessKey(): string {
