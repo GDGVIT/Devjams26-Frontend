@@ -54,13 +54,19 @@ export interface BackendTeamMember {
   is_team_leader?: boolean;
 }
 
+export interface BackendTeamIdea {
+  short_description: string;
+  long_description: string;
+  links: string;
+  tracks: string;
+}
+
 export interface BackendTeam {
   team_id: string;
   team_name: string;
-  invite_code?: string;
-  problem_statement?: string;
-  github_link?: string;
-  figma_link?: string;
+  join_code?: string;
+  idea?: BackendTeamIdea;
+  idea_submitted?: boolean;
   round?: number;
   color_mark?: string;
   total_points?: number;
@@ -415,22 +421,21 @@ export const portalApi = {
   async getParticipantTeam(): Promise<BackendTeam | null> {
     return portalApi.fetchTeam();
   },
-  // Join team via code or ID
-  // Join a team through its public six-character invite code.
-  async joinTeam(inviteCode: string): Promise<{ team_id: string; team_name: string; invite_code: string }> {
-    const normalizedInviteCode = inviteCode.trim().toUpperCase();
-    if (!/^[A-Z0-9]{6}$/.test(normalizedInviteCode)) {
-      throw new Error("Enter the six-character uppercase invite code.");
+  // Join a team through its upstream eight-digit numeric join code.
+  async joinTeam(joinCode: string): Promise<{ team_id: string; team_name: string; team_size: number }> {
+    const normalizedJoinCode = joinCode.trim();
+    if (!/^\d{8}$/.test(normalizedJoinCode)) {
+      throw new Error("Enter the eight-digit numeric join code.");
     }
 
     const response = await portalApi.request<{
       message: string;
       team_id: string;
       team_name: string;
-      invite_code: string;
+      team_size: number;
     }>("/participant/team/join", {
       method: "POST",
-      body: JSON.stringify({ invite_code: normalizedInviteCode }),
+      body: JSON.stringify({ join_code: normalizedJoinCode }),
     });
 
     const session = portalApi.getSession();
@@ -484,13 +489,13 @@ export const portalApi = {
   async createTeam(
     name: string,
     members: Array<{ registration_number?: string; email?: string }> = []
-  ): Promise<{ team_id: string; team_name: string; invite_code: string; team_size: number }> {
+  ): Promise<{ team_id: string; team_name: string; join_code: string; team_size: number }> {
     try {
       const resp = await portalApi.request<{
         message: string;
         team_id: string;
         team_name: string;
-        invite_code: string;
+        join_code: string;
         team_size: number;
       }>("/participant/team", {
         method: "POST",
@@ -533,9 +538,11 @@ export const portalApi = {
         portalApi.saveSession(session);
       }
 
+      const mockJoinCode = String(Date.now()).slice(-8).padStart(8, "0");
       const mockTeam: BackendTeam = {
         team_id: teamId,
         team_name: name.trim(),
+        join_code: mockJoinCode,
         round: 1,
         checked_in: false,
         members: [
@@ -555,7 +562,7 @@ export const portalApi = {
       return {
         team_id: teamId,
         team_name: name.trim(),
-        invite_code: mockTeam.team_id,
+        join_code: mockJoinCode,
         team_size: 1,
       };
     }
@@ -582,58 +589,27 @@ export const portalApi = {
     return team;
   },
 
-  // Submit Idea Problem Statement via PATCH /participant/team/idea
-  async submitIdea(problemStatement: string): Promise<{ message: string }> {
+  // Submit all idea fields atomically through the upstream team-idea contract.
+  async submitIdea(idea: BackendTeamIdea): Promise<{ message: string }> {
     try {
       const resp = await portalApi.request<{ message: string }>("/participant/team/idea", {
         method: "PATCH",
-        body: JSON.stringify({
-          problem_statement: problemStatement,
-        }),
+        body: JSON.stringify(idea),
       });
       await portalApi.fetchTeam().catch(() => null);
       return resp;
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : String(err);
       console.warn("submitIdea backend unavailable, using local mock:", errMsg);
-      // Update local storage
       const team = await portalApi.fetchTeam();
       if (team) {
-        team.problem_statement = problemStatement;
+        team.idea = idea;
+        team.idea_submitted = true;
         if (typeof window !== "undefined") {
           localStorage.setItem(STORAGE_KEY_TEAM, JSON.stringify(team));
         }
       }
       return { message: "idea submitted" };
-    }
-  },
-
-  // Update Team Links via PATCH /participant/team/links
-  async updateTeamLinks(links: {
-    problem_statement?: string;
-    github_link?: string;
-    figma_link?: string;
-  }): Promise<{ message: string }> {
-    try {
-      const resp = await portalApi.request<{ message: string }>("/participant/team/links", {
-        method: "PATCH",
-        body: JSON.stringify(links),
-      });
-      await portalApi.fetchTeam().catch(() => null);
-      return resp;
-    } catch (err: unknown) {
-      const errMsg = err instanceof Error ? err.message : String(err);
-      console.warn("updateTeamLinks backend unavailable, using local mock:", errMsg);
-      const team = await portalApi.fetchTeam();
-      if (team) {
-        if (links.problem_statement) team.problem_statement = links.problem_statement;
-        if (links.github_link) team.github_link = links.github_link;
-        if (links.figma_link) team.figma_link = links.figma_link;
-        if (typeof window !== "undefined") {
-          localStorage.setItem(STORAGE_KEY_TEAM, JSON.stringify(team));
-        }
-      }
-      return { message: "team links updated" };
     }
   },
 

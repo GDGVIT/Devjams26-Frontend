@@ -46,7 +46,7 @@ export default function TeamPage() {
         const team = await portalApi.fetchTeam();
         if (team) {
           setTeamName(team.team_name || me.teamName || "My Team");
-          setTeamCode(team.invite_code || "");
+          setTeamCode(team.join_code || "");
           if (team.members && Array.isArray(team.members)) {
             setMembers(team.members);
           } else {
@@ -323,7 +323,7 @@ export default function TeamPage() {
                   fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
                 }}
               >
-                Invite Code
+                Join Code
               </span>
 
               {/* Team Code Box with Copy Clipboard Button */}

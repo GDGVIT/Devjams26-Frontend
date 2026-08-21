@@ -6,6 +6,8 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "../../../components/gsap-motion";
 import { portalApi } from "@/services/portalApi";
+import { lockedSubmissionStatus } from "../../idea-submission-status";
+
 
 const ALL_TRACKS = [
   "AIML",
@@ -67,31 +69,27 @@ export default function IdeaSubmissionPage() {
 
         const team = await portalApi.fetchTeam();
         const cachedSub = await portalApi.getSubmission(me.id);
-
         if (team) {
-          const hasIdea =
-            !!team.problem_statement || !!team.github_link || !!team.figma_link;
-
-          if (hasIdea || cachedSub?.isLocked) {
+          if (team.idea_submitted) {
             setIsLocked(true);
             setSubmitted(true);
           }
 
-          if (team.problem_statement) {
-            setLongDescription(team.problem_statement);
+          if (team.idea) {
             if (!shortDescription) {
-              setShortDescription(
-                team.problem_statement.slice(0, 120) +
-                  (team.problem_statement.length > 120 ? "..." : "")
-              );
+              setShortDescription(team.idea.short_description);
             }
-          }
-
-          const linksList: string[] = [];
-          if (team.github_link) linksList.push(team.github_link);
-          if (team.figma_link) linksList.push(team.figma_link);
-          if (linksList.length > 0) {
-            setLinks(linksList.join(", "));
+            if (!longDescription) {
+              setLongDescription(team.idea.long_description);
+            }
+            setLinks(team.idea.links);
+            const tracks = team.idea.tracks
+              .split(",")
+              .map((track) => track.trim())
+              .filter(Boolean);
+            if (tracks.length > 0) {
+              setSelectedTracks(tracks);
+            }
           }
         }
 
@@ -143,10 +141,13 @@ export default function IdeaSubmissionPage() {
     setIsSubmitting(true);
 
     try {
-      const statement = trimmedLong || trimmedShort;
-      await portalApi.submitIdea(statement);
+      await portalApi.submitIdea({
+        short_description: trimmedShort,
+        long_description: trimmedLong || trimmedShort,
+        links: links.trim(),
+        tracks: selectedTracks.join(", "),
+      });
 
-      // Parse links for github and figma
       const rawLinks = links.split(",").map((l) => l.trim()).filter(Boolean);
       let githubLink = "";
       let figmaLink = "";
@@ -157,17 +158,9 @@ export default function IdeaSubmissionPage() {
         else if (!figmaLink) figmaLink = l;
       }
 
-      if (githubLink || figmaLink) {
-        await portalApi.updateTeamLinks({
-          problem_statement: statement,
-          github_link: githubLink || undefined,
-          figma_link: figmaLink || undefined,
-        }).catch(() => null);
-      }
-
       await portalApi.saveSubmission({
         shortSummary: trimmedShort,
-        problemStatement: statement,
+        problemStatement: trimmedLong || trimmedShort,
         githubUrl: githubLink,
         figmaUrl: figmaLink,
         status: "submitted",
@@ -308,11 +301,22 @@ export default function IdeaSubmissionPage() {
         {/* Locked / Submitted Status Banner */}
         {isLocked && (
           <div className="w-full p-3.5 sm:p-4 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs sm:text-sm flex items-center gap-3">
-            <span className="text-base sm:text-lg">🔒</span>
+            <svg
+              aria-hidden="true"
+              className="h-5 w-5 shrink-0 stroke-current"
+              viewBox="0 0 24 24"
+              fill="none"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="4" y="10" width="16" height="10" rx="2" />
+              <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+            </svg>
             <div>
-              <p className="font-semibold">Your idea has been submitted and locked for review.</p>
+              <p className="font-semibold">{lockedSubmissionStatus.headline}</p>
               <p className="text-xs text-emerald-400/80 mt-0.5">
-                Submissions are one-time and final. Mentor evaluation will proceed based on these details.
+                {lockedSubmissionStatus.detail}
               </p>
             </div>
           </div>
@@ -560,7 +564,7 @@ export default function IdeaSubmissionPage() {
             >
               <span>
                 {isLocked
-                  ? "Idea Submitted (Locked)"
+                  ? lockedSubmissionStatus.buttonLabel
                   : isSubmitting
                   ? "Submitting..."
                   : submitted

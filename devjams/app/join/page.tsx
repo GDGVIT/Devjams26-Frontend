@@ -130,11 +130,12 @@ export default function JoinPage() {
           <input
             type="text"
             value={teamCode}
-            onChange={(e) => setTeamCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6))}
-            placeholder="e.g.: GHY618"
-            maxLength={6}
-            pattern="[A-Z0-9]{6}"
-            title="Enter the six-character uppercase invite code."
+            onChange={(e) => setTeamCode(e.target.value.replace(/\D/g, "").slice(0, 8))}
+            placeholder="e.g.: 12345678"
+            maxLength={8}
+            inputMode="numeric"
+            pattern="[0-9]{8}"
+            title="Enter the eight-digit numeric join code."
             className="w-full h-9 sm:h-[48px] md:h-[59px] bg-[#343434] md:bg-transparent text-white placeholder-white/40 border border-transparent md:border-white/40 focus:border-white focus:outline-none transition-colors rounded-[9.08px] px-3.5 sm:px-6 md:px-9 text-xs sm:text-base md:text-xl"
             style={{
               fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',

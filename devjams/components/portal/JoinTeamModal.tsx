@@ -71,15 +71,18 @@ export function JoinTeamModal({ isOpen, onClose }: JoinTeamModalProps) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-normal text-neutral-300 mb-1.5">
-              Team Invite Code
+              Team Join Code
             </label>
             <input
               type="text"
-              placeholder="e.g. DJ26-4892"
+              inputMode="numeric"
+              pattern="[0-9]{8}"
+              maxLength={8}
+              placeholder="e.g. 12345678"
               value={teamCode}
-              onChange={(e) => setTeamCode(e.target.value)}
+              onChange={(e) => setTeamCode(e.target.value.replace(/\D/g, "").slice(0, 8))}
               required
-              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-neutral-500 text-sm focus:outline-none focus:border-white/30 uppercase tracking-widest text-center font-mono transition"
+              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-neutral-500 text-sm focus:outline-none focus:border-white/30 tracking-widest text-center font-mono transition"
             />
           </div>
 
