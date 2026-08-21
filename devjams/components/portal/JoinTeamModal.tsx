@@ -21,7 +21,7 @@ export function JoinTeamModal({ isOpen, onClose }: JoinTeamModalProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!teamCode.trim()) {
-      setError("Please enter a valid Team Code.");
+      setError("Please enter a valid invite code.");
       return;
     }
 
@@ -54,10 +54,10 @@ export function JoinTeamModal({ isOpen, onClose }: JoinTeamModalProps) {
 
         <div className="text-center mb-6">
           <h3 className="text-2xl font-medium tracking-tight text-white">
-            Enter Team Code
+            Enter Invite Code
           </h3>
           <p className="text-xs text-neutral-400 mt-1">
-            Ask your Team Leader for the 6-character team invite code.
+            Ask your Team Leader for the 6-character alphanumeric invite code.
           </p>
         </div>
 
@@ -71,16 +71,16 @@ export function JoinTeamModal({ isOpen, onClose }: JoinTeamModalProps) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-normal text-neutral-300 mb-1.5">
-              Team Join Code
+              Invite Code
             </label>
             <input
               type="text"
-              inputMode="numeric"
-              pattern="[0-9]{8}"
-              maxLength={8}
-              placeholder="e.g. 12345678"
+              inputMode="text"
+              pattern="[A-Za-z0-9]{6}"
+              maxLength={6}
+              placeholder="e.g. A1B2C3"
               value={teamCode}
-              onChange={(e) => setTeamCode(e.target.value.replace(/\D/g, "").slice(0, 8))}
+              onChange={(e) => setTeamCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6))}
               required
               className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-neutral-500 text-sm focus:outline-none focus:border-white/30 tracking-widest text-center font-mono transition"
             />

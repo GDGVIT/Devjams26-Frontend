@@ -38,7 +38,7 @@ export default function JoinPage() {
     setError("");
     const trimmed = teamCode.trim();
     if (!trimmed) {
-      setError("Please enter your team code.");
+      setError("Please enter your team's invite code.");
       return;
     }
 
@@ -108,14 +108,14 @@ export default function JoinPage() {
           Join A Team
         </h1>
 
-        {/* Subtitle / Prompt: Enter Your Team's Code */}
+        {/* Subtitle / Prompt: Enter Your Team's Invite Code */}
         <p
           className="text-white/70 font-normal m-0 text-sm sm:text-lg lg:text-2xl mt-2 sm:mt-4 leading-normal"
           style={{
             fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
           }}
         >
-          Enter your team code
+          Enter your team&apos;s invite code
         </p>
 
         {error && (
@@ -130,12 +130,12 @@ export default function JoinPage() {
           <input
             type="text"
             value={teamCode}
-            onChange={(e) => setTeamCode(e.target.value.replace(/\D/g, "").slice(0, 8))}
-            placeholder="e.g.: 12345678"
-            maxLength={8}
-            inputMode="numeric"
-            pattern="[0-9]{8}"
-            title="Enter the eight-digit numeric join code."
+            onChange={(e) => setTeamCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6))}
+            placeholder="e.g.: A1B2C3"
+            maxLength={6}
+            inputMode="text"
+            pattern="[A-Za-z0-9]{6}"
+            title="Enter the six-character alphanumeric invite code."
             className="w-full h-9 sm:h-[48px] md:h-[59px] bg-[#343434] md:bg-transparent text-white placeholder-white/40 border border-transparent md:border-white/40 focus:border-white focus:outline-none transition-colors rounded-[9.08px] px-3.5 sm:px-6 md:px-9 text-xs sm:text-base md:text-xl"
             style={{
               fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',

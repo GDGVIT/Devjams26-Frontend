@@ -46,7 +46,7 @@ export default function TeamPage() {
         const team = await portalApi.fetchTeam();
         if (team) {
           setTeamName(team.team_name || me.teamName || "My Team");
-          setTeamCode(team.join_code || "");
+          setTeamCode(team.invite_code || "");
           if (team.members && Array.isArray(team.members)) {
             setMembers(team.members);
           } else {
@@ -318,7 +318,7 @@ export default function TeamPage() {
               </div>
             </div>
 
-            {/* Team Code Field */}
+            {/* Invite Code Field */}
             <div className="w-full md:w-[clamp(280px,30vw,406px)] flex flex-col gap-2">
               <span
                 className="text-white font-normal leading-normal capitalize text-[clamp(16px,2vw,32px)]"
@@ -326,10 +326,10 @@ export default function TeamPage() {
                   fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
                 }}
               >
-                Join Code
+                Invite Code
               </span>
 
-              {/* Team Code Box with Copy Clipboard Button */}
+              {/* Invite Code Box with Copy Clipboard Button */}
               <div className="w-full h-8 sm:h-14 bg-[#343434] rounded-[4px] sm:rounded-lg flex items-center justify-between px-3.5 sm:px-6 md:px-7">
                 <span
                   className="text-white/80 font-normal text-[clamp(12px,1.6vw,24px)] leading-none"

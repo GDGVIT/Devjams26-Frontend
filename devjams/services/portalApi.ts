@@ -71,7 +71,7 @@ export interface BackendTeamIdea {
 export interface BackendTeam {
   team_id: string;
   team_name: string;
-  join_code?: string;
+  invite_code?: string;
   idea?: BackendTeamIdea;
   idea_submitted?: boolean;
   round?: number;
@@ -483,11 +483,11 @@ export const portalApi = {
   async getParticipantTeam(): Promise<BackendTeam | null> {
     return portalApi.fetchTeam();
   },
-  // Join a team through its upstream eight-digit numeric join code.
-  async joinTeam(joinCode: string): Promise<{ team_id: string; team_name: string; team_size: number }> {
-    const normalizedJoinCode = joinCode.trim();
-    if (!/^\d{8}$/.test(normalizedJoinCode)) {
-      throw new Error("Enter the eight-digit numeric join code.");
+  // Join a team with its six-character case-insensitive invite code.
+  async joinTeam(inviteCode: string): Promise<{ team_id: string; team_name: string; team_size: number }> {
+    const normalizedInviteCode = inviteCode.trim().toUpperCase();
+    if (!/^[A-Z0-9]{6}$/.test(normalizedInviteCode)) {
+      throw new Error("Enter the six-character alphanumeric invite code.");
     }
 
     const response = await portalApi.request<{
@@ -497,7 +497,7 @@ export const portalApi = {
       team_size: number;
     }>("/participant/team/join", {
       method: "POST",
-      body: JSON.stringify({ join_code: normalizedJoinCode }),
+      body: JSON.stringify({ invite_code: normalizedInviteCode }),
     });
 
     const session = portalApi.getSession();
@@ -551,13 +551,13 @@ export const portalApi = {
   async createTeam(
     name: string,
     members: Array<{ registration_number?: string; email?: string }> = []
-  ): Promise<{ team_id: string; team_name: string; join_code: string; team_size: number }> {
+  ): Promise<{ team_id: string; team_name: string; invite_code: string; team_size: number }> {
     try {
       const resp = await portalApi.request<{
         message: string;
         team_id: string;
         team_name: string;
-        join_code: string;
+        invite_code: string;
         team_size: number;
       }>("/participant/team", {
         method: "POST",
@@ -600,11 +600,11 @@ export const portalApi = {
         portalApi.saveSession(session);
       }
 
-      const mockJoinCode = String(Date.now()).slice(-8).padStart(8, "0");
+      const mockInviteCode = Date.now().toString(36).slice(-6).toUpperCase().padStart(6, "0");
       const mockTeam: BackendTeam = {
         team_id: teamId,
         team_name: name.trim(),
-        join_code: mockJoinCode,
+        invite_code: mockInviteCode,
         round: 1,
         checked_in: false,
         members: [
@@ -624,7 +624,7 @@ export const portalApi = {
       return {
         team_id: teamId,
         team_name: name.trim(),
-        join_code: mockJoinCode,
+        invite_code: mockInviteCode,
         team_size: 1,
       };
     }
