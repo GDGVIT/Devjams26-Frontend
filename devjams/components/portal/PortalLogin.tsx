@@ -7,6 +7,7 @@ import { HeroLogo } from "../hero/HeroLogo";
 import { HeroTrackIcons } from "../hero/HeroTrackIcons";
 import { portalAuthErrorMessage } from "../../app/portal-auth-state";
 import { nextPortalRoute, portalApi } from "../../services/portalApi";
+import { GDGLockup } from "./GDGLockup";
 
 export function PortalLogin() {
   const router = useRouter();
@@ -62,6 +63,14 @@ export function PortalLogin() {
 
   return (
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-center overflow-hidden px-4 py-8 select-none">
+      {/* Top Left GDG Lockup */}
+      <header
+        className="absolute top-6 md:top-8 left-[clamp(20px,5vw,60px)] z-40"
+        aria-label="Google Developer Groups"
+      >
+        <GDGLockup />
+      </header>
+
       <div className="absolute -top-32 -left-32 w-[520px] h-[520px] bg-gradient-to-br from-amber-600/20 via-orange-600/10 to-transparent rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute -bottom-32 -right-32 w-[580px] h-[580px] bg-gradient-to-tl from-emerald-600/15 via-yellow-600/10 to-transparent rounded-full blur-[150px] pointer-events-none" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-blue-900/10 rounded-full blur-[160px] pointer-events-none" />

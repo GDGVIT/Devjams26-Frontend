@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "../gsap-motion";
 import { DashboardGraphic } from "./DashboardGraphic";
+import { GDGLockup } from "./GDGLockup";
 import { portalApi } from "@/services/portalApi";
 
 export function TeamChoiceView() {
@@ -31,6 +32,14 @@ export function TeamChoiceView() {
 
   return (
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-center overflow-hidden px-4 py-8 select-none">
+      {/* Top Left GDG Lockup */}
+      <header
+        className="absolute top-6 md:top-8 left-[clamp(20px,5vw,60px)] z-40"
+        aria-label="Google Developer Groups"
+      >
+        <GDGLockup />
+      </header>
+
       {/* Ambient background glows */}
       <div className="absolute -top-32 -left-32 w-[520px] h-[520px] bg-gradient-to-br from-blue-600/15 via-purple-600/10 to-transparent rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute -bottom-32 -right-32 w-[580px] h-[580px] bg-gradient-to-tl from-amber-600/15 via-emerald-600/10 to-transparent rounded-full blur-[150px] pointer-events-none" />

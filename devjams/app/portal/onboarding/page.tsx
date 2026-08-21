@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "@/components/gsap-motion";
 import AssetImage from "@/components/AssetImage";
+import { GDGLockup } from "@/components/portal/GDGLockup";
 import { isOnboardingComplete, portalApi, type ParticipantType } from "@/services/portalApi";
 const COUNTRY_CODES = [
   { code: "+91", country: "India", flag: "🇮🇳" },
@@ -424,6 +425,14 @@ export default function OnboardingPage() {
 
   return (
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col justify-between overflow-x-hidden p-4 sm:p-8 select-none">
+      {/* Top Left GDG Lockup */}
+      <header
+        className="absolute top-6 md:top-8 left-[clamp(20px,5vw,60px)] z-40"
+        aria-label="Google Developer Groups"
+      >
+        <GDGLockup />
+      </header>
+
       {/* Top-Left Web Graphic */}
       <div className="absolute -top-16 -left-16 sm:-top-20 sm:-left-20 w-36 h-36 sm:w-52 sm:h-52 md:w-64 md:h-64 pointer-events-none z-0">
         <AssetImage

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "../../../components/gsap-motion";
+import { GDGLockup } from "@/components/portal/GDGLockup";
 import { portalApi } from "@/services/portalApi";
 import { lockedSubmissionStatus } from "../../idea-submission-status";
 
@@ -179,6 +180,14 @@ export default function IdeaSubmissionPage() {
 
   return (
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto select-none p-4 sm:p-6 md:p-10 pb-20">
+      {/* Top Left GDG Lockup */}
+      <header
+        className="absolute top-6 md:top-8 left-[clamp(20px,5vw,60px)] z-30"
+        aria-label="Google Developer Groups"
+      >
+        <GDGLockup />
+      </header>
+
       {/* Top Right Profile Link */}
       <Link
         href="/profile"
