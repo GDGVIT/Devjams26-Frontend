@@ -815,7 +815,9 @@ body {
   top: 34px;
   right: 147.94px;
   left: auto;
-  z-index: 70;
+  /* Well clear of every page layer; the sheet must never be composited
+     against the additively blended shapes underneath it. */
+  z-index: 1000;
   width: var(--hero-nav-open-width);
   height: 68px;
   margin-left: 0;
@@ -1009,7 +1011,7 @@ body {
   .hero-nav__backdrop {
     position: fixed;
     inset: 0;
-    z-index: 60;
+    z-index: 999;
     display: block;
     width: 100vw;
     height: 100vh;
@@ -1022,6 +1024,11 @@ body {
        was open. That is what made the sheet crawl on a phone. The heavier
        scrim gives the same separation for one cheap paint. */
     background: rgba(0, 0, 0, 0.82);
+    /* Keeps this layer its own compositing group, so nothing inside the menu
+       can blend outward into the page. The overlap itself is fixed by the
+       opaque sheet background below — an additively blended shape cannot show
+       through a layer with no transparency left to show through. */
+    isolation: isolate;
   }
 
   .hero-nav {
@@ -1039,7 +1046,10 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.32);
     border-right: 0;
     border-radius: 24px 0 0 24px;
-    background: rgba(10, 10, 10, 0.96);
+    /* Fully opaque, not 0.96. The remaining 4% was enough for the additively
+       blended page shapes to punch through and land on top of the menu links. */
+    background: #0a0a0a;
+    isolation: isolate;
     box-shadow: -18px 0 48px rgba(0, 0, 0, 0.45);
     overflow-y: auto;
   }

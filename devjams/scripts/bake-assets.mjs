@@ -46,6 +46,9 @@ const TARGETS = [
   { src: "leftbracket.svg", out: "leftbracket.png", width: 256, height: 664 },
   { src: "rightbracket.svg", out: "rightbracket.png", width: 256, height: 664 },
   { src: "umbrella.svg", out: "umbrella.png", width: 512, height: 368 },
+  // Stretched edge to edge with preserveAspectRatio="none", and it is a soft
+  // blur, so it needs no more resolution than its own coordinate space.
+  { src: "faq-mesh.svg", out: "faq-mesh.png", width: 1000, height: 650 },
 ];
 
 const CHROME_CANDIDATES = [

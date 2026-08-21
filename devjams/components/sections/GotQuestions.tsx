@@ -36,13 +36,25 @@ export function GotQuestions() {
     offset: ["start start", "end start"],
   });
 
-  // Stage 1: triangle apex drops to the bottom edge (0.00 -> 0.35)
-  const apexX = useTransform(scrollYProgress, [0, 0.18, 0.35], [550, 480, 260]);
-  const apexY = useTransform(scrollYProgress, [0, 0.11, 0.23, 0.35], [0, 160, 380, 650]);
+  // The sticky panel is one viewport tall inside a 240vh track, so it releases
+  // at progress (240 - 100) / 240 = 0.583 and spends the last 100vh scrolling
+  // away. Everything below is timed against that: the gradient holds through
+  // the release and only dissolves while the panel wipes up, so the FAQ block
+  // is revealed underneath a live gradient rather than after a stretch of
+  // black. Previously the graphic finished fading at 0.85 of a 320vh track,
+  // which left ~48vh of an empty black panel reading as its own section.
+  // Keep in step with the h-[240vh] class below — Tailwind needs that literal.
+  const TRACK_VH = 240;
+  const STICKY_RELEASE = (TRACK_VH - 100) / TRACK_VH;
 
-  // Stage 2: full-screen gradient expansion, lines fade (0.37 -> 0.50)
-  const fullGradientOpacity = useTransform(scrollYProgress, [0.37, 0.5], [0, 1]);
-  const linesOpacity = useTransform(scrollYProgress, [0.37, 0.47], [1, 0]);
+  // Stage 1: triangle apex drops to the bottom edge
+  const apexX = useTransform(scrollYProgress, [0, 0.17, 0.34], [550, 480, 260]);
+  const apexY = useTransform(scrollYProgress, [0, 0.11, 0.22, 0.34], [0, 160, 380, 650]);
+
+  // Stage 2: full-screen gradient expansion, lines fade — both complete before
+  // the panel releases, so the reveal never happens mid-wipe.
+  const fullGradientOpacity = useTransform(scrollYProgress, [0.36, 0.52], [0, 1]);
+  const linesOpacity = useTransform(scrollYProgress, [0.36, 0.48], [1, 0]);
 
   // Text is clipped to the expanding colorful triangle, so it stays hidden
   // until the cover reveals it.
@@ -67,13 +79,14 @@ export function GotQuestions() {
     },
   );
 
-  // Stage 3: screen is fully colorful -> fade to black (0.45 -> 0.85)
-  const graphicOpacity = useTransform(scrollYProgress, [0.45, 0.85], [1, 0]);
-  const textOpacity = useTransform(scrollYProgress, [0.45, 0.78], [1, 0]);
+  // Stage 3: both dissolve during the wipe, after STICKY_RELEASE, so the panel
+  // is never a plain black rectangle sitting still on screen.
+  const graphicOpacity = useTransform(scrollYProgress, [STICKY_RELEASE + 0.16, 0.98], [1, 0]);
+  const textOpacity = useTransform(scrollYProgress, [STICKY_RELEASE + 0.1, 0.92], [1, 0]);
 
   return (
     <section id="faqs" className="relative w-full bg-black text-white">
-      <div ref={introRef} className="relative h-[320vh]">
+      <div ref={introRef} className="relative h-[240vh]">
         <div className="sticky top-0 h-screen overflow-hidden bg-black">
           <motion.div
             className="absolute inset-0"

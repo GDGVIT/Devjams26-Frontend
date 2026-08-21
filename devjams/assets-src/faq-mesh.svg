@@ -1,0 +1,56 @@
+<svg width="1000" height="650" viewBox="0 0 1000 650" xmlns="http://www.w3.org/2000/svg">
+  <!--
+    The liquid mesh behind the Got Questions -> FAQ transition.
+
+    This used to live inline in GotQuestionsGraphic as nine ellipses under an
+    feGaussianBlur of stdDeviation 48, sitting inside a group whose clipPath
+    animates on every scroll frame. The mesh itself never changes — only the
+    clip does — but the browser re-ran the blur anyway, which is what made the
+    section crawl on a phone. Baked to a flat PNG by scripts/bake-assets.mjs
+    and drawn as a single <image>, so the clip is the only per-frame work left.
+
+    Edit this file and re-run `npm run bake` to change the artwork.
+  -->
+  <defs>
+    <linearGradient
+      id="triangleBaseGradient"
+      gradientUnits="userSpaceOnUse"
+      x1="0"
+      y1="0"
+      x2="1000"
+      y2="0"
+    >
+      <stop offset="0%" stop-color="#DC4855" />
+      <stop offset="35%" stop-color="#AD5AAA" />
+      <stop offset="70%" stop-color="#4E80EB" />
+      <stop offset="100%" stop-color="#38BDF8" />
+    </linearGradient>
+
+    <filter id="meshGlow" x="-15%" y="-15%" width="130%" height="130%">
+      <feGaussianBlur stdDeviation="48" result="blur" />
+    </filter>
+  </defs>
+
+  <rect width="1000" height="650" fill="url(#triangleBaseGradient)" />
+
+  <g filter="url(#meshGlow)">
+    <!-- Upper Left Coral Red -->
+    <ellipse cx="140" cy="180" rx="380" ry="320" fill="#DC4855" opacity="0.95" />
+    <!-- Lower Left Coral Red extending down to apex -->
+    <ellipse cx="200" cy="460" rx="360" ry="340" fill="#DC4855" opacity="0.95" />
+    <!-- Apex Point Warm Sunset Red/Orange -->
+    <ellipse cx="260" cy="620" rx="300" ry="240" fill="#F27D1E" opacity="0.9" />
+    <!-- Center-Bottom Sunset Amber Glow -->
+    <ellipse cx="480" cy="470" rx="340" ry="280" fill="#F27D1E" opacity="0.85" />
+    <!-- Center Warm Golden Yellow Burst -->
+    <ellipse cx="550" cy="400" rx="300" ry="260" fill="#F2C81E" opacity="0.8" />
+    <!-- Upper-Center Purple / Violet Aura -->
+    <ellipse cx="460" cy="90" rx="360" ry="240" fill="#AD5AAA" opacity="0.9" />
+    <!-- Top-Right Sky Blue Aura -->
+    <ellipse cx="820" cy="100" rx="380" ry="260" fill="#4E80EB" opacity="0.95" />
+    <!-- Mid-Right Emerald Green Transition -->
+    <ellipse cx="780" cy="360" rx="340" ry="300" fill="#0EBC61" opacity="0.85" />
+    <!-- Lower-Right Green / Amber Hue -->
+    <ellipse cx="680" cy="520" rx="280" ry="240" fill="#0EBC61" opacity="0.7" />
+  </g>
+</svg>
