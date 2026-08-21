@@ -6,13 +6,7 @@ import { motion } from "../gsap-motion";
 import { HeroLogo } from "../hero/HeroLogo";
 import { HeroTrackIcons } from "../hero/HeroTrackIcons";
 import { portalAuthErrorMessage } from "../../app/portal-auth-state";
-import { portalApi, type UserSession } from "../../services/portalApi";
-
-function nextRoute(session: UserSession): string {
-  if (session.teamId) return "/team";
-  if (session.phone && session.hostelBlock && session.gender) return "/portal/join-create";
-  return "/portal/onboarding";
-}
+import { nextPortalRoute, portalApi } from "../../services/portalApi";
 
 export function PortalLogin() {
   const router = useRouter();
@@ -40,7 +34,7 @@ export function PortalLogin() {
       void Promise.resolve().then(() => setLoading(true));
       portalApi
         .completeGoogleLogin(oauthCode)
-        .then((session) => router.replace(nextRoute(session)))
+        .then((session) => router.replace(nextPortalRoute(session)))
         .catch((reason: unknown) => {
           setError(reason instanceof Error ? reason.message : "Google sign-in could not be completed.");
           setLoading(false);
@@ -52,7 +46,7 @@ export function PortalLogin() {
       if (!portalApi.getToken()) return;
       try {
         const session = await portalApi.fetchMe();
-        if (session) router.replace(nextRoute(session));
+        if (session) router.replace(nextPortalRoute(session));
       } catch {
         portalApi.logout();
       }

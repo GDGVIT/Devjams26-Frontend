@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { portalApi } from "../../services/portalApi";
+import { nextPortalRoute, portalApi } from "../../services/portalApi";
 
 interface ExternalAuthModalProps {
   isOpen: boolean;
@@ -49,10 +49,8 @@ export function ExternalAuthModal({ isOpen, onClose, onSuccess }: ExternalAuthMo
 
       if (onSuccess) {
         onSuccess();
-      } else if (session.teamId) {
-        router.push("/team");
       } else {
-        router.push("/portal/join-create");
+        router.push(nextPortalRoute(session));
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to sign in. Please try again.");
@@ -72,10 +70,8 @@ export function ExternalAuthModal({ isOpen, onClose, onSuccess }: ExternalAuthMo
       });
       if (onSuccess) {
         onSuccess();
-      } else if (session.teamId) {
-        router.push("/team");
       } else {
-        router.push("/portal/join-create");
+        router.push(nextPortalRoute(session));
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : `${provider} sign-in failed.`);
