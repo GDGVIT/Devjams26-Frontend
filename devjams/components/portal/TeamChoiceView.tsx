@@ -31,12 +31,11 @@ export function TeamChoiceView() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
-          className="w-full flex justify-center px-4 sm:px-6 md:px-8 overflow-visible"
+          className="w-full flex justify-center px-4 sm:px-6 overflow-visible my-2 sm:my-6"
         >
           <DashboardGraphic />
         </motion.div>
 
-        {/* Action Buttons Row matching reference design */}
         {/* Action Buttons Row matching mobile and desktop Figma specs */}
         <motion.div
           initial={{ opacity: 0, y: 25 }}
