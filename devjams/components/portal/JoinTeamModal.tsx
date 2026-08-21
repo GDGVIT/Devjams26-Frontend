@@ -28,24 +28,8 @@ export function JoinTeamModal({ isOpen, onClose }: JoinTeamModalProps) {
     setLoading(true);
     setError("");
     try {
-      // Join team and update session/submission
-      const session = portalApi.getSession();
-      await portalApi.saveSubmission(
-        {
-          teamName: `Team ${teamCode.trim().toUpperCase()}`,
-          members: [
-            {
-              name: session?.name || "Participant",
-              email: session?.email || "participant@example.com",
-              registrationNumber: session?.registrationNumber,
-              role: role,
-            },
-          ],
-        },
-        true
-      );
-
-      router.push("/portal/submit");
+      await portalApi.joinTeam(teamCode.trim());
+      router.push("/team");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to join team.");
     } finally {
