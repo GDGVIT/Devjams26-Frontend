@@ -278,7 +278,33 @@ export function frameTwoMapEntryTransformAt(progress: number) {
   };
 }
 
-export const FRAME_ONE_ANIMATION_START_PROGRESS = 0.5;
+export const FRAME_ONE_ANIMATION_START_PROGRESS = 0.15;
+
+/**
+ * How far before the About section reaches the top of the viewport the hero
+ * morph should already be finished, in viewports.
+ *
+ * Measured, not guessed. The morph used to end exactly at frameTwoStart, but
+ * the About section is well into view long before that: on a 390x740 phone its
+ * top sits at viewport y=277 while the morph was only 25% done, so the shapes
+ * were still parked up at the hero while the space they belong in had already
+ * scrolled on screen. That left a 616px hole — 83% of the screen — at scrollY
+ * 463. Landing them early enough to fill their slot as it appears is what
+ * closes it.
+ */
+export const HERO_TRANSITION_END_LEAD_VIEWPORTS = 0.55;
+
+export function heroTransitionWindowAt(geometry: {
+  heroStart: number;
+  heroHeight: number;
+  frameTwoStart: number;
+  viewportHeight: number;
+}): { start: number; end: number } {
+  const { heroStart, heroHeight, frameTwoStart, viewportHeight } = geometry;
+  const start = heroStart + heroHeight * FRAME_ONE_ANIMATION_START_PROGRESS;
+  const end = frameTwoStart - viewportHeight * HERO_TRANSITION_END_LEAD_VIEWPORTS;
+  return { start, end: Math.max(end, start + 1) };
+}
 export const FRAME_TWO_CONTENT_ENTER_OFFSET = {
   x: -160,
   y: 0,
