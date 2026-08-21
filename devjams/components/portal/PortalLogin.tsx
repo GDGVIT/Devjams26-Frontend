@@ -33,13 +33,12 @@ export function PortalLogin() {
           Login
         </motion.h1>
 
-        {/* Hero DevJams '26 Logo (SVG Letters) */}
-        <HeroLogo />
+        {/* Center Graphic Box: DevJams '26 Logo + Floating Track Icons (Group 1948755620) */}
+        <div className="relative w-full flex flex-col items-center justify-center my-2 sm:my-6 overflow-visible">
+          <HeroLogo />
+          <HeroTrackIcons />
+        </div>
 
-        {/* Hero 4 Floating Track Icons */}
-        <HeroTrackIcons />
-
-        {/* Action Buttons Row */}
         {/* Action Buttons Row matching mobile and desktop Figma specs */}
         <motion.div
           initial={{ opacity: 0, y: 25 }}
