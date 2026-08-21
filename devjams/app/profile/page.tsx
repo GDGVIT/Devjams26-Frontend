@@ -97,7 +97,7 @@ export default function ProfilePage() {
             }}
           >
             <Image
-              src="/assets/baked/antigravity.png"
+              src="/assets/antigravity.svg"
               alt="Antigravity"
               width={299}
               height={276}
@@ -113,7 +113,7 @@ export default function ProfilePage() {
             }}
           >
             <Image
-              src="/assets/baked/folder.png"
+              src="/assets/folder.svg"
               alt="Folder"
               width={149}
               height={121}

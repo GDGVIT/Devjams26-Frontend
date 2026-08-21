@@ -856,10 +856,26 @@ export default function Home() {
             <motion.nav
               id="primary-navigation-sheet"
               className="hero-nav"
-              initial={isMobileViewport ? { x: "100%", opacity: 0 } : { width: "68px", opacity: 0 }}
+              /* viewportWidth starts at the desktop reference, so the first
+                 render on a phone still takes the desktop branch and GSAP
+                 writes an inline width: 68px. That inline value used to survive
+                 the switch to mobile and break x: "100%", which GSAP resolves
+                 against the element's own width — the sheet travelled 68px off
+                 screen instead of its full width and stayed half visible.
+                 clearProps hands width back to CSS once, rather than animating
+                 it: a width in the mobile target would be rewritten every frame
+                 and invalidate layout on a fixed sheet full of children. */
+              initial={
+                isMobileViewport
+                  ? { x: "100%", opacity: 0, clearProps: "width" }
+                  : { width: "68px", opacity: 0, x: 0 }
+              }
               animate={
                 isMobileViewport
-                  ? { x: menuOpen ? 0 : "100%", opacity: menuOpen ? 1 : 0 }
+                  ? {
+                      x: menuOpen ? 0 : "100%",
+                      opacity: menuOpen ? 1 : 0,
+                    }
                   : {
                       width: menuOpen ? "var(--hero-nav-open-width)" : "68px",
                       opacity: menuOpen ? 1 : 0,
@@ -1168,6 +1184,10 @@ export default function Home() {
               alt="Cloud"
               width={278}
               height={203}
+              /* The About VIT transition scales this up to 468px via transform,
+                 which never makes the browser request a larger candidate — so
+                 without this it decoded at 278px and arrived visibly soft. */
+              sizes="468px"
               className="frame-three__logo-image"
             />
           </motion.div>
