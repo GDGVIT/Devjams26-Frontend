@@ -51,10 +51,10 @@ export default function TeamPage() {
   }, [memberToRemove]);
 
   return (
-    <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto select-none p-6 md:p-10 pb-20">
+    <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto select-none p-4 sm:p-6 md:p-10 pb-20">
       {/* Top 4 Logos Blend Banner (Group 1948755624) */}
       <div
-        className="relative pointer-events-none z-10 w-full max-w-[848px] h-[clamp(140px,22vw,314px)] -mt-[clamp(40px,8vw,135px)] flex items-center justify-center overflow-visible"
+        className="relative pointer-events-none z-10 w-full max-w-[848px] h-[clamp(100px,18vw,314px)] -mt-[clamp(24px,5vw,135px)] flex items-center justify-center overflow-visible"
         aria-hidden="true"
       >
         <div className="relative w-full h-full flex items-center justify-center">
@@ -133,7 +133,7 @@ export default function TeamPage() {
       </div>
 
       {/* Main Responsive Content Container (Frame 1948755614) */}
-      <div className="w-full max-w-[1072px] flex flex-col items-start gap-[clamp(24px,3.5vh,36px)] mt-4 z-20">
+      <div className="w-full max-w-[1072px] mx-auto flex flex-col items-start gap-[clamp(18px,3vh,36px)] mt-2 z-20 px-1 sm:px-3 md:px-0">
         {/* Team Page Title */}
         <h1
           className="text-white font-bold tracking-normal leading-[1.2] text-center capitalize m-0 select-none w-full text-[clamp(36px,4.5vw,64px)]"
@@ -148,7 +148,7 @@ export default function TeamPage() {
         <div className="flex flex-col items-start w-full gap-2">
           {/* Team Details Section Heading */}
           <h2
-            className="text-white font-normal leading-[1.3] capitalize m-0 flex items-center w-full text-[clamp(28px,3.2vw,48px)]"
+            className="text-white font-normal leading-[1.3] capitalize m-0 flex items-center w-full text-[clamp(24px,3.2vw,48px)]"
             style={{
               fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
             }}
@@ -161,7 +161,7 @@ export default function TeamPage() {
             {/* Name Field */}
             <div className="flex-1 flex flex-col gap-2">
               <span
-                className="text-white font-normal leading-normal capitalize text-[clamp(20px,2.2vw,32px)]"
+                className="text-white font-normal leading-normal capitalize text-[clamp(16px,2vw,32px)]"
                 style={{
                   fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
                 }}
@@ -170,9 +170,9 @@ export default function TeamPage() {
               </span>
 
               {/* Name Box */}
-              <div className="w-full h-14 bg-[#343434] rounded-lg flex items-center px-6 md:px-7">
+              <div className="w-full h-8 sm:h-14 bg-[#343434] rounded-[4px] sm:rounded-lg flex items-center px-3.5 sm:px-6 md:px-7">
                 <span
-                  className="text-white/60 font-normal text-[clamp(18px,1.6vw,24px)] leading-none"
+                  className="text-white/60 font-normal text-[clamp(12px,1.6vw,24px)] leading-none"
                   style={{
                     fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
                   }}
@@ -185,7 +185,7 @@ export default function TeamPage() {
             {/* Team Code Field */}
             <div className="w-full md:w-[clamp(280px,30vw,406px)] flex flex-col gap-2">
               <span
-                className="text-white font-normal leading-normal capitalize text-[clamp(20px,2.2vw,32px)]"
+                className="text-white font-normal leading-normal capitalize text-[clamp(16px,2vw,32px)]"
                 style={{
                   fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
                 }}
@@ -194,9 +194,9 @@ export default function TeamPage() {
               </span>
 
               {/* Team Code Box with Copy Clipboard Button */}
-              <div className="w-full h-14 bg-[#343434] rounded-lg flex items-center justify-between px-6 md:px-7">
+              <div className="w-full h-8 sm:h-14 bg-[#343434] rounded-[4px] sm:rounded-lg flex items-center justify-between px-3.5 sm:px-6 md:px-7">
                 <span
-                  className="text-white/60 font-normal text-[clamp(18px,1.6vw,24px)] leading-none"
+                  className="text-white/60 font-normal text-[clamp(12px,1.6vw,24px)] leading-none"
                   style={{
                     fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
                   }}
@@ -253,7 +253,7 @@ export default function TeamPage() {
         <div className="flex flex-col items-start w-full max-w-[465px] gap-2">
           {/* Members Heading */}
           <h2
-            className="text-white font-normal leading-[1.3] capitalize m-0 flex items-center w-full text-[clamp(28px,3.2vw,48px)]"
+            className="text-white font-normal leading-[1.3] capitalize m-0 flex items-center w-full text-[clamp(24px,3.2vw,48px)]"
             style={{
               fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
             }}
@@ -266,10 +266,10 @@ export default function TeamPage() {
             {members.map((member) => (
               <div
                 key={member.id}
-                className="w-full h-14 bg-[#343434] rounded-lg flex flex-row justify-between items-center px-6 md:px-7 box-border flex-shrink-0"
+                className="w-full h-8 sm:h-14 bg-[#343434] rounded-[4px] sm:rounded-lg flex flex-row justify-between items-center px-3.5 sm:px-6 md:px-7 box-border flex-shrink-0"
               >
                 <span
-                  className="text-white/60 font-normal text-[clamp(18px,1.6vw,24px)] leading-none"
+                  className="text-white/60 font-normal text-[clamp(12px,1.6vw,24px)] leading-none"
                   style={{
                     fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
                   }}
@@ -318,15 +318,16 @@ export default function TeamPage() {
         </div>
 
         {/* Invite Button */}
+        {/* Invite Button (Component 62) */}
         <motion.button
           type="button"
           onClick={handleInvite}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="bg-white text-black rounded-[35px] flex items-center justify-center cursor-pointer border-none shadow-md hover:bg-neutral-100 transition-all px-8 py-2.5 mt-2"
+          className="bg-white text-black rounded-full flex items-center justify-center cursor-pointer border-none shadow-md hover:bg-neutral-100 transition-all px-5 sm:px-8 py-1.5 sm:py-2.5 min-w-[95px] sm:min-w-[138px] h-8 sm:h-11 mt-2"
         >
           <span
-            className="text-[clamp(18px,1.6vw,23px)] leading-none font-medium text-center"
+            className="text-[clamp(12px,1.6vw,23px)] leading-none font-medium text-center"
             style={{
               fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
               letterSpacing: "0.02em",

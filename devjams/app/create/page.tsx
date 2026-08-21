@@ -60,11 +60,11 @@ export default function CreateTeamPage() {
 
       {/* Left Form Container - Vertically Centered with Screen Size */}
       <div
-        className="absolute left-[clamp(24px,6.5vw,94px)] top-1/2 -translate-y-1/2 z-20 flex flex-col justify-center w-[min(590px,calc(100vw-48px))] max-w-[590px]"
+        className="absolute left-[clamp(20px,5vw,94px)] top-1/2 -translate-y-1/2 z-20 flex flex-col justify-center w-[min(590px,calc(100vw-40px))] max-w-[220px] sm:max-w-[320px] md:max-w-[590px]"
       >
         {/* Title: Create A Team */}
         <h1
-          className="text-white font-bold tracking-tight leading-[1.08] text-4xl sm:text-5xl lg:text-6xl m-0"
+          className="text-white font-bold tracking-tight leading-[1.15] text-3xl sm:text-5xl lg:text-6xl m-0"
           style={{
             fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
           }}
@@ -74,39 +74,39 @@ export default function CreateTeamPage() {
 
         {/* Subtitle / Prompt: Enter Your Team's Name */}
         <p
-          className="text-white/70 font-normal m-0 text-lg sm:text-xl lg:text-2xl mt-3 sm:mt-4 leading-normal"
+          className="text-white/70 font-normal m-0 text-sm sm:text-lg lg:text-2xl mt-2 sm:mt-4 leading-normal"
           style={{
             fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
           }}
         >
-          Enter Your Team’s Name
+          Team code
         </p>
 
         {/* Form with Input and Submit Button */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5 sm:gap-6 w-full mt-6 sm:mt-8">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3.5 sm:gap-6 w-full mt-4 sm:mt-8">
           {/* Input Field */}
           <input
             type="text"
             value={teamName}
             onChange={(e) => setTeamName(e.target.value)}
-            placeholder="Enter team name"
-            className="w-full h-14 sm:h-[59px] bg-transparent text-white placeholder-white/40 border border-white/40 focus:border-white focus:outline-none transition-colors rounded-[9.08px] px-6 sm:px-9 text-lg sm:text-xl"
+            placeholder="e.g.: 12345"
+            className="w-full h-9 sm:h-[48px] md:h-[59px] bg-[#343434] md:bg-transparent text-white placeholder-white/40 border border-transparent md:border-white/40 focus:border-white focus:outline-none transition-colors rounded-[9.08px] px-3.5 sm:px-6 md:px-9 text-xs sm:text-base md:text-xl"
             style={{
               fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
             }}
             required
           />
 
-            {/* Frame 1948754780 - Submit Button */}
+          {/* Submit Button */}
           <motion.button
             type="submit"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             disabled={isSubmitting}
-            className="w-full h-12 sm:h-[48px] bg-white text-black flex items-center justify-center cursor-pointer hover:bg-neutral-100 transition-all border-none rounded-[35px] shadow-lg px-6 gap-3.5"
+            className="w-full h-9 sm:h-[42px] md:h-[48px] bg-white text-black flex items-center justify-center cursor-pointer hover:bg-neutral-100 transition-all border-none rounded-[25.8px] md:rounded-[35px] shadow-lg px-4 sm:px-6 gap-2 sm:gap-3.5"
           >
             <span
-              className="text-lg sm:text-xl font-normal leading-none text-center whitespace-nowrap"
+              className="text-xs sm:text-base md:text-xl font-normal leading-none text-center whitespace-nowrap"
               style={{
                 fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
                 letterSpacing: "0.02em",
@@ -115,12 +115,12 @@ export default function CreateTeamPage() {
               {isSubmitting ? "Continuing..." : "Continue To Team Page"}
             </span>
             <svg
-              width="20"
-              height="20"
+              width="16"
+              height="16"
               viewBox="0 0 24 24"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className="w-5 h-5 flex-shrink-0"
+              className="w-3.5 h-3.5 sm:w-5 sm:h-5 flex-shrink-0"
               aria-hidden="true"
             >
               <path
@@ -135,9 +135,9 @@ export default function CreateTeamPage() {
         </form>
       </div>
 
-      {/* Right Side 3 Logos Stack - Single Normalized 100vh Column matching Image #2 */}
+      {/* Right Side 3 Logos Stack - Positioned on right edge with only left 50% on screen in mobile, fully on screen in desktop */}
       <div
-        className="absolute right-[clamp(16px,4.5vw,70px)] top-0 bottom-0 h-screen pointer-events-none z-10 hidden md:flex flex-col items-center justify-center overflow-hidden w-[clamp(250px,27vw,390px)]"
+        className="absolute right-0 translate-x-[50%] md:right-[clamp(16px,4.5vw,70px)] md:translate-x-0 top-0 bottom-0 h-screen pointer-events-none z-10 flex flex-col items-center justify-center overflow-hidden w-[280px] sm:w-[320px] md:w-[clamp(250px,27vw,390px)]"
         aria-hidden="true"
       >
         {/* 1. Web Track Logo */}
