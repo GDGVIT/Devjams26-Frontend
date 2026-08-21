@@ -135,14 +135,14 @@ export default function JoinPage() {
         </form>
       </div>
 
-      {/* Right Side 3 Logos Stack - Single 100vh Div, Equal Width for all 3 logos, Perfectly Vertically Aligned, 20% Blend Overlap, No Stretching */}
+      {/* Right Side 3 Logos Stack - Single Normalized 100vh Column matching Image #2 */}
       <div
-        className="absolute right-[clamp(16px,4vw,60px)] top-0 bottom-0 h-screen pointer-events-none z-10 hidden md:flex flex-col items-center justify-between py-[2vh] overflow-hidden w-[clamp(280px,32vw,450px)]"
+        className="absolute right-[clamp(16px,4.5vw,70px)] top-0 bottom-0 h-screen pointer-events-none z-10 hidden md:flex flex-col items-center justify-center overflow-hidden w-[clamp(250px,27vw,390px)]"
         aria-hidden="true"
       >
-        {/* 1. Web Track Logo (Top) */}
+        {/* 1. Web Track Logo */}
         <div
-          className="relative w-full flex-shrink-0 flex items-center justify-center"
+          className="relative w-full aspect-square flex items-center justify-center flex-shrink-0"
           style={{
             mixBlendMode: "screen",
             filter: "brightness(1.12) saturate(1.05)",
@@ -151,16 +151,16 @@ export default function JoinPage() {
           <AssetImage
             src="/assets/web.svg"
             alt="Web Track"
-            width={454}
-            height={454}
+            width={908}
+            height={908}
             priority
-            className="w-full h-auto max-h-[36vh] object-contain"
+            className="w-full h-full object-contain"
           />
         </div>
 
-        {/* 2. Maps Logo (Middle - 20% blend overlap with Web and Android) */}
+        {/* 2. Maps Logo (Overlaps Web bottom by 22%) */}
         <div
-          className="relative w-full flex-shrink-0 flex items-center justify-center -my-[7vh]"
+          className="relative w-full aspect-[730/930] flex items-center justify-center flex-shrink-0 -mt-[22%]"
           style={{
             mixBlendMode: "screen",
             filter: "brightness(1.12) saturate(1.05)",
@@ -169,16 +169,16 @@ export default function JoinPage() {
           <AssetImage
             src="/assets/maps.svg"
             alt="Google Maps"
-            width={365}
-            height={465}
+            width={730}
+            height={930}
             priority
-            className="w-full h-auto max-h-[38vh] object-contain"
+            className="w-full h-full object-contain"
           />
         </div>
 
-        {/* 3. Android Track Logo (Bottom) */}
+        {/* 3. Android Track Logo (Overlaps Maps bottom pin by 26%) */}
         <div
-          className="relative w-full flex-shrink-0 flex items-center justify-center"
+          className="relative w-full aspect-[936/572] flex items-center justify-center flex-shrink-0 -mt-[26%]"
           style={{
             mixBlendMode: "screen",
             filter: "brightness(1.12) saturate(1.05)",
@@ -187,10 +187,10 @@ export default function JoinPage() {
           <AssetImage
             src="/assets/android.svg"
             alt="Android Track"
-            width={468}
-            height={286}
+            width={936}
+            height={572}
             priority
-            className="w-full h-auto max-h-[30vh] object-contain"
+            className="w-full h-full object-contain"
           />
         </div>
       </div>
