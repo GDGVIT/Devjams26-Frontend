@@ -19,7 +19,7 @@ import {
   FRAME_FOUR_MOBILE_ROTATIONS,
   FRAME_FOUR_MOBILE_SHAPES,
   FRAME_FOUR_SHAPES,
-  FRAME_ONE_ANIMATION_START_PROGRESS,
+  heroTransitionWindowAt,
   FRAME_REFERENCE_WIDTH,
   FRAME_THREE_EDGE_LOGO_OFFSETS,
   FRAME_THREE_MOBILE_SHAPES,
@@ -178,11 +178,16 @@ export default function Home() {
       const geometry = frameThreeGeometryRef.current;
       if (!geometry) return;
 
+      const heroWindow = heroTransitionWindowAt({
+        heroStart: geometry.heroStart,
+        heroHeight: geometry.heroHeight,
+        frameTwoStart: geometry.frameTwoStart,
+        viewportHeight: geometry.viewportHeight,
+      });
       const transitionProgress = scrollTransitionProgressAt(
         pageScroll,
-        geometry.heroStart +
-          geometry.heroHeight * FRAME_ONE_ANIMATION_START_PROGRESS,
-        geometry.frameTwoStart,
+        heroWindow.start,
+        heroWindow.end,
       );
       const clampedProgress = smoothScrollProgressAt(transitionProgress);
       const heroTrackScale = geometry.heroTrackScale || 1;

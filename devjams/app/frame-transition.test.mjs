@@ -4,7 +4,7 @@ import {
   FRAME_THREE_LOGO_HEIGHT,
   FRAME_THREE_LOGOS,
   FRAME_THREE_MOBILE_SHAPES,
-  FRAME_ONE_ANIMATION_START_PROGRESS,
+  heroTransitionWindowAt,
   FRAME_REFERENCE_WIDTH,
   FRAME_TWO_MOBILE_SHAPES,
   FRAME_TWO_SHAPES,
@@ -326,12 +326,36 @@ test("section transitions finish when half the section is visible", () => {
   assert.equal(halfVisibleScrollAt(1924, 1024, 900), 1536);
 });
 
-test("Frame 1 animation starts at 50% and settles before the Frame 2 hold", () => {
-  assert.equal(FRAME_ONE_ANIMATION_START_PROGRESS, 0.5);
+test("scroll progress maps linearly across its window", () => {
   assert.equal(scrollTransitionProgressAt(449, 450, 900), 0);
   assert.equal(scrollTransitionProgressAt(450, 450, 900), 0);
   assert.equal(scrollTransitionProgressAt(675, 450, 900), 0.5);
   assert.equal(scrollTransitionProgressAt(900, 450, 900), 1);
+});
+
+test("the hero morph lands before the About section is well into view", () => {
+  // A 390x740 phone: hero is one viewport, About starts right after it.
+  const viewportHeight = 740;
+  const w = heroTransitionWindowAt({
+    heroStart: 0,
+    heroHeight: viewportHeight,
+    frameTwoStart: viewportHeight,
+    viewportHeight,
+  });
+
+  // It used to end at frameTwoStart (740), by which point the About section had
+  // been on screen for most of a viewport with its shapes still parked at the
+  // hero — a measured 616px hole, 83% of the screen, at scrollY 463.
+  assert.ok(w.end < viewportHeight, `expected the morph to finish before ${viewportHeight}, got ${w.end}`);
+
+  // At the offset that used to be worst, the morph is now essentially done.
+  const p = scrollTransitionProgressAt(463, w.start, w.end);
+  assert.ok(p > 0.9, `expected the morph to be settled by scrollY 463, got ${p.toFixed(2)}`);
+
+  // And it must not begin the instant the page moves, or the hero comes apart
+  // while it is still the only thing on screen.
+  assert.ok(w.start > viewportHeight * 0.1, `morph starts too early at ${w.start}`);
+  assert.ok(w.start < w.end);
 });
 
 test("scroll easing softens both transition ends", () => {
