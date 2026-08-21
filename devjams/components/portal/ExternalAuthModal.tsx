@@ -52,8 +52,8 @@ export function ExternalAuthModal({ isOpen, onClose, onSuccess }: ExternalAuthMo
       } else {
         router.push("/portal/submit");
       }
-    } catch (err: any) {
-      setError(err?.message || "Failed to sign in. Please try again.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to sign in. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -73,8 +73,8 @@ export function ExternalAuthModal({ isOpen, onClose, onSuccess }: ExternalAuthMo
       } else {
         router.push("/portal/submit");
       }
-    } catch (err: any) {
-      setError(err?.message || `${provider} sign-in failed.`);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : `${provider} sign-in failed.`);
     } finally {
       setLoading(false);
     }

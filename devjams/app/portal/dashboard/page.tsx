@@ -13,23 +13,21 @@ import {
 
 export default function PortalDashboardPage() {
   const router = useRouter();
-  const [session, setSession] = useState<UserSession | null>(null);
+  const [session] = useState<UserSession | null>(() => portalApi.getSession());
   const [submission, setSubmission] = useState<IdeaSubmission | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const currentSession = portalApi.getSession();
-    if (!currentSession) {
+    if (!session) {
       router.push("/portal");
       return;
     }
-    setSession(currentSession);
 
-    portalApi.getSubmission(currentSession.id).then((sub) => {
+    portalApi.getSubmission(session.id).then((sub) => {
       setSubmission(sub);
       setLoading(false);
     });
-  }, [router]);
+  }, [router, session]);
 
   if (loading) {
     return (
@@ -57,7 +55,7 @@ export default function PortalDashboardPage() {
                 {session?.participantType === "internal" ? "VIT Internal Participant" : "External Participant"}
               </span>
               <span className="text-xs text-neutral-500">•</span>
-              <span className="text-xs text-neutral-400">DevJams '26 Candidate</span>
+              <span className="text-xs text-neutral-400">DevJams &apos;26 Candidate</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
               Welcome, {session?.name || "Hacker"}!
@@ -87,7 +85,7 @@ export default function PortalDashboardPage() {
               No Proposal Submitted Yet
             </h2>
             <p className="text-sm text-neutral-400 mb-6 max-w-md mx-auto leading-relaxed">
-              You haven't submitted your idea for DevJams '26 yet. Select a track, form your team, and submit your proposal before the deadline!
+              You haven&apos;t submitted your idea for DevJams &apos;26 yet. Select a track, form your team, and submit your proposal before the deadline!
             </p>
             <Link
               href="/portal/submit"

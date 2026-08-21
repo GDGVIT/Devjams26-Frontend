@@ -46,8 +46,8 @@ export function JoinTeamModal({ isOpen, onClose }: JoinTeamModalProps) {
       );
 
       router.push("/portal/submit");
-    } catch (err: any) {
-      setError(err?.message || "Failed to join team.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to join team.");
     } finally {
       setLoading(false);
     }

@@ -42,8 +42,8 @@ export function CreateTeamModal({ isOpen, onClose }: CreateTeamModalProps) {
       );
 
       router.push("/portal/submit");
-    } catch (err: any) {
-      setError(err?.message || "Failed to create team.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to create team.");
     } finally {
       setLoading(false);
     }
@@ -101,7 +101,7 @@ export function CreateTeamModal({ isOpen, onClose }: CreateTeamModalProps) {
             </label>
             <select
               value={track}
-              onChange={(e) => setTrack(e.target.value as any)}
+              onChange={(e) => setTrack(e.target.value as TrackType)}
               className="w-full px-4 py-2.5 rounded-xl bg-[#222228] border border-white/10 text-white text-sm focus:outline-none focus:border-amber-400 transition cursor-pointer"
             >
               <option value="android">Android Development</option>

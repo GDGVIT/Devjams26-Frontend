@@ -30,7 +30,14 @@ export interface InternalOnboardingData {
   hostelBlock: string;
   roomNumber: string;
 }
-
+export interface Team {
+  id: string;
+  name: string;
+  code: string;
+  track: TrackType;
+  members: TeamMember[];
+  createdAt: string;
+}
 export interface TeamMember {
   name: string;
   email: string;
@@ -159,7 +166,7 @@ export const portalApi = {
   },
 
   // Local Team storage
-  async saveTeam(teamData: { name: string; code?: string; track?: TrackType; members?: TeamMember[] }): Promise<any> {
+  async saveTeam(teamData: { name: string; code?: string; track?: TrackType; members?: TeamMember[] }): Promise<Team> {
     const team = {
       id: `team_${Date.now()}`,
       name: teamData.name,
@@ -174,7 +181,7 @@ export const portalApi = {
     return team;
   },
 
-  async getParticipantTeam(): Promise<any> {
+  async getParticipantTeam(): Promise<Team | null> {
     if (typeof window !== "undefined") {
       const raw = localStorage.getItem(STORAGE_KEY_TEAM);
       if (raw) {
@@ -215,7 +222,11 @@ export const portalApi = {
       const raw = localStorage.getItem(STORAGE_KEY_SUBMISSION);
       if (raw) {
         try {
-          return JSON.parse(raw);
+          const parsed = JSON.parse(raw);
+          if (userId && parsed.userId && parsed.userId !== userId) {
+            return null;
+          }
+          return parsed;
         } catch {
           return null;
         }

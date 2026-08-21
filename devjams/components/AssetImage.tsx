@@ -21,6 +21,10 @@ const BAKED_ASSETS = new Set([
   "cloud",
   "maps",
   "dino-menu",
+  "cursor",
+  "notebookllm",
+  "antigravity",
+  "folder",
   "logo/triangle",
   "logo/circle",
 ]);

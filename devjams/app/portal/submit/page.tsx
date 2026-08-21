@@ -7,7 +7,6 @@ import Link from "next/link";
 import { PortalNavbar } from "@/components/portal/PortalNavbar";
 import {
   portalApi,
-  type IdeaSubmission,
   type TeamMember,
   type TrackType,
   type UserSession,
@@ -65,7 +64,7 @@ const AVAILABLE_TRACKS: {
 
 export default function SubmitProposalPage() {
   const router = useRouter();
-  const [session, setSession] = useState<UserSession | null>(null);
+  const [session] = useState<UserSession | null>(() => portalApi.getSession());
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [successModalOpen, setSuccessModalOpen] = useState(false);
@@ -74,10 +73,10 @@ export default function SubmitProposalPage() {
   // Form State
   const [activeStep, setActiveStep] = useState<1 | 2 | 3 | 4>(1);
   const [teamName, setTeamName] = useState("");
-  const [leaderName, setLeaderName] = useState("");
-  const [leaderEmail, setLeaderEmail] = useState("");
+  const [leaderName] = useState(() => portalApi.getSession()?.name || "");
+  const [leaderEmail] = useState(() => portalApi.getSession()?.email || "");
   const [leaderPhone, setLeaderPhone] = useState("");
-  const [leaderRegNo, setLeaderRegNo] = useState("");
+  const [leaderRegNo] = useState(() => portalApi.getSession()?.registrationNumber || "");
   const [members, setMembers] = useState<TeamMember[]>([]);
 
   const [selectedTrack, setSelectedTrack] = useState<TrackType>("web");
@@ -95,20 +94,15 @@ export default function SubmitProposalPage() {
   const [presentationUrl, setPresentationUrl] = useState("");
 
   useEffect(() => {
-    const currentSession = portalApi.getSession();
-    if (!currentSession) {
+    if (!session) {
       router.push("/portal");
       return;
     }
-    setSession(currentSession);
-    setLeaderName(currentSession.name || "");
-    setLeaderEmail(currentSession.email || "");
-    setLeaderRegNo(currentSession.registrationNumber || "");
 
     // Load existing draft if any
-    portalApi.getSubmission(currentSession.id).then((sub) => {
+    portalApi.getSubmission(session.id).then((sub) => {
       if (sub) {
-        setTeamName(sub.teamName || "");
+        if (sub.teamName) setTeamName(sub.teamName);
         if (sub.leaderPhone) setLeaderPhone(sub.leaderPhone);
         if (sub.members && sub.members.length > 0) setMembers(sub.members);
         if (sub.track) setSelectedTrack(sub.track);
@@ -124,7 +118,7 @@ export default function SubmitProposalPage() {
       }
       setLoading(false);
     });
-  }, [router]);
+  }, [router, session]);
 
   const addMember = () => {
     if (members.length >= 4) {
@@ -221,8 +215,8 @@ export default function SubmitProposalPage() {
         true
       );
       alert("Draft saved successfully!");
-    } catch (err: any) {
-      setError(err.message || "Failed to save draft.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to save draft.");
     } finally {
       setSubmitting(false);
     }
@@ -256,8 +250,8 @@ export default function SubmitProposalPage() {
         false
       );
       setSuccessModalOpen(true);
-    } catch (err: any) {
-      setError(err.message || "Failed to submit proposal.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to submit proposal.");
     } finally {
       setSubmitting(false);
     }
@@ -320,7 +314,7 @@ export default function SubmitProposalPage() {
               <button
                 key={step.num}
                 type="button"
-                onClick={() => setActiveStep(step.num as any)}
+                onClick={() => setActiveStep(step.num as 1 | 2 | 3 | 4)}
                 className={`flex flex-col sm:flex-row items-center gap-2 p-3 rounded-2xl border text-left transition-all cursor-pointer ${
                   activeStep === step.num
                     ? "bg-white/10 border-white/30 text-white shadow-[0_0_20px_rgba(255,255,255,0.05)]"
@@ -436,7 +430,7 @@ export default function SubmitProposalPage() {
 
                 {members.length === 0 ? (
                   <div className="p-4 rounded-2xl bg-white/5 border border-white/5 text-center text-xs text-neutral-400">
-                    No additional members added. Click "+ Add Member" to add teammates.
+                    No additional members added. Click &quot;+ Add Member&quot; to add teammates.
                   </div>
                 ) : (
                   <div className="space-y-3">

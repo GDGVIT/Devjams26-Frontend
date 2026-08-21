@@ -1,40 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { motion } from "@/components/gsap-motion";
-import ResponsiveSvg from "@/components/ResponsiveSvg";
+import AssetImage from "@/components/AssetImage";
 import { portalApi } from "@/services/portalApi";
 
 export default function OnboardingPage() {
   const router = useRouter();
 
-  // Form State matching the reference screenshot
-  const [name, setName] = useState("");
-  const [registrationNumber, setRegistrationNumber] = useState("");
-  const [contactNumber, setContactNumber] = useState("");
-  const [email, setEmail] = useState("");
-  const [gender, setGender] = useState("");
-  const [hostelBlock, setHostelBlock] = useState("");
-  const [roomNumber, setRoomNumber] = useState("");
+  // Form State matching the reference screenshot (lazy initialized from stored data)
+  const [name, setName] = useState(() => portalApi.getInternalOnboarding()?.name || "");
+  const [registrationNumber, setRegistrationNumber] = useState(() => portalApi.getInternalOnboarding()?.registrationNumber || "");
+  const [contactNumber, setContactNumber] = useState(() => portalApi.getInternalOnboarding()?.contactNumber || "");
+  const [email, setEmail] = useState(() => portalApi.getInternalOnboarding()?.email || "");
+  const [gender, setGender] = useState(() => portalApi.getInternalOnboarding()?.gender || "");
+  const [hostelBlock, setHostelBlock] = useState(() => portalApi.getInternalOnboarding()?.hostelBlock || "");
+  const [roomNumber, setRoomNumber] = useState(() => portalApi.getInternalOnboarding()?.roomNumber || "");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    // Load pre-existing data if any
-    const existing = portalApi.getInternalOnboarding();
-    if (existing) {
-      if (existing.name) setName(existing.name);
-      if (existing.registrationNumber) setRegistrationNumber(existing.registrationNumber);
-      if (existing.contactNumber) setContactNumber(existing.contactNumber);
-      if (existing.email) setEmail(existing.email);
-      if (existing.gender) setGender(existing.gender);
-      if (existing.hostelBlock) setHostelBlock(existing.hostelBlock);
-      if (existing.roomNumber) setRoomNumber(existing.roomNumber);
-    }
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,8 +55,8 @@ export default function OnboardingPage() {
       });
 
       router.push("/portal/join-create");
-    } catch (err: any) {
-      setError(err?.message || "Failed to save onboarding details.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to save onboarding details.");
     } finally {
       setLoading(false);
     }
@@ -81,7 +66,7 @@ export default function OnboardingPage() {
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col justify-between overflow-x-hidden p-4 sm:p-8 select-none">
       {/* Top-Left Web Graphic */}
       <div className="absolute -top-16 -left-16 sm:-top-20 sm:-left-20 w-36 h-36 sm:w-52 sm:h-52 md:w-64 md:h-64 pointer-events-none z-0 opacity-40 sm:opacity-70">
-        <ResponsiveSvg
+        <AssetImage
           src="/assets/web.svg"
           alt="Web Track Decoration"
           width={288}
@@ -93,7 +78,7 @@ export default function OnboardingPage() {
 
       {/* Top-Right Gear Graphic */}
       <div className="absolute -top-16 -right-16 sm:-top-20 sm:-right-20 w-40 h-40 sm:w-56 sm:h-56 md:w-72 md:h-72 pointer-events-none z-0 opacity-40 sm:opacity-70">
-        <ResponsiveSvg
+        <AssetImage
           src="/assets/gear.svg"
           alt="Gear Decoration"
           width={337}

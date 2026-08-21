@@ -39,6 +39,10 @@ const TARGETS = [
   { src: "cloud.svg", out: "cloud.png", width: 784, height: 572 },
   { src: "maps.svg", out: "maps.png", width: 730, height: 930 },
   { src: "dino-menu.svg", out: "dino-menu.png", width: 130, height: 138 },
+  { src: "cursor.svg", out: "cursor.png", width: 513, height: 432 },
+  { src: "notebookllm.svg", out: "notebookllm.png", width: 342, height: 360 },
+  { src: "antigravity.svg", out: "antigravity.png", width: 598, height: 552 },
+  { src: "folder.svg", out: "folder.png", width: 447, height: 363 },
   { src: "logo/triangle.svg", out: "logo/triangle.png", width: 600, height: 600 },
   { src: "logo/circle.svg", out: "logo/circle.png", width: 480, height: 480 },
 ];
@@ -51,6 +55,11 @@ const CHROME_CANDIDATES = [
   "/usr/bin/google-chrome-stable",
   "/usr/bin/chromium",
   "/usr/bin/chromium-browser",
+  "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+  "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+  process.env.LOCALAPPDATA ? `${process.env.LOCALAPPDATA}\\Google\\Chrome\\Application\\chrome.exe` : undefined,
+  "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe",
 ].filter(Boolean);
 
 async function resolveChrome() {

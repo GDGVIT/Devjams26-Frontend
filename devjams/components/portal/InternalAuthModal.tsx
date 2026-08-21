@@ -48,8 +48,8 @@ export function InternalAuthModal({ isOpen, onClose, onSuccess }: InternalAuthMo
       } else {
         router.push("/portal/submit");
       }
-    } catch (err: any) {
-      setError(err?.message || "Failed to sign in. Please try again.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to sign in. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -69,8 +69,8 @@ export function InternalAuthModal({ isOpen, onClose, onSuccess }: InternalAuthMo
       } else {
         router.push("/portal/submit");
       }
-    } catch (err: any) {
-      setError(err?.message || "Google sign-in failed.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Google sign-in failed.");
     } finally {
       setLoading(false);
     }
