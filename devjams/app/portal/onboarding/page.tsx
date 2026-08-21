@@ -365,30 +365,41 @@ export default function OnboardingPage() {
 
   return (
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col justify-between overflow-x-hidden p-4 sm:p-8 select-none">
-      {/* Top-Left Web Graphic */}
-      <div className="absolute -top-16 -left-16 sm:-top-20 sm:-left-20 w-36 h-36 sm:w-52 sm:h-52 md:w-64 md:h-64 pointer-events-none z-0 opacity-40 sm:opacity-70">
+      {/* Top-Left Web Graphic - Bright & Screen Blended */}
+      <div
+        className="absolute -top-12 -left-12 sm:-top-16 sm:-left-16 w-44 h-44 sm:w-60 sm:h-60 md:w-72 md:h-72 pointer-events-none z-0 flex items-center justify-center opacity-95 sm:opacity-100"
+        style={{
+          mixBlendMode: "screen",
+          filter: "brightness(1.15) saturate(1.1)",
+        }}
+      >
         <AssetImage
           src="/assets/web.svg"
           alt="Web Track Decoration"
           width={288}
           height={288}
           priority
-          className="w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(66,133,244,0.3)]"
+          className="w-full h-full object-contain filter drop-shadow-[0_0_30px_rgba(66,133,244,0.6)]"
         />
       </div>
 
-      {/* Top-Right Gear Graphic */}
-      <div className="absolute -top-16 -right-16 sm:-top-20 sm:-right-20 w-40 h-40 sm:w-56 sm:h-56 md:w-72 md:h-72 pointer-events-none z-0 opacity-40 sm:opacity-70">
+      {/* Top-Right Gear Graphic - Bright & Screen Blended */}
+      <div
+        className="absolute -top-12 -right-12 sm:-top-16 sm:-right-16 w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 pointer-events-none z-0 flex items-center justify-center opacity-95 sm:opacity-100"
+        style={{
+          mixBlendMode: "screen",
+          filter: "brightness(1.15) saturate(1.1)",
+        }}
+      >
         <AssetImage
           src="/assets/gear.svg"
           alt="Gear Decoration"
           width={337}
           height={337}
           priority
-          className="w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(251,188,4,0.3)]"
+          className="w-full h-full object-contain filter drop-shadow-[0_0_30px_rgba(251,188,4,0.6)]"
         />
       </div>
-
       {/* Main Container */}
       <div className="relative z-20 max-w-4xl w-full mx-auto my-auto py-6 sm:py-10">
         {/* Title */}
