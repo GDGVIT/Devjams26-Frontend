@@ -92,8 +92,9 @@ export default function IdeaSubmissionPage() {
           <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
         </svg>
       </Link>
+      {/* 4 Logos Blend Banner: Top on Desktop, Down at the bottom on Mobile (Group 1948755625) */}
       <div
-        className="relative pointer-events-none z-10 w-full max-w-[848px] h-[clamp(100px,18vw,314px)] -mt-[clamp(24px,5vw,135px)] flex items-center justify-center overflow-visible"
+        className="order-last md:order-first relative pointer-events-none z-10 w-full max-w-[340px] md:max-w-[848px] h-[124px] md:h-[clamp(140px,22vw,314px)] mt-8 md:-mt-[clamp(24px,5vw,135px)] flex items-center justify-center overflow-visible flex-shrink-0"
         aria-hidden="true"
       >
         <div className="relative w-full h-full flex items-center justify-center">
