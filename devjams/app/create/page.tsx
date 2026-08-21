@@ -135,16 +135,15 @@ export default function CreateTeamPage() {
         </form>
       </div>
 
-      {/* Right Side 3 Logos Stack - Perfectly Relative Aligned Vertical, 20% Blend with each other, Dynamically Covering 100% Screen Height */}
+      {/* Right Side 3 Logos Stack - Single 100vh Div, Equal Width for all 3 logos, Perfectly Vertically Aligned, 20% Blend Overlap, No Stretching */}
       <div
-        className="absolute right-[clamp(16px,4vw,60px)] top-0 bottom-0 h-screen pointer-events-none z-10 hidden md:flex flex-col items-center justify-between py-[1vh] overflow-hidden w-[clamp(280px,32vw,460px)]"
+        className="absolute right-[clamp(16px,4vw,60px)] top-0 bottom-0 h-screen pointer-events-none z-10 hidden md:flex flex-col items-center justify-between py-[2vh] overflow-hidden w-[clamp(280px,32vw,450px)]"
         aria-hidden="true"
       >
-        {/* 1. Web Track Logo (Top, 70% visible on screen, 30% shifted up) */}
+        {/* 1. Web Track Logo (Top) */}
         <div
-          className="relative w-full flex-shrink-0 flex items-center justify-center -mt-[11.4vh]"
+          className="relative w-full flex-shrink-0 flex items-center justify-center"
           style={{
-            height: "38vh",
             mixBlendMode: "screen",
             filter: "brightness(1.12) saturate(1.05)",
           }}
@@ -155,16 +154,14 @@ export default function CreateTeamPage() {
             width={454}
             height={454}
             priority
-            className="max-h-full max-w-full object-contain"
+            className="w-full h-auto max-h-[36vh] object-contain"
           />
         </div>
 
-        {/* 2. Maps Logo (Vertically Centered in Screen, Shifted Down by 20%) */}
+        {/* 2. Maps Logo (Middle - 20% blend overlap with Web and Android) */}
         <div
-          className="relative w-full flex-shrink-0 flex items-center justify-center my-auto"
+          className="relative w-full flex-shrink-0 flex items-center justify-center -my-[7vh]"
           style={{
-            height: "39vh",
-            transform: "translateY(20%)",
             mixBlendMode: "screen",
             filter: "brightness(1.12) saturate(1.05)",
           }}
@@ -175,15 +172,14 @@ export default function CreateTeamPage() {
             width={365}
             height={465}
             priority
-            className="max-h-full max-w-full object-contain"
+            className="w-full h-auto max-h-[38vh] object-contain"
           />
         </div>
 
-        {/* 3. Android Track Logo (Bottom, dynamically scaled in vh) */}
+        {/* 3. Android Track Logo (Bottom) */}
         <div
           className="relative w-full flex-shrink-0 flex items-center justify-center"
           style={{
-            height: "31vh",
             mixBlendMode: "screen",
             filter: "brightness(1.12) saturate(1.05)",
           }}
@@ -194,7 +190,7 @@ export default function CreateTeamPage() {
             width={468}
             height={286}
             priority
-            className="max-h-full max-w-full object-contain"
+            className="w-full h-auto max-h-[30vh] object-contain"
           />
         </div>
       </div>
