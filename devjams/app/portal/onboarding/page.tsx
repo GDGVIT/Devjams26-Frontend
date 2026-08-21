@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "@/components/gsap-motion";
 import AssetImage from "@/components/AssetImage";
@@ -299,34 +299,42 @@ export default function OnboardingPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    const checkSkip = async () => {
+      const token = portalApi.getToken();
+      if (!token) {
+        router.push("/portal");
+        return;
+      }
+      try {
+        const me = await portalApi.fetchMe();
+        if (me) {
+          if (me.teamId) {
+            router.push("/team");
+            return;
+          }
+          if (me.phone && me.hostelBlock && me.gender) {
+            router.push("/portal/join-create");
+            return;
+          }
+          if (me.name) setName((prev) => prev || me.name);
+          if (me.registrationNumber) setRegistrationNumber((prev) => prev || me.registrationNumber || "");
+          if (me.email) setEmail((prev) => prev || me.email);
+          if (me.phone) setContactNumber((prev) => prev || me.phone?.replace(/^\+\d+\s*/, "") || "");
+          if (me.gender) setGender((prev) => prev || me.gender || "");
+          if (me.hostelBlock) setHostelBlock((prev) => prev || me.hostelBlock || "");
+          if (me.roomNumber) setRoomNumber((prev) => prev || me.roomNumber || "");
+        }
+      } catch {
+        // Continue with onboarding form
+      }
+    };
+    checkSkip();
+  }, [router]);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    if (!name.trim()) {
-      setError("Please enter your name.");
-      return;
-    }
-
-    // Reg No validation: 2 digits, 3 letters (case-insensitive), 4 digits (e.g. 25BCE2055)
-    const regNoPattern = /^[0-9]{2}[A-Za-z]{3}[0-9]{4}$/;
-    if (!regNoPattern.test(registrationNumber.trim())) {
-      setError("Registration Number must be 2 digits, 3 letters, and 4 digits (e.g. 25BCE2055).");
-      return;
-    }
-
-    const cleanPhone = contactNumber.trim().replace(/\D/g, "");
-    if (!cleanPhone || cleanPhone.length < 7 || cleanPhone.length > 15) {
-      setError("Please enter a valid contact number.");
-      return;
-    }
-
-    // General email format validation (accepting any valid domain)
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email.trim())) {
-      setError("Please enter a valid email address.");
-      return;
-    }
 
     if (!gender.trim()) {
       setError("Please select your gender.");
@@ -345,15 +353,16 @@ export default function OnboardingPage() {
 
     setLoading(true);
     try {
-      await portalApi.saveInternalOnboarding({
+      await portalApi.saveOnboarding({
         name: name.trim(),
         registrationNumber: registrationNumber.trim().toUpperCase(),
         contactNumber: `${countryCode} ${contactNumber.trim()}`,
         email: email.trim().toLowerCase(),
         gender: gender.trim(),
         hostelBlock: hostelBlock.trim(),
-        roomNumber: roomNumber.trim(),
+        roomNumber: hostelBlock === "Day Boarder" ? "N/A" : roomNumber.trim(),
       });
+
 
       router.push("/portal/join-create");
     } catch (err: unknown) {
@@ -429,11 +438,10 @@ export default function OnboardingPage() {
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Neeraj Sathish Kumar"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  className="w-full px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white placeholder-neutral-500 text-sm sm:text-base focus:outline-none transition-all"
+                  readOnly
+                  aria-readonly="true"
+                  className="w-full px-4 py-3 rounded-xl bg-[#242424] border border-white/10 text-white/70 text-sm sm:text-base cursor-not-allowed"
                 />
               </div>
 
@@ -443,12 +451,10 @@ export default function OnboardingPage() {
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. 25BCE2055"
                   value={registrationNumber}
-                  onChange={(e) => setRegistrationNumber(e.target.value.toUpperCase().slice(0, 9))}
-                  required
-                  maxLength={9}
-                  className="w-full px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white placeholder-neutral-500 text-sm sm:text-base focus:outline-none transition-all uppercase"
+                  readOnly
+                  aria-readonly="true"
+                  className="w-full px-4 py-3 rounded-xl bg-[#242424] border border-white/10 text-white/70 text-sm sm:text-base cursor-not-allowed uppercase"
                 />
               </div>
             </div>
@@ -498,11 +504,10 @@ export default function OnboardingPage() {
                 </label>
                 <input
                   type="email"
-                  placeholder="e.g. neeraj@vitstudent.ac.in"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="w-full px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white placeholder-neutral-500 text-sm sm:text-base focus:outline-none transition-all"
+                  readOnly
+                  aria-readonly="true"
+                  className="w-full px-4 py-3 rounded-xl bg-[#242424] border border-white/10 text-white/70 text-sm sm:text-base cursor-not-allowed"
                 />
               </div>
             </div>

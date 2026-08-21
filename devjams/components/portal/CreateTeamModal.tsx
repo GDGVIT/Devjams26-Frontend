@@ -26,22 +26,9 @@ export function CreateTeamModal({ isOpen, onClose }: CreateTeamModalProps) {
     }
 
     setLoading(true);
-    setError("");
     try {
-      const session = portalApi.getSession();
-      await portalApi.saveSubmission(
-        {
-          teamName: teamName.trim(),
-          track: track,
-          leaderName: session?.name || "",
-          leaderEmail: session?.email || "",
-          leaderPhone: session?.phone || "",
-          leaderRegNo: session?.registrationNumber || "",
-        },
-        true
-      );
-
-      router.push("/portal/submit");
+      await portalApi.createTeam(teamName.trim(), []);
+      router.push("/team");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to create team.");
     } finally {

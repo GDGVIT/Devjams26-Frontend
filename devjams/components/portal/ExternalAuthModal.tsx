@@ -40,7 +40,7 @@ export function ExternalAuthModal({ isOpen, onClose, onSuccess }: ExternalAuthMo
 
     setLoading(true);
     try {
-      await portalApi.loginExternal({
+      const session = await portalApi.loginExternal({
         name: name.trim(),
         email: email.trim().toLowerCase(),
         college: college.trim(),
@@ -49,8 +49,10 @@ export function ExternalAuthModal({ isOpen, onClose, onSuccess }: ExternalAuthMo
 
       if (onSuccess) {
         onSuccess();
+      } else if (session.teamId) {
+        router.push("/team");
       } else {
-        router.push("/portal/submit");
+        router.push("/portal/join-create");
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to sign in. Please try again.");
@@ -63,15 +65,17 @@ export function ExternalAuthModal({ isOpen, onClose, onSuccess }: ExternalAuthMo
     setLoading(true);
     setError("");
     try {
-      await portalApi.loginExternal({
+      const session = await portalApi.loginExternal({
         name: name.trim() || (provider === "google" ? "Google User" : "GitHub User"),
         email: email.trim().toLowerCase() || `user@${provider}.com`,
         college: college.trim() || "External Institution",
       });
       if (onSuccess) {
         onSuccess();
+      } else if (session.teamId) {
+        router.push("/team");
       } else {
-        router.push("/portal/submit");
+        router.push("/portal/join-create");
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : `${provider} sign-in failed.`);

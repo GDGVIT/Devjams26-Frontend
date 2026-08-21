@@ -2,21 +2,57 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import AssetImage from "../../components/AssetImage";
 import { motion } from "../../components/gsap-motion";
+import { portalApi } from "@/services/portalApi";
 
 export default function JoinPage() {
+  const router = useRouter();
   const [teamCode, setTeamCode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = portalApi.getToken();
+      if (!token && !portalApi.getSession()) {
+        router.push("/portal");
+        return;
+      }
+      try {
+        const me = await portalApi.fetchMe();
+        if (me?.teamId) {
+          router.push("/team");
+        }
+      } catch {
+        // Continue
+      }
+    };
+    checkAuth();
+  }, [router]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!teamCode.trim()) return;
+    setError("");
+    const trimmed = teamCode.trim();
+    if (!trimmed) {
+      setError("Please enter your team code.");
+      return;
+    }
+
     setIsSubmitting(true);
-    setTimeout(() => {
+    try {
+      await portalApi.joinTeam(trimmed);
+      router.push("/team");
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error ? err.message : "Failed to join team. Please try again.";
+      setError(msg);
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -82,19 +118,30 @@ export default function JoinPage() {
           Enter your team code
         </p>
 
+        {error && (
+          <div className="mt-3 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs sm:text-sm">
+            {error}
+          </div>
+        )}
+
         {/* Form with Input and Submit Button */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-3.5 sm:gap-6 w-full mt-4 sm:mt-8">
           {/* Input Field */}
           <input
             type="text"
             value={teamCode}
-            onChange={(e) => setTeamCode(e.target.value)}
-            placeholder="e.g.: 12345"
+            onChange={(e) => setTeamCode(e.target.value.replace(/\D/g, "").slice(0, 8))}
+            placeholder="e.g.: 12345678"
+            maxLength={8}
+            inputMode="numeric"
+            pattern="[0-9]{8}"
+            title="Enter the eight-digit numeric join code."
             className="w-full h-9 sm:h-[48px] md:h-[59px] bg-[#343434] md:bg-transparent text-white placeholder-white/40 border border-transparent md:border-white/40 focus:border-white focus:outline-none transition-colors rounded-[9.08px] px-3.5 sm:px-6 md:px-9 text-xs sm:text-base md:text-xl"
             style={{
               fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif',
             }}
             required
+            disabled={isSubmitting}
           />
 
           {/* Submit Button */}
@@ -103,7 +150,7 @@ export default function JoinPage() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             disabled={isSubmitting}
-            className="w-full h-9 sm:h-[42px] md:h-[48px] bg-white text-black flex items-center justify-center cursor-pointer hover:bg-neutral-100 transition-all border-none rounded-[25.8px] md:rounded-[35px] shadow-lg px-4 sm:px-6 gap-2 sm:gap-3.5"
+            className="w-full h-9 sm:h-[42px] md:h-[48px] bg-white text-black flex items-center justify-center cursor-pointer hover:bg-neutral-100 transition-all border-none rounded-[25.8px] md:rounded-[35px] shadow-lg px-4 sm:px-6 gap-2 sm:gap-3.5 disabled:opacity-50"
           >
             <span
               className="text-xs sm:text-base md:text-xl font-normal leading-none text-center whitespace-nowrap"
@@ -112,7 +159,7 @@ export default function JoinPage() {
                 letterSpacing: "0.02em",
               }}
             >
-              {isSubmitting ? "Continuing..." : "Continue To Team Page"}
+              {isSubmitting ? "Joining Team..." : "Continue To Team Page"}
             </span>
             <svg
               width="16"

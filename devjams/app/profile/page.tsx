@@ -1,11 +1,48 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "../../components/gsap-motion";
+import { portalApi, type UserSession } from "@/services/portalApi";
 
 export default function ProfilePage() {
   const router = useRouter();
+  const [profile, setProfile] = useState<UserSession | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      const token = portalApi.getToken();
+      if (!token && !portalApi.getSession()) {
+        router.push("/portal");
+        return;
+      }
+
+      try {
+        const me = await portalApi.fetchMe();
+        if (me) {
+          setProfile(me);
+        } else {
+          setProfile(portalApi.getSession());
+        }
+      } catch (err: unknown) {
+        console.warn("Failed to fetch profile:", err);
+        setProfile(portalApi.getSession());
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProfile();
+  }, [router]);
+
+  const handleLogout = () => {
+    portalApi.logout();
+    router.push("/portal");
+  };
+
+  const isCheckedIn = profile?.isCheckedIn;
 
   return (
     <div className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start select-none overflow-x-hidden pb-20">
@@ -125,14 +162,24 @@ export default function ProfilePage() {
 
       {/* Main Content Container (Semantic Main) */}
       <main className="w-full max-w-[1072px] mx-auto flex flex-col items-start gap-[clamp(18px,3vh,36px)] z-20 pt-[clamp(75px,11vw,155px)] px-4 sm:px-6 md:px-0">
-        <h1
-          className="text-white font-bold tracking-normal leading-[1.2] text-center capitalize m-0 select-none w-full text-[clamp(36px,4.5vw,64px)]"
-          style={{
-            fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
-          }}
-        >
-          Profile Page
-        </h1>
+        <div className="w-full flex items-center justify-between">
+          <h1
+            className="text-white font-bold tracking-normal leading-[1.2] text-left capitalize m-0 select-none text-[clamp(36px,4.5vw,64px)]"
+            style={{
+              fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+            }}
+          >
+            Profile Page
+          </h1>
+
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="px-4 py-1.5 rounded-full bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 text-xs sm:text-sm font-medium transition cursor-pointer"
+          >
+            Sign Out
+          </button>
+        </div>
 
         {/* Section 1: Contact Details */}
         <div className="w-full flex flex-col items-start gap-2.5 sm:gap-6">
@@ -158,12 +205,12 @@ export default function ProfilePage() {
                 Name
               </label>
               <div
-                className="w-full bg-[#343434] text-white/60 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center text-[clamp(12px,1.6vw,24px)] font-normal select-text"
+                className="w-full bg-[#343434] text-white/90 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center text-[clamp(12px,1.6vw,22px)] font-normal select-text"
                 style={{
                   fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
                 }}
               >
-                DEVJAMS
+                {loading ? "Loading..." : profile?.name || "Participant"}
               </div>
             </div>
 
@@ -178,17 +225,103 @@ export default function ProfilePage() {
                 Email Address
               </label>
               <div
-                className="w-full bg-[#343434] text-white/60 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center text-[clamp(12px,1.6vw,24px)] font-normal select-text"
+                className="w-full bg-[#343434] text-white/90 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center text-[clamp(12px,1.6vw,22px)] font-normal select-text truncate"
                 style={{
                   fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
                 }}
               >
-                GHY618
+                {loading ? "Loading..." : profile?.email || "N/A"}
               </div>
             </div>
           </div>
 
-          {/* Row 2: Team Name & Team Code */}
+          {/* Row 2: Registration Number & Phone */}
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-14 mt-1 sm:mt-2">
+            {/* Reg No Field */}
+            <div className="w-full flex flex-col items-start gap-2">
+              <label
+                className="text-white font-normal capitalize text-[clamp(16px,2vw,32px)] leading-[1.3]"
+                style={{
+                  fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+                }}
+              >
+                Registration Number
+              </label>
+              <div
+                className="w-full bg-[#343434] text-white/90 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center text-[clamp(12px,1.6vw,22px)] font-normal select-text"
+                style={{
+                  fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+                }}
+              >
+                {loading ? "Loading..." : profile?.registrationNumber || "N/A"}
+              </div>
+            </div>
+
+            {/* Phone Field */}
+            <div className="w-full flex flex-col items-start gap-2">
+              <label
+                className="text-white font-normal capitalize text-[clamp(16px,2vw,32px)] leading-[1.3]"
+                style={{
+                  fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+                }}
+              >
+                Phone Number
+              </label>
+              <div
+                className="w-full bg-[#343434] text-white/90 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center text-[clamp(12px,1.6vw,22px)] font-normal select-text"
+                style={{
+                  fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+                }}
+              >
+                {loading ? "Loading..." : profile?.phone || "N/A"}
+              </div>
+            </div>
+          </div>
+
+          {/* Row 3: Hostel Block & Room Number */}
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-14 mt-1 sm:mt-2">
+            {/* Hostel Block */}
+            <div className="w-full flex flex-col items-start gap-2">
+              <label
+                className="text-white font-normal capitalize text-[clamp(16px,2vw,32px)] leading-[1.3]"
+                style={{
+                  fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+                }}
+              >
+                Hostel Block
+              </label>
+              <div
+                className="w-full bg-[#343434] text-white/90 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center text-[clamp(12px,1.6vw,22px)] font-normal select-text"
+                style={{
+                  fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+                }}
+              >
+                {loading ? "Loading..." : profile?.hostelBlock || "N/A"}
+              </div>
+            </div>
+
+            {/* Room Number */}
+            <div className="w-full flex flex-col items-start gap-2">
+              <label
+                className="text-white font-normal capitalize text-[clamp(16px,2vw,32px)] leading-[1.3]"
+                style={{
+                  fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+                }}
+              >
+                Room Number
+              </label>
+              <div
+                className="w-full bg-[#343434] text-white/90 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center text-[clamp(12px,1.6vw,22px)] font-normal select-text"
+                style={{
+                  fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+                }}
+              >
+                {loading ? "Loading..." : profile?.roomNumber || "N/A"}
+              </div>
+            </div>
+          </div>
+
+          {/* Row 4: Team Name & Team Code */}
           <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-14 mt-1 sm:mt-2">
             {/* Team Name Field */}
             <div className="w-full flex flex-col items-start gap-2">
@@ -201,12 +334,12 @@ export default function ProfilePage() {
                 Team Name
               </label>
               <div
-                className="w-full bg-[#343434] text-white/60 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center text-[clamp(12px,1.6vw,24px)] font-normal select-text"
+                className="w-full bg-[#343434] text-white/90 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center text-[clamp(12px,1.6vw,22px)] font-normal select-text"
                 style={{
                   fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
                 }}
               >
-                DEVJAMS
+                {loading ? "Loading..." : profile?.teamName || "Not in team"}
               </div>
             </div>
 
@@ -221,18 +354,18 @@ export default function ProfilePage() {
                 Team Code
               </label>
               <div
-                className="w-full bg-[#343434] text-white/60 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center text-[clamp(12px,1.6vw,24px)] font-normal select-text"
+                className="w-full bg-[#343434] text-white/90 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center text-[clamp(12px,1.6vw,22px)] font-normal select-text"
                 style={{
                   fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
                 }}
               >
-                GHY618
+                {loading ? "Loading..." : profile?.teamId || "N/A"}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Section 2: Attendance History (Frame 1948755614) */}
+        {/* Section 2: Attendance History */}
         <div className="w-full flex flex-col items-start gap-2.5 sm:gap-5 mt-1 sm:mt-2">
           <h2
             className="text-white font-normal capitalize text-[clamp(24px,3.5vw,48px)] leading-[1.3] m-0"
@@ -244,51 +377,78 @@ export default function ProfilePage() {
           </h2>
 
           {/* Attendance Rows Stack */}
-          <div className="w-full max-w-[465px] flex flex-col items-start gap-2 sm:gap-2.5">
-            {/* 1. Morning Half */}
+          <div className="w-full max-w-[580px] flex flex-col items-start gap-2.5 sm:gap-3">
+            {/* 1. Overall Status */}
             <div
-              className="w-full bg-[#343434] text-white/60 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center justify-between text-[clamp(12px,1.6vw,24px)] font-normal"
+              className="w-full bg-[#343434] text-white/90 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center justify-between text-[clamp(12px,1.6vw,20px)] font-normal"
               style={{
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
               }}
             >
-              <span>Morning Half</span>
+              <span>Hackathon Check-in</span>
+              <span
+                className={`text-xs sm:text-sm px-2.5 py-1 rounded-full font-medium ${
+                  isCheckedIn
+                    ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                    : "bg-amber-500/15 text-amber-400 border border-amber-500/25"
+                }`}
+              >
+                {isCheckedIn ? "Checked In" : "Pending Scan"}
+              </span>
             </div>
 
-            {/* 2. Evening Half */}
+            {/* 2. Morning Session */}
             <div
-              className="w-full bg-[#343434] text-white/60 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center justify-between text-[clamp(12px,1.6vw,24px)] font-normal"
+              className="w-full bg-[#343434] text-white/90 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center justify-between text-[clamp(12px,1.6vw,20px)] font-normal"
               style={{
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
               }}
             >
-              <span>Evening Half</span>
+              <span>Morning Session</span>
+              <span
+                className={`text-xs sm:text-sm px-2.5 py-1 rounded-full font-medium ${
+                  isCheckedIn
+                    ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                    : "bg-neutral-600/30 text-neutral-400 border border-neutral-600/40"
+                }`}
+              >
+                {isCheckedIn ? "Present" : "Pending"}
+              </span>
             </div>
 
-            {/* 3. Overnight */}
+            {/* 3. Evening Session */}
             <div
-              className="w-full bg-[#343434] text-white/60 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center justify-between text-[clamp(12px,1.6vw,24px)] font-normal"
+              className="w-full bg-[#343434] text-white/90 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center justify-between text-[clamp(12px,1.6vw,20px)] font-normal"
               style={{
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
               }}
             >
-              <span>Overnight</span>
+              <span>Evening Session</span>
+              <span
+                className={`text-xs sm:text-sm px-2.5 py-1 rounded-full font-medium ${
+                  isCheckedIn
+                    ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                    : "bg-neutral-600/30 text-neutral-400 border border-neutral-600/40"
+                }`}
+              >
+                {isCheckedIn ? "Present" : "Pending"}
+              </span>
             </div>
           </div>
         </div>
 
-        {/* Section 3: Back Button (Frame 1948754781) */}
+        {/* Section 3: Back Button */}
         <div className="pt-2">
           <motion.button
             type="button"
             onClick={() => router.back()}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="bg-white text-black font-medium text-[clamp(12px,1.6vw,23px)] rounded-full px-4 sm:px-6 py-1.5 sm:py-2 flex items-center justify-center gap-2 cursor-pointer border-none shadow-md hover:bg-neutral-100 transition-all"
+            className="bg-white text-black font-medium text-[clamp(12px,1.6vw,20px)] rounded-full px-5 sm:px-7 py-1.5 sm:py-2.5 flex items-center justify-center gap-2 cursor-pointer border-none shadow-md hover:bg-neutral-100 transition-all"
             style={{
               fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
               minWidth: "95px",
-              height: "32px",
+              height: "36px",
             }}
           >
             {/* Back Arrow Vector (←) */}

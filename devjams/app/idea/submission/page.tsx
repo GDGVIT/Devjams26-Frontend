@@ -3,7 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "../../../components/gsap-motion";
+import { portalApi } from "@/services/portalApi";
+import { lockedSubmissionStatus } from "../../idea-submission-status";
+
 
 const ALL_TRACKS = [
   "AIML",
@@ -18,6 +22,7 @@ const ALL_TRACKS = [
 ];
 
 export default function IdeaSubmissionPage() {
+  const router = useRouter();
   const [shortDescription, setShortDescription] = useState("");
   const [longDescription, setLongDescription] = useState("");
   const [links, setLinks] = useState("");
@@ -25,6 +30,9 @@ export default function IdeaSubmissionPage() {
   const [isTracksOpen, setIsTracksOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
+  const [isLeader, setIsLeader] = useState(true);
+  const [error, setError] = useState("");
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -42,25 +50,131 @@ export default function IdeaSubmissionPage() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    const loadSubmissionData = async () => {
+      const token = portalApi.getToken();
+      if (!token && !portalApi.getSession()) {
+        router.push("/portal");
+        return;
+      }
+
+      try {
+        const me = await portalApi.fetchMe();
+        if (!me?.teamId) {
+          router.push("/portal/join-create");
+          return;
+        }
+
+        setIsLeader(!!me.isTeamLeader);
+
+        const team = await portalApi.fetchTeam();
+        const cachedSub = await portalApi.getSubmission(me.id);
+        if (team) {
+          if (team.idea_submitted) {
+            setIsLocked(true);
+            setSubmitted(true);
+          }
+
+          if (team.idea) {
+            if (!shortDescription) {
+              setShortDescription(team.idea.short_description);
+            }
+            if (!longDescription) {
+              setLongDescription(team.idea.long_description);
+            }
+            setLinks(team.idea.links);
+            const tracks = team.idea.tracks
+              .split(",")
+              .map((track) => track.trim())
+              .filter(Boolean);
+            if (tracks.length > 0) {
+              setSelectedTracks(tracks);
+            }
+          }
+        }
+
+        if (cachedSub) {
+          if (cachedSub.shortSummary && !shortDescription) {
+            setShortDescription(cachedSub.shortSummary);
+          }
+          if (cachedSub.problemStatement && !longDescription) {
+            setLongDescription(cachedSub.problemStatement);
+          }
+        }
+      } catch (err: unknown) {
+        console.warn("Failed to load idea submission:", err);
+      }
+    };
+
+    loadSubmissionData();
+  }, [router, shortDescription, longDescription]);
+
   const removeTrack = (track: string) => {
+    if (isLocked) return;
     setSelectedTracks((prev) => prev.filter((t) => t !== track));
   };
 
   const addTrack = (track: string) => {
+    if (isLocked) return;
     if (!selectedTracks.includes(track)) {
       setSelectedTracks((prev) => [...prev, track]);
     }
     setIsTracksOpen(false);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLocked) return;
+    if (!isLeader) {
+      setError("Only the Team Leader can submit the project proposal.");
+      return;
+    }
+
+    const trimmedShort = shortDescription.trim();
+    const trimmedLong = longDescription.trim();
+    if (!trimmedShort && !trimmedLong) {
+      setError("Please enter a short or long description of your idea.");
+      return;
+    }
+
+    setError("");
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+
+    try {
+      await portalApi.submitIdea({
+        short_description: trimmedShort,
+        long_description: trimmedLong || trimmedShort,
+        links: links.trim(),
+        tracks: selectedTracks.join(", "),
+      });
+
+      const rawLinks = links.split(",").map((l) => l.trim()).filter(Boolean);
+      let githubLink = "";
+      let figmaLink = "";
+      for (const l of rawLinks) {
+        if (l.includes("github.com")) githubLink = l;
+        else if (l.includes("figma.com")) figmaLink = l;
+        else if (!githubLink) githubLink = l;
+        else if (!figmaLink) figmaLink = l;
+      }
+
+      await portalApi.saveSubmission({
+        shortSummary: trimmedShort,
+        problemStatement: trimmedLong || trimmedShort,
+        githubUrl: githubLink,
+        figmaUrl: figmaLink,
+        status: "submitted",
+        isLocked: true,
+      }, false);
+
+      setIsLocked(true);
       setSubmitted(true);
-      setTimeout(() => setSubmitted(false), 3000);
-    }, 1200);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to submit idea.";
+      setError(msg);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -92,7 +206,8 @@ export default function IdeaSubmissionPage() {
           <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
         </svg>
       </Link>
-      {/* 4 Logos Blend Banner: Top on Desktop, Anchored to bottom of screen (60% visible) on Mobile */}
+
+      {/* 4 Logos Blend Banner: Top on Desktop, Anchored to bottom of screen on Mobile */}
       <div
         className="fixed md:relative bottom-0 md:bottom-auto left-1/2 md:left-auto -translate-x-1/2 md:translate-x-0 translate-y-[40%] md:translate-y-0 pointer-events-none z-10 w-full max-w-[340px] md:max-w-[848px] h-[124px] md:h-[clamp(140px,22vw,314px)] md:-mt-[clamp(24px,5vw,135px)] flex items-center justify-center overflow-visible flex-shrink-0"
         aria-hidden="true"
@@ -172,7 +287,7 @@ export default function IdeaSubmissionPage() {
         </div>
       </div>
 
-      {/* Main Form Content Container (Frame 1948755618 - Centered in mobile) */}
+      {/* Main Form Content Container */}
       <div className="w-full max-w-[1072px] mx-auto my-auto flex flex-col items-center justify-center gap-[clamp(14px,2vh,24px)] z-20 px-1 sm:px-3 md:px-0 py-6 sm:py-0">
         <h1
           className="text-white font-bold tracking-normal leading-[1.2] text-center capitalize m-0 select-none w-full text-[clamp(36px,4.5vw,64px)]"
@@ -183,12 +298,55 @@ export default function IdeaSubmissionPage() {
           Idea Submission
         </h1>
 
-        {/* Form Fields Container (Frame 1948755617) */}
+        {/* Locked / Submitted Status Banner */}
+        {isLocked && (
+          <div className="w-full p-3.5 sm:p-4 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs sm:text-sm flex items-center gap-3">
+            <svg
+              aria-hidden="true"
+              className="h-5 w-5 shrink-0 stroke-current"
+              viewBox="0 0 24 24"
+              fill="none"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="4" y="10" width="16" height="10" rx="2" />
+              <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+            </svg>
+            <div>
+              <p className="font-semibold">{lockedSubmissionStatus.headline}</p>
+              <p className="text-xs text-emerald-400/80 mt-0.5">
+                {lockedSubmissionStatus.detail}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Leader Info Banner if not leader */}
+        {!isLocked && !isLeader && (
+          <div className="w-full p-3.5 sm:p-4 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs sm:text-sm flex items-center gap-3">
+            <span className="text-base sm:text-lg">ℹ️</span>
+            <div>
+              <p className="font-medium">Only the Team Leader can submit the project proposal.</p>
+              <p className="text-xs text-amber-400/80 mt-0.5">
+                You can review the draft details below while your team leader finalizes the submission.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {error && (
+          <div className="w-full p-3.5 sm:p-4 rounded-xl bg-red-500/15 border border-red-500/30 text-red-300 text-xs sm:text-sm">
+            {error}
+          </div>
+        )}
+
+        {/* Form Fields Container */}
         <form
           onSubmit={handleSubmit}
           className="w-full flex flex-col items-start gap-[clamp(14px,2.2vh,28px)] mt-1 sm:mt-2"
         >
-          {/* Field 1: Short Description (Frame 1948755613) */}
+          {/* Field 1: Short Description */}
           <div className="w-full flex flex-col items-start gap-1.5 sm:gap-2.5">
             <label
               htmlFor="shortDescription"
@@ -203,15 +361,16 @@ export default function IdeaSubmissionPage() {
               id="shortDescription"
               value={shortDescription}
               onChange={(e) => setShortDescription(e.target.value)}
+              disabled={isLocked || isSubmitting || (!isLeader && !isLocked)}
               placeholder="Brief summary of your project..."
-              className="w-full bg-[#343434] text-white rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-7 py-2 sm:py-3 text-[clamp(12px,1.6vw,18px)] focus:outline-none focus:ring-1 focus:ring-white/40 resize-none min-h-[41px] sm:min-h-[82px] h-[41px] sm:h-[82px] transition-all placeholder:text-neutral-500"
+              className="w-full bg-[#343434] text-white rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-7 py-2 sm:py-3 text-[clamp(12px,1.6vw,18px)] focus:outline-none focus:ring-1 focus:ring-white/40 resize-none min-h-[41px] sm:min-h-[82px] h-[41px] sm:h-[82px] transition-all placeholder:text-neutral-500 disabled:opacity-75 disabled:cursor-not-allowed"
               style={{
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
               }}
             />
           </div>
 
-          {/* Field 2: Long Description (Frame 1948755614) */}
+          {/* Field 2: Long Description */}
           <div className="w-full flex flex-col items-start gap-1.5 sm:gap-2.5">
             <label
               htmlFor="longDescription"
@@ -226,15 +385,16 @@ export default function IdeaSubmissionPage() {
               id="longDescription"
               value={longDescription}
               onChange={(e) => setLongDescription(e.target.value)}
+              disabled={isLocked || isSubmitting || (!isLeader && !isLocked)}
               placeholder="Detailed architecture, features, problem statement and solution..."
-              className="w-full bg-[#343434] text-white rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-7 py-2 sm:py-3 text-[clamp(12px,1.6vw,18px)] focus:outline-none focus:ring-1 focus:ring-white/40 resize-none min-h-[85px] sm:min-h-[125px] h-[85px] sm:h-[125px] transition-all placeholder:text-neutral-500"
+              className="w-full bg-[#343434] text-white rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-7 py-2 sm:py-3 text-[clamp(12px,1.6vw,18px)] focus:outline-none focus:ring-1 focus:ring-white/40 resize-none min-h-[85px] sm:min-h-[125px] h-[85px] sm:h-[125px] transition-all placeholder:text-neutral-500 disabled:opacity-75 disabled:cursor-not-allowed"
               style={{
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
               }}
             />
           </div>
 
-          {/* Field 3: Links (Frame 1948755615) */}
+          {/* Field 3: Links */}
           <div className="w-full flex flex-col items-start gap-1.5 sm:gap-2.5">
             <label
               htmlFor="links"
@@ -250,15 +410,16 @@ export default function IdeaSubmissionPage() {
               type="text"
               value={links}
               onChange={(e) => setLinks(e.target.value)}
+              disabled={isLocked || isSubmitting || (!isLeader && !isLocked)}
               placeholder="GitHub repo, Figma, demo URLs (comma separated)..."
-              className="w-full bg-[#343434] text-white rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-7 py-1.5 sm:py-3 text-[clamp(12px,1.6vw,18px)] focus:outline-none focus:ring-1 focus:ring-white/40 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] transition-all placeholder:text-neutral-500"
+              className="w-full bg-[#343434] text-white rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-7 py-1.5 sm:py-3 text-[clamp(12px,1.6vw,18px)] focus:outline-none focus:ring-1 focus:ring-white/40 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] transition-all placeholder:text-neutral-500 disabled:opacity-75 disabled:cursor-not-allowed"
               style={{
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
               }}
             />
           </div>
 
-          {/* Field 4: Tracks (Frame 1948755616) */}
+          {/* Field 4: Tracks */}
           <div className="w-full flex flex-col items-start gap-1.5 sm:gap-2.5 relative" ref={dropdownRef}>
             <label
               className="text-white font-normal capitalize text-[clamp(16px,2vw,32px)] leading-[1.3]"
@@ -269,10 +430,18 @@ export default function IdeaSubmissionPage() {
               Tracks
             </label>
 
-            {/* Custom Interactive Chip Dropdown Input Box (Frame 1948754657) */}
+            {/* Custom Interactive Chip Dropdown Input Box */}
             <div
-              onClick={() => setIsTracksOpen((prev) => !prev)}
-              className="w-full min-h-[32px] sm:min-h-[56px] bg-[#343434] text-white rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-1.5 sm:py-2.5 flex items-center justify-between cursor-pointer border border-transparent hover:border-white/20 transition-all select-none"
+              onClick={() => {
+                if (!isLocked && (isLeader || isLocked)) {
+                  setIsTracksOpen((prev) => !prev);
+                }
+              }}
+              className={`w-full min-h-[32px] sm:min-h-[56px] bg-[#343434] text-white rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-1.5 sm:py-2.5 flex items-center justify-between border border-transparent transition-all select-none ${
+                isLocked || (!isLeader && !isLocked)
+                  ? "opacity-75 cursor-not-allowed"
+                  : "cursor-pointer hover:border-white/20"
+              }`}
             >
               {/* Chips container */}
               <div className="flex flex-wrap items-center gap-1.5 sm:gap-2.5">
@@ -289,47 +458,51 @@ export default function IdeaSubmissionPage() {
                         fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
                       }}
                       onClick={(e) => {
-                        e.stopPropagation();
-                        removeTrack(track);
+                        if (!isLocked) {
+                          e.stopPropagation();
+                          removeTrack(track);
+                        }
                       }}
                     >
                       {track}
-                      {/* Close 'x' icon (Vectors 1185, 1186) */}
-                      <span
-                        className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full text-white/80 hover:text-white hover:bg-white/20 transition-colors"
-                        aria-label={`Remove ${track}`}
-                      >
-                        ×
-                      </span>
+                      {!isLocked && isLeader && (
+                        <span
+                          className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full text-white/80 hover:text-white hover:bg-white/20 transition-colors"
+                          aria-label={`Remove ${track}`}
+                        >
+                          ×
+                        </span>
+                      )}
                     </span>
                   ))
                 )}
               </div>
 
-              {/* Vector 1184 - Dropdown arrow */}
-              <svg
-                width="16"
-                height="9"
-                viewBox="0 0 20 11"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className={`transition-transform duration-200 text-white/60 flex-shrink-0 ml-2 ${
-                  isTracksOpen ? "rotate-180" : ""
-                }`}
-              >
-                <path
-                  d="M1.5 1.5L10 9.5L18.5 1.5"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              {!isLocked && isLeader && (
+                <svg
+                  width="16"
+                  height="9"
+                  viewBox="0 0 20 11"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className={`transition-transform duration-200 text-white/60 flex-shrink-0 ml-2 ${
+                    isTracksOpen ? "rotate-180" : ""
+                  }`}
+                >
+                  <path
+                    d="M1.5 1.5L10 9.5L18.5 1.5"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
             </div>
 
             {/* Dropdown Menu Options */}
             <AnimatePresence>
-              {isTracksOpen && (
+              {isTracksOpen && !isLocked && isLeader && (
                 <motion.div
                   initial={{ opacity: 0, y: -10, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -369,38 +542,53 @@ export default function IdeaSubmissionPage() {
             </AnimatePresence>
           </div>
 
-          {/* Submit Button (Component 62) */}
-          <div className="pt-2">
+          {/* Submit Button */}
+          <div className="pt-2 flex items-center gap-4">
             <motion.button
               type="submit"
-              disabled={isSubmitting}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              className="bg-white text-black font-medium text-[clamp(12px,1.6vw,23px)] rounded-full px-4 sm:px-6 py-1.5 sm:py-2.5 flex items-center justify-center gap-2 cursor-pointer border-none shadow-md hover:bg-neutral-100 transition-all disabled:opacity-60"
+              disabled={isLocked || isSubmitting || !isLeader}
+              whileHover={!isLocked && isLeader ? { scale: 1.03 } : {}}
+              whileTap={!isLocked && isLeader ? { scale: 0.97 } : {}}
+              className={`font-medium text-[clamp(12px,1.6vw,20px)] rounded-full px-5 sm:px-8 py-1.5 sm:py-2.5 flex items-center justify-center gap-2 border-none shadow-md transition-all ${
+                isLocked
+                  ? "bg-emerald-600 text-white cursor-not-allowed opacity-90"
+                  : !isLeader
+                  ? "bg-neutral-600 text-neutral-300 cursor-not-allowed"
+                  : "bg-white text-black hover:bg-neutral-100 cursor-pointer"
+              }`}
               style={{
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
-                minWidth: "95px",
-                height: "32px",
+                minWidth: "120px",
+                height: "36px",
               }}
             >
-              <span>{isSubmitting ? "Submitting..." : submitted ? "Submitted!" : "Submit"}</span>
-              {/* North-East Arrow Vector */}
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 16 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="stroke-current flex-shrink-0"
-              >
-                <path
-                  d="M4.5 11.5L11.5 4.5M11.5 4.5H5.5M11.5 4.5V10.5"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <span>
+                {isLocked
+                  ? lockedSubmissionStatus.buttonLabel
+                  : isSubmitting
+                  ? "Submitting..."
+                  : submitted
+                  ? "Submitted!"
+                  : "Submit Proposal"}
+              </span>
+              {!isLocked && (
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="stroke-current flex-shrink-0"
+                >
+                  <path
+                    d="M4.5 11.5L11.5 4.5M11.5 4.5H5.5M11.5 4.5V10.5"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
             </motion.button>
           </div>
         </form>

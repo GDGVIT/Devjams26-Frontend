@@ -1,10 +1,34 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "../gsap-motion";
 import { DashboardGraphic } from "./DashboardGraphic";
+import { portalApi } from "@/services/portalApi";
 
 export function TeamChoiceView() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const checkTeamState = async () => {
+      const token = portalApi.getToken();
+      if (!token && !portalApi.getSession()) {
+        router.push("/portal");
+        return;
+      }
+      try {
+        const me = await portalApi.fetchMe();
+        if (me?.teamId) {
+          router.push("/team");
+        }
+      } catch {
+        // Stay on choice page
+      }
+    };
+    checkTeamState();
+  }, [router]);
+
   return (
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-center overflow-hidden px-4 py-8 select-none">
       {/* Ambient background glows */}

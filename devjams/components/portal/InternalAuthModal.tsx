@@ -35,9 +35,8 @@ export function InternalAuthModal({ isOpen, onClose, onSuccess }: InternalAuthMo
       return;
     }
 
-    setLoading(true);
     try {
-      await portalApi.loginInternal({
+      const session = await portalApi.loginInternal({
         email: cleanedEmail,
         registrationNumber: regNo.trim().toUpperCase(),
         password: password,
@@ -45,8 +44,12 @@ export function InternalAuthModal({ isOpen, onClose, onSuccess }: InternalAuthMo
 
       if (onSuccess) {
         onSuccess();
+      } else if (session.teamId) {
+        router.push("/team");
+      } else if (session.phone && session.hostelBlock && session.gender) {
+        router.push("/portal/join-create");
       } else {
-        router.push("/portal/submit");
+        router.push("/portal/onboarding");
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to sign in. Please try again.");
@@ -60,14 +63,18 @@ export function InternalAuthModal({ isOpen, onClose, onSuccess }: InternalAuthMo
     setError("");
     try {
       // In production with OAuth, this triggers the VIT Google SSO
-      await portalApi.loginInternal({
+      const session = await portalApi.loginInternal({
         email: email.trim().toLowerCase() || "student@vitstudent.ac.in",
         registrationNumber: regNo.trim().toUpperCase() || "23BCE1001",
       });
       if (onSuccess) {
         onSuccess();
+      } else if (session.teamId) {
+        router.push("/team");
+      } else if (session.phone && session.hostelBlock && session.gender) {
+        router.push("/portal/join-create");
       } else {
-        router.push("/portal/submit");
+        router.push("/portal/onboarding");
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Google sign-in failed.");
