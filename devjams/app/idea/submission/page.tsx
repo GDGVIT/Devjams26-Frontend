@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "../../../components/gsap-motion";
@@ -91,9 +92,88 @@ export default function IdeaSubmissionPage() {
           <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
         </svg>
       </Link>
+      {/* Top 4 Logos Blend Banner (Group 1948755624 - gear, web, gemini, cursor) */}
+      <div
+        className="relative pointer-events-none z-10 w-full max-w-[848px] h-[clamp(140px,22vw,314px)] -mt-[clamp(40px,8vw,135px)] flex items-center justify-center overflow-visible"
+        aria-hidden="true"
+      >
+        <div className="relative w-full h-full flex items-center justify-center">
+          {/* 1. Gear Logo */}
+          <div
+            className="absolute left-0 top-0 w-[37%] aspect-square flex items-center justify-center"
+            style={{
+              mixBlendMode: "screen",
+              filter: "brightness(1.12) saturate(1.05)",
+            }}
+          >
+            <Image
+              src="/assets/gear.svg"
+              alt="Gear"
+              width={314}
+              height={314}
+              priority
+              className="w-full h-full object-contain"
+            />
+          </div>
+
+          {/* 2. Web Track Logo */}
+          <div
+            className="absolute left-[32.5%] top-[15%] w-[27.3%] aspect-square flex items-center justify-center"
+            style={{
+              mixBlendMode: "screen",
+              filter: "brightness(1.12) saturate(1.05)",
+            }}
+          >
+            <Image
+              src="/assets/baked/web.png"
+              alt="Web Track"
+              width={232}
+              height={232}
+              priority
+              className="w-full h-full object-contain"
+            />
+          </div>
+
+          {/* 3. Gemini Track Logo */}
+          <div
+            className="absolute left-[55.5%] top-[11.8%] w-[28.8%] aspect-square flex items-center justify-center"
+            style={{
+              mixBlendMode: "screen",
+              filter: "brightness(1.12) saturate(1.05)",
+            }}
+          >
+            <Image
+              src="/assets/gemini.svg"
+              alt="Gemini Track"
+              width={244}
+              height={244}
+              priority
+              className="w-full h-full object-contain"
+            />
+          </div>
+
+          {/* 4. Cursor Logo */}
+          <div
+            className="absolute left-[80%] top-[23.3%] w-[20%] aspect-[170/205] flex items-center justify-center"
+            style={{
+              mixBlendMode: "screen",
+              filter: "brightness(1.12) saturate(1.05)",
+            }}
+          >
+            <Image
+              src="/assets/baked/cursor.png"
+              alt="Cursor"
+              width={170}
+              height={205}
+              priority
+              className="w-full h-full object-contain"
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Main Form Content Container (Frame 1948755618) */}
-      <div className="w-full max-w-[1072px] flex flex-col items-center gap-[clamp(16px,2vh,24px)] mt-10 md:mt-16 z-20">
-        {/* Title: Idea Submission */}
+      <div className="w-full max-w-[1072px] flex flex-col items-center gap-[clamp(16px,2vh,24px)] mt-2 z-20">
         <h1
           className="text-white font-bold tracking-normal leading-[1.2] text-center capitalize m-0 select-none w-full text-[clamp(36px,4.5vw,64px)]"
           style={{

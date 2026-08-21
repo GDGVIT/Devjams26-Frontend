@@ -135,16 +135,15 @@ export default function JoinPage() {
         </form>
       </div>
 
-      {/* Right Side 3 Logos Stack - Perfectly Relative Aligned Vertical, 20% Blend with each other, Dynamically Covering 100% Screen Height */}
+      {/* Right Side 3 Logos Stack - Single Normalized 100vh Column matching Image #2 */}
       <div
-        className="absolute right-[clamp(16px,4vw,60px)] top-0 bottom-0 h-screen pointer-events-none z-10 hidden md:flex flex-col items-center justify-between py-[1vh] overflow-hidden w-[clamp(280px,32vw,460px)]"
+        className="absolute right-[clamp(16px,4.5vw,70px)] top-0 bottom-0 h-screen pointer-events-none z-10 hidden md:flex flex-col items-center justify-center overflow-hidden w-[clamp(250px,27vw,390px)]"
         aria-hidden="true"
       >
-        {/* 1. Web Track Logo (Top, 70% visible on screen, 30% shifted up) */}
+        {/* 1. Web Track Logo */}
         <div
-          className="relative w-full flex-shrink-0 flex items-center justify-center -mt-[11.4vh]"
+          className="relative w-full aspect-square flex items-center justify-center flex-shrink-0"
           style={{
-            height: "38vh",
             mixBlendMode: "screen",
             filter: "brightness(1.12) saturate(1.05)",
           }}
@@ -152,19 +151,17 @@ export default function JoinPage() {
           <AssetImage
             src="/assets/web.svg"
             alt="Web Track"
-            width={454}
-            height={454}
+            width={908}
+            height={908}
             priority
-            className="max-h-full max-w-full object-contain"
+            className="w-full h-full object-contain"
           />
         </div>
 
-        {/* 2. Maps Logo (Vertically Centered in Screen, Shifted Down by 20%) */}
+        {/* 2. Maps Logo (Overlaps Web bottom by 22%) */}
         <div
-          className="relative w-full flex-shrink-0 flex items-center justify-center my-auto"
+          className="relative w-full aspect-[730/930] flex items-center justify-center flex-shrink-0 -mt-[22%]"
           style={{
-            height: "39vh",
-            transform: "translateY(20%)",
             mixBlendMode: "screen",
             filter: "brightness(1.12) saturate(1.05)",
           }}
@@ -172,18 +169,17 @@ export default function JoinPage() {
           <AssetImage
             src="/assets/maps.svg"
             alt="Google Maps"
-            width={365}
-            height={465}
+            width={730}
+            height={930}
             priority
-            className="max-h-full max-w-full object-contain"
+            className="w-full h-full object-contain"
           />
         </div>
 
-        {/* 3. Android Track Logo (Bottom, dynamically scaled in vh) */}
+        {/* 3. Android Track Logo (Overlaps Maps bottom pin by 26%) */}
         <div
-          className="relative w-full flex-shrink-0 flex items-center justify-center"
+          className="relative w-full aspect-[936/572] flex items-center justify-center flex-shrink-0 -mt-[26%]"
           style={{
-            height: "31vh",
             mixBlendMode: "screen",
             filter: "brightness(1.12) saturate(1.05)",
           }}
@@ -191,10 +187,10 @@ export default function JoinPage() {
           <AssetImage
             src="/assets/android.svg"
             alt="Android Track"
-            width={468}
-            height={286}
+            width={936}
+            height={572}
             priority
-            className="max-h-full max-w-full object-contain"
+            className="w-full h-full object-contain"
           />
         </div>
       </div>
