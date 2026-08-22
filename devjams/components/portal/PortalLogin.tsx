@@ -2,12 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { AlertCircle, ExternalLink } from "lucide-react";
 import { motion } from "../gsap-motion";
 import { HeroLogo } from "../hero/HeroLogo";
 import { HeroTrackIcons } from "../hero/HeroTrackIcons";
 import { portalAuthErrorMessage } from "../../app/portal-auth-state";
 import { nextPortalRoute, portalApi } from "../../services/portalApi";
 import { GDGLockup } from "./GDGLockup";
+import { GravitasNoticeModal, GRAVITAS_PORTAL_URL } from "./GravitasNoticeModal";
 
 export function PortalLogin() {
   const router = useRouter();
@@ -15,6 +17,7 @@ export function PortalLogin() {
   // Which button was clicked. `loading` disables both so a second click cannot
   // start a competing redirect, but only the chosen one should say it is busy.
   const [pendingType, setPendingType] = useState<"internal" | "external" | null>(null);
+  const [gravitasModalType, setGravitasModalType] = useState<"internal" | "external" | null>(null);
   const [error, setError] = useState("");
   const callbackHandled = useRef(false);
 
@@ -65,6 +68,14 @@ export function PortalLogin() {
     window.location.assign(portalApi.googleOAuthStartUrl(type));
   };
 
+  const handleProceedWithLogin = () => {
+    const targetType = gravitasModalType;
+    setGravitasModalType(null);
+    if (targetType) {
+      beginGoogleLogin(targetType);
+    }
+  };
+
   return (
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-center overflow-hidden px-4 py-8 select-none">
       {/* Top Left GDG Lockup */}
@@ -95,6 +106,34 @@ export function PortalLogin() {
           <HeroTrackIcons />
         </div>
 
+        {/* Gravitas Registration Info Notice */}
+        <div className="relative z-30 mt-1 max-w-xl mx-auto px-4 py-2 rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-200 text-xs sm:text-sm flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-left">
+            <AlertCircle className="w-4 h-4 shrink-0 text-amber-400" />
+            <span>
+              Registration on{" "}
+              <a
+                href={GRAVITAS_PORTAL_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline font-semibold hover:text-amber-100"
+              >
+                gravitas.vit.ac.in
+              </a>{" "}
+              is required before idea submission.
+            </span>
+          </div>
+          <a
+            href={GRAVITAS_PORTAL_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden sm:inline-flex items-center gap-1 text-xs font-semibold text-amber-300 hover:text-white shrink-0"
+          >
+            <span>Gravitas</span>
+            <ExternalLink className="w-3 h-3" />
+          </a>
+        </div>
+
         {error && (
           <div className="relative z-30 mt-3 max-w-xl rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-center text-sm text-red-200">
             {error}
@@ -105,13 +144,13 @@ export function PortalLogin() {
           initial={{ opacity: 0, y: 25 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
-          className="relative z-30 mt-6 sm:mt-10 md:mt-12 flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-6 w-full px-4 max-w-5xl"
+          className="relative z-30 mt-5 sm:mt-8 md:mt-10 flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-6 w-full px-4 max-w-5xl"
         >
           <div className="w-full sm:w-auto flex justify-center">
             <motion.button
               type="button"
               disabled={loading}
-              onClick={() => beginGoogleLogin("internal")}
+              onClick={() => setGravitasModalType("internal")}
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
               className="group w-full max-w-[266px] sm:max-w-none sm:w-auto sm:min-w-[340px] md:min-w-[420px] h-7 sm:h-[58px] md:h-[64px] px-3 sm:px-10 rounded-full bg-[#343434] text-white border border-white/10 font-normal flex items-center justify-center gap-2 sm:gap-4 transition-colors duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer select-none text-[12px] sm:text-[18px] md:text-[22.5px] disabled:opacity-60"
@@ -132,7 +171,7 @@ export function PortalLogin() {
             <motion.button
               type="button"
               disabled={loading}
-              onClick={() => beginGoogleLogin("external")}
+              onClick={() => setGravitasModalType("external")}
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
               className="group w-full max-w-[266px] sm:max-w-none sm:w-auto sm:min-w-[340px] md:min-w-[420px] h-7 sm:h-[58px] md:h-[64px] px-3 sm:px-10 rounded-full bg-white hover:bg-neutral-200 text-black border-none font-normal flex items-center justify-center gap-2 sm:gap-4 transition-colors duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer select-none text-[12px] sm:text-[18px] md:text-[22.5px] disabled:opacity-60"
@@ -146,6 +185,14 @@ export function PortalLogin() {
           </div>
         </motion.div>
       </div>
+
+      <GravitasNoticeModal
+        isOpen={Boolean(gravitasModalType)}
+        participantType={gravitasModalType}
+        onClose={() => setGravitasModalType(null)}
+        onProceed={handleProceedWithLogin}
+        loading={loading}
+      />
     </main>
   );
 }
