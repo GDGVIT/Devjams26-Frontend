@@ -14,7 +14,7 @@ export function portalAuthErrorMessage(code: string | null): string {
     case "participant_type_mismatch":
       return "That Google account does not match the participant type you chose. Use your VIT account for Internal, or a personal account for External.";
     case "registration_number_unavailable":
-      return "We could not read your registration number from your VIT account. Its Google name should end with it, as in \"Aman Singh 23BCE0346\". Please contact the event team.";
+      return "We could not read your registration number from your VIT account. Its Google name should end with it, as in \"Jane Doe 21ABC1234\". Please contact the event team.";
     case "registration_number_claimed":
       return "Your registration number is already linked to a different Google account. Please contact the event team.";
     case "participant_session_failed":
