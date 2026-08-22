@@ -9,6 +9,9 @@ import { Info } from "lucide-react";
 import { GDGLockup } from "@/components/portal/GDGLockup";
 import { portalApi } from "@/services/portalApi";
 import { lockedSubmissionStatus } from "../../idea-submission-status";
+const SHORT_DESCRIPTION_MAX_LENGTH = 100;
+const LONG_DESCRIPTION_MAX_LENGTH = 1000;
+
 
 
 const ALL_TRACKS = [
@@ -413,7 +416,10 @@ export default function IdeaSubmissionPage() {
             <textarea
               id="shortDescription"
               value={shortDescription}
-              onChange={(e) => setShortDescription(e.target.value)}
+              onChange={(e) =>
+                setShortDescription(e.target.value.slice(0, SHORT_DESCRIPTION_MAX_LENGTH))
+              }
+              maxLength={SHORT_DESCRIPTION_MAX_LENGTH}
               disabled={isLocked || isSubmitting || isSaving}
               placeholder="Brief summary of your project..."
               className="w-full bg-[#343434] text-white rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-7 py-2 sm:py-3 text-[clamp(12px,1.6vw,18px)] focus:outline-none focus:ring-1 focus:ring-white/40 resize-none min-h-[41px] sm:min-h-[82px] h-[41px] sm:h-[82px] transition-all placeholder:text-neutral-500 disabled:opacity-75 disabled:cursor-not-allowed"
@@ -421,6 +427,12 @@ export default function IdeaSubmissionPage() {
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
               }}
             />
+            <p
+              className="w-full text-right text-[10px] sm:text-xs text-white/50"
+              aria-live="polite"
+            >
+              {Math.max(0, SHORT_DESCRIPTION_MAX_LENGTH - shortDescription.length)} chars remaining
+            </p>
           </div>
 
           {/* Field 2: Long Description */}
@@ -437,7 +449,10 @@ export default function IdeaSubmissionPage() {
             <textarea
               id="longDescription"
               value={longDescription}
-              onChange={(e) => setLongDescription(e.target.value)}
+              onChange={(e) =>
+                setLongDescription(e.target.value.slice(0, LONG_DESCRIPTION_MAX_LENGTH))
+              }
+              maxLength={LONG_DESCRIPTION_MAX_LENGTH}
               disabled={isLocked || isSubmitting || isSaving}
               placeholder="Detailed architecture, features, problem statement and solution..."
               className="w-full bg-[#343434] text-white rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-7 py-2 sm:py-3 text-[clamp(12px,1.6vw,18px)] focus:outline-none focus:ring-1 focus:ring-white/40 resize-none min-h-[85px] sm:min-h-[125px] h-[85px] sm:h-[125px] transition-all placeholder:text-neutral-500 disabled:opacity-75 disabled:cursor-not-allowed"
@@ -445,6 +460,12 @@ export default function IdeaSubmissionPage() {
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
               }}
             />
+            <p
+              className="w-full text-right text-[10px] sm:text-xs text-white/50"
+              aria-live="polite"
+            >
+              {Math.max(0, LONG_DESCRIPTION_MAX_LENGTH - longDescription.length)} chars remaining
+            </p>
           </div>
 
           {/* Field 3: Links (Optional) */}
