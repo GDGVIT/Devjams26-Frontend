@@ -797,6 +797,14 @@ export default function Home() {
         id="home"
         className="relative z-10 flex flex-col items-center justify-center min-h-screen w-full max-w-[1440px] px-4 py-10"
       >
+        {/*
+          The wordmark is ten separate <img> letters, so the page had no h1 at
+          all and its headings started at h2 — search engines saw no top-level
+          heading. This carries it as real text without touching the design.
+        */}
+        <h1 className="sr-only">
+          DevJams’26 — Google Developer Groups On Campus, VIT Vellore
+        </h1>
         <header className="hero-header" aria-label="Google Developer Groups">
           <div className="hero-header__row">
           <motion.div

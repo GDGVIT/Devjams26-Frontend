@@ -49,7 +49,14 @@ const googleSansFlex = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://devjams.gdgvit.com"),
+  // The site is served from devjams.dscvit.com. This was gdgvit.com, which does
+  // not resolve, so every absolute URL Next derives from it — og:url, og:image,
+  // twitter:image — pointed at a dead host and social previews rendered with no
+  // image at all.
+  metadataBase: new URL("https://devjams.dscvit.com"),
+  alternates: {
+    canonical: "/",
+  },
   title: "DevJams’26",
   description: "DevJams 2026 - Hack Pack, DevJams’ Back. Organized by Google Developer Groups On Campus, VIT Vellore.",
   icons: {
@@ -66,7 +73,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "DevJams’26 | Wham Bam, Lets DevJam!",
     description: "DevJams 2026 - Hack Pack, DevJams’ Back. Organized by Google Developer Groups On Campus, VIT Vellore.",
-    url: "https://devjams.gdgvit.com",
+    url: "https://devjams.dscvit.com",
     siteName: "DevJams’26",
     images: [
       {
