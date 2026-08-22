@@ -22,13 +22,13 @@ export const FAQ_CATEGORIES: FAQCategory[] = [
       },
       {
         id: "g2",
-        question: "Who is eligible to participate in DevJams '26?",
+        question: "Who is eligible to participate in DevJams’26?",
         answer: "DevJams is open to all university students, developers, designers, and tech enthusiasts regardless of prior experience.",
       },
       {
         id: "g3",
         question: "What is the mode of the event?",
-        answer: "DevJams '26 is an in-person event hosted at VIT Vellore, so all participants take part on campus.",
+        answer: "The Idea Submission Round is online. Shortlisted teams will then be invited to the offline hackathon at the venue.",
       },
     ],
   },
@@ -48,8 +48,8 @@ export const FAQ_CATEGORIES: FAQCategory[] = [
       },
       {
         id: "r3",
-        question: "Can I participate individually without a team?",
-        answer: "Yes, solo hackers are welcome! You can also join our Discord community to connect with potential teammates.",
+        question: "What if I don’t have a team?",
+        answer: "No worries! Head over to our Discord community to connect with potential teammates. Internal and external participants can also team up and participate together.",
       },
     ],
   },

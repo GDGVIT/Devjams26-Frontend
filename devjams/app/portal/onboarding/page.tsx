@@ -672,7 +672,7 @@ export default function OnboardingPage() {
                       </option>
                       {gender === "Male" ? (
                         <>
-                          <optgroup label="Men's Hostel" className="bg-[#1E1E22] text-amber-400 font-semibold">
+                          <optgroup label="Men’s Hostel" className="bg-[#1E1E22] text-amber-400 font-semibold">
                             {mhBlocks.map((block) => (
                               <option key={block} value={block} className="bg-[#1E1E22] text-white font-normal">
                                 {block}
@@ -698,7 +698,7 @@ export default function OnboardingPage() {
                         </>
                       ) : (
                         <>
-                          <optgroup label="Men's Hostel" className="bg-[#1E1E22] text-amber-400 font-semibold">
+                          <optgroup label="Men’s Hostel" className="bg-[#1E1E22] text-amber-400 font-semibold">
                             {mhBlocks.map((block) => (
                               <option key={block} value={block} className="bg-[#1E1E22] text-white font-normal">
                                 {block}

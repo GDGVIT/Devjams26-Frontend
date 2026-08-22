@@ -291,7 +291,7 @@ export default function SubmitProposalPage() {
                 Submit Your Idea Proposal
               </h1>
               <p className="text-sm text-neutral-400 mt-1">
-                DevJams ’26 Round 1 Idea Submission & Evaluation
+                DevJams’26 Round 1 Idea Submission & Evaluation
               </p>
             </div>
 
@@ -823,7 +823,7 @@ export default function SubmitProposalPage() {
               Proposal Submitted!
             </h3>
             <p className="text-xs text-neutral-300 mb-6 leading-relaxed">
-              Your idea proposal for <span className="text-amber-400 font-semibold">{projectTitle || "DevJams '26"}</span> has been successfully registered. You can monitor evaluation status and update details from your dashboard.
+              Your idea proposal for <span className="text-amber-400 font-semibold">{projectTitle || "DevJams’26"}</span> has been successfully registered. You can monitor evaluation status and update details from your dashboard.
             </p>
             <div className="flex flex-col gap-2.5">
               <Link

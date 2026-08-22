@@ -50,8 +50,8 @@ const googleSansFlex = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://devjams.gdgvit.com"),
-  title: "DevJams '26 | Wham Bam, Lets DevJam!",
-  description: "DevJams 2026 - Hack Pack, DevJams' Back. Organized by Google Developer Groups On Campus, VIT Vellore.",
+  title: "DevJams’26 | Wham Bam, Lets DevJam!",
+  description: "DevJams 2026 - Hack Pack, DevJams’ Back. Organized by Google Developer Groups On Campus, VIT Vellore.",
   icons: {
     icon: [
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
@@ -64,16 +64,16 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: "DevJams '26 | Wham Bam, Lets DevJam!",
-    description: "DevJams 2026 - Hack Pack, DevJams' Back. Organized by Google Developer Groups On Campus, VIT Vellore.",
+    title: "DevJams’26 | Wham Bam, Lets DevJam!",
+    description: "DevJams 2026 - Hack Pack, DevJams’ Back. Organized by Google Developer Groups On Campus, VIT Vellore.",
     url: "https://devjams.gdgvit.com",
-    siteName: "DevJams '26",
+    siteName: "DevJams’26",
     images: [
       {
         url: "/og-image.png",
         width: 1024,
         height: 537,
-        alt: "DevJams '26 - Google Developer Groups On Campus VIT Vellore",
+        alt: "DevJams’26 - Google Developer Groups On Campus VIT Vellore",
       },
     ],
     locale: "en_US",
@@ -81,8 +81,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "DevJams '26 | Wham Bam, Lets DevJam!",
-    description: "DevJams 2026 - Hack Pack, DevJams' Back. Organized by Google Developer Groups On Campus, VIT Vellore.",
+    title: "DevJams’26 | Wham Bam, Lets DevJam!",
+    description: "DevJams 2026 - Hack Pack, DevJams’ Back. Organized by Google Developer Groups On Campus, VIT Vellore.",
     images: ["/og-image.png"],
   },
 };

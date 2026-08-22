@@ -160,7 +160,7 @@ export function GravitasNoticeModal({
                   fontFamily: '"Google Sans", var(--font-google-sans), sans-serif',
                 }}
               >
-                <span>{loading ? "Redirecting..." : "I've Registered — Continue with Google"}</span>
+                <span>{loading ? "Redirecting..." : "I’ve Registered — Continue with Google"}</span>
                 {!loading && <ArrowRight className="w-4 h-4" />}
               </button>
             </div>

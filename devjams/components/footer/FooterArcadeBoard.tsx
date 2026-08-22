@@ -208,7 +208,7 @@ export function FooterArcadeBoard() {
         }}
       />
 
-      {/* Central DevJams '26 Gradient SVG Logo with dedicated padding to prevent text overlap */}
+      {/* Central DevJams’26 Gradient SVG Logo with dedicated padding to prevent text overlap */}
       <div className="relative z-10 w-full max-w-full flex items-center justify-center py-3 sm:py-4 md:py-6 px-6 sm:px-10 md:px-14 pointer-events-none">
         <svg
           viewBox="0 0 960 180"

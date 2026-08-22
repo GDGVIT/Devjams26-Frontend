@@ -1,4 +1,4 @@
-// DevJams '26 Idea Submission Portal API Service
+// DevJams’26 Idea Submission Portal API Service
 // Integrated with Go/PostgreSQL Hackathon Management API
 
 export type ParticipantType = "internal" | "external";

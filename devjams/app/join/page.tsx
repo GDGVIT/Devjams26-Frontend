@@ -37,7 +37,7 @@ export default function JoinPage() {
     setError("");
     const trimmed = teamCode.trim();
     if (!trimmed) {
-      setError("Please enter your team's invite code.");
+      setError("Please enter your team’s invite code.");
       return;
     }
 

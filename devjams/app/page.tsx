@@ -957,7 +957,7 @@ export default function Home() {
         </AnimatePresence>
 
         <div className="hero-content">
-        {/* DevJams '26 Logo Container - Placed ON TOP (z-30) */}
+        {/* DevJams’26 Logo Container - Placed ON TOP (z-30) */}
         <div className="hero-logo-canvas relative z-30 w-[955.5px] h-[170.98px] max-w-full scale-[0.36] min-[440px]:scale-[0.52] sm:scale-[0.72] md:scale-[0.88] lg:scale-100 transition-transform origin-center">
           {logoLetters.map((letter, index) => (
             <motion.div
@@ -981,7 +981,7 @@ export default function Home() {
             >
               <Image
                 src={letter.src}
-                alt={`DevJams '26 - ${letter.alt}`}
+                alt={`DevJams’26 - ${letter.alt}`}
                 width={letter.width}
                 height={letter.height}
                 priority

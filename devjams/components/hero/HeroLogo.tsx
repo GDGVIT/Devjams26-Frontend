@@ -52,7 +52,7 @@ export function HeroLogo() {
         >
           <Image
             src={letter.src}
-            alt={`DevJams '26 - ${letter.alt}`}
+            alt={`DevJams’26 - ${letter.alt}`}
             width={letter.width}
             height={letter.height}
             priority

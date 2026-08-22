@@ -9,7 +9,7 @@ export function Hero() {
   return (
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-center overflow-x-hidden px-4 py-10 select-none">
       <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-[1100px]">
-        {/* DevJams '26 Logo */}
+        {/* DevJams’26 Logo */}
         <HeroLogo />
 
         {/* 4 Floating Track SVGs */}
