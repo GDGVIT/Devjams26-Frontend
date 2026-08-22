@@ -708,11 +708,12 @@ export const portalApi = {
     return persistIdea(idea, true);
   },
 
-  // Save only mutable onboarding fields. Name, registration number, and email
-  // are always the authenticated participant identity returned by the backend.
+  // Save editable identity fields together with onboarding details. Email is
+  // omitted because it is the verified Google identity and remains read-only.
   async saveOnboarding(data: OnboardingData): Promise<UserSession> {
     const profileUpdate = data.participantType === "external"
       ? {
+          name: data.name.trim(),
           phone: data.contactNumber.trim(),
           gender: data.gender.trim(),
           college_name: data.collegeName.trim(),
@@ -720,6 +721,8 @@ export const portalApi = {
           college_roll_number: data.collegeRollNumber.trim(),
         }
       : {
+          name: data.name.trim(),
+          registration_number: data.registrationNumber.trim().toUpperCase(),
           phone: data.contactNumber.trim(),
           gender: data.gender.trim(),
           hostel_block: data.hostelBlock.trim(),

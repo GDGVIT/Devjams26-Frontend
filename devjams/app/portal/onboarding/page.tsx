@@ -498,9 +498,10 @@ export default function OnboardingPage() {
                 <input
                   type="text"
                   value={name}
-                  readOnly
-                  aria-readonly="true"
-                  className="w-full px-4 py-3 rounded-xl bg-[#242424] border border-white/10 text-white/70 text-sm sm:text-base cursor-not-allowed"
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="E.G Neeraj Sathish Kumar"
+                  required
+                  className="w-full px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white placeholder-neutral-500 text-sm sm:text-base focus:outline-none transition-all"
                 />
               </div>
 
@@ -512,9 +513,11 @@ export default function OnboardingPage() {
                   <input
                     type="text"
                     value={registrationNumber}
-                    readOnly
-                    aria-readonly="true"
-                    className="w-full px-4 py-3 rounded-xl bg-[#242424] border border-white/10 text-white/70 text-sm sm:text-base cursor-not-allowed uppercase"
+                    onChange={(e) => setRegistrationNumber(e.target.value.toUpperCase())}
+                    placeholder="E.G 25BCE2055"
+                    required
+                    aria-label="Registration Number"
+                    className="w-full px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white placeholder-neutral-500 text-sm sm:text-base focus:outline-none transition-all uppercase"
                   />
                 </div>
               )}
