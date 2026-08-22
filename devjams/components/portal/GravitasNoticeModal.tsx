@@ -4,7 +4,8 @@ import { useEffect } from "react";
 import { AlertCircle, ExternalLink, ArrowRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "../gsap-motion";
 
-export const GRAVITAS_PORTAL_URL = "https://gravitas.vit.ac.in";
+export { GRAVITAS_PORTAL_URL } from "@/app/gravitas-notice";
+import { GRAVITAS_PORTAL_URL } from "@/app/gravitas-notice";
 
 export interface GravitasNoticeModalProps {
   isOpen: boolean;
@@ -54,7 +55,7 @@ export function GravitasNoticeModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.94, y: 16 }}
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
             className="relative z-10 w-full max-w-lg bg-[#141418] border border-white/15 rounded-3xl p-6 sm:p-8 text-white shadow-[0_0_60px_rgba(0,0,0,0.85)] flex flex-col gap-5 overflow-hidden"
           >
             {/* Top Ambient Glow */}

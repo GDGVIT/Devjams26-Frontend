@@ -17,7 +17,7 @@ export const FAQ_CATEGORIES: FAQCategory[] = [
     items: [
       {
         id: "g1",
-        question: "Do i need to pay for this hack?",
+        question: "Do I need to pay for this hack?",
         answer: "No, registration for this hack is completely free, we believe in making technology accessible to everyone.",
       },
       {
@@ -28,7 +28,7 @@ export const FAQ_CATEGORIES: FAQCategory[] = [
       {
         id: "g3",
         question: "What is the mode of the event?",
-        answer: "DevJams '26 is hosted in a hybrid format, allowing participants to attend in-person at the venue or contribute remotely.",
+        answer: "DevJams '26 is an in-person event hosted at VIT Vellore, so all participants take part on campus.",
       },
     ],
   },
@@ -39,7 +39,7 @@ export const FAQ_CATEGORIES: FAQCategory[] = [
       {
         id: "r1",
         question: "What is the maximum team size?",
-        answer: "Teams can consist of 1 to 4 members. You can form teams across different courses and academic years.",
+        answer: "Teams can consist of 2 to 4 members. You can form teams across different courses and academic years.",
       },
       {
         id: "r2",

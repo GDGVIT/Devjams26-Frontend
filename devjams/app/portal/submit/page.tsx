@@ -122,8 +122,10 @@ export default function SubmitProposalPage() {
   }, [router, session]);
 
   const addMember = () => {
-    if (members.length >= 4) {
-      setError("Maximum team size is 5 (Leader + 4 members).");
+    // Teams are 2 to 4 people in total. The signed-in user is the leader and is
+    // not part of `members`, so this list holds 1 to 3 additional people.
+    if (members.length >= 3) {
+      setError("Maximum team size is 4 (you + 3 members).");
       return;
     }
     setMembers([...members, { name: "", email: "", role: "Developer" }]);
@@ -166,6 +168,13 @@ export default function SubmitProposalPage() {
       return false;
     }
     if (isSubmitting) {
+      // Lower bound of the 2 to 4 team size. Only enforced on final submission
+      // so an incomplete roster can still be saved as a draft.
+      if (members.length < 1) {
+        setError("Teams need at least 2 people. Add at least one more member.");
+        setActiveStep(1);
+        return false;
+      }
       if (!projectTitle.trim()) {
         setError("Please enter a Project Title.");
         setActiveStep(3);
@@ -354,7 +363,7 @@ export default function SubmitProposalPage() {
               <div>
                 <h2 className="text-xl font-bold text-white mb-1">Team Information</h2>
                 <p className="text-xs text-neutral-400">
-                  Provide your team name, contact details, and member roster (1 to 5 members).
+                  Provide your team name, contact details, and member roster (teams are 2 to 4 people, including you).
                 </p>
               </div>
 
@@ -417,12 +426,12 @@ export default function SubmitProposalPage() {
                 <div className="flex items-center justify-between mb-3">
                   <div>
                     <h3 className="text-sm font-semibold text-white">Team Members</h3>
-                    <p className="text-xs text-neutral-400">Add up to 4 additional team members</p>
+                    <p className="text-xs text-neutral-400">Add 1 to 3 additional team members</p>
                   </div>
                   <button
                     type="button"
                     onClick={addMember}
-                    disabled={members.length >= 4}
+                    disabled={members.length >= 3}
                     className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-medium text-white transition disabled:opacity-40 cursor-pointer"
                   >
                     + Add Member
