@@ -141,8 +141,7 @@ export function isOnboardingComplete(session: OnboardingStatus): boolean {
 export function nextPortalRoute(
   session: OnboardingStatus & Pick<UserSession, "teamId">
 ): string {
-  if (session.teamId) return "/team";
-  return isOnboardingComplete(session) ? "/portal/join-create" : "/portal/onboarding";
+  return session.teamId ? "/team" : "/portal/onboarding";
 }
 
 export interface TeamMember {
