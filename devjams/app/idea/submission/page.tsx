@@ -603,6 +603,37 @@ export default function IdeaSubmissionPage() {
 
           {/* Draft and submission actions */}
           <div className="pt-2 flex flex-wrap items-center gap-3 sm:gap-4">
+            <Link href="/team">
+              <motion.div
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="font-medium text-[clamp(12px,1.6vw,20px)] rounded-full px-5 sm:px-8 py-1.5 sm:py-2.5 flex items-center justify-center gap-2 bg-[#343434] text-white hover:bg-[#444444] border border-white/10 shadow-md transition-all cursor-pointer select-none"
+                style={{
+                  fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+                  minWidth: "100px",
+                  height: "36px",
+                }}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="stroke-current flex-shrink-0"
+                >
+                  <path
+                    d="M11.5 8H4.5M4.5 8L8.5 4M4.5 8L8.5 12"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span>Back</span>
+              </motion.div>
+            </Link>
+
             {!isLocked && (
               <motion.button
                 type="button"
