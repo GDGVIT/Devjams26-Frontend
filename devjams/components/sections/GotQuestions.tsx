@@ -85,7 +85,7 @@ export function GotQuestions() {
   const textOpacity = useTransform(scrollYProgress, [STICKY_RELEASE + 0.1, 0.92], [1, 0]);
 
   return (
-    <section id="faqs" className="relative w-full bg-black text-white">
+    <section id="got-questions" className="relative w-full bg-black text-white">
       <div ref={introRef} className="relative h-[240vh]">
         <div className="sticky top-0 h-screen overflow-hidden bg-black">
           <motion.div
@@ -111,7 +111,7 @@ export function GotQuestions() {
         </div>
       </div>
 
-      <div className="relative min-h-screen overflow-hidden bg-black py-4 sm:py-6 md:py-8 px-4 sm:px-8">
+      <div id="faqs" className="relative min-h-screen overflow-hidden bg-black py-4 sm:py-6 md:py-8 px-4 sm:px-8">
         <FAQsHeader />
         <FAQContent />
 
