@@ -12,6 +12,9 @@ import { GDGLockup } from "./GDGLockup";
 export function PortalLogin() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  // Which button was clicked. `loading` disables both so a second click cannot
+  // start a competing redirect, but only the chosen one should say it is busy.
+  const [pendingType, setPendingType] = useState<"internal" | "external" | null>(null);
   const [error, setError] = useState("");
   const callbackHandled = useRef(false);
 
@@ -57,6 +60,7 @@ export function PortalLogin() {
 
   const beginGoogleLogin = (type: "internal" | "external") => {
     setError("");
+    setPendingType(type);
     setLoading(true);
     window.location.assign(portalApi.googleOAuthStartUrl(type));
   };
@@ -113,7 +117,7 @@ export function PortalLogin() {
               className="group w-full max-w-[266px] sm:max-w-none sm:w-auto sm:min-w-[340px] md:min-w-[420px] h-7 sm:h-[58px] md:h-[64px] px-3 sm:px-10 rounded-full bg-[#343434] text-white border border-white/10 font-normal flex items-center justify-center gap-2 sm:gap-4 transition-colors duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer select-none text-[12px] sm:text-[18px] md:text-[22.5px] disabled:opacity-60"
               style={{ fontFamily: '"Google Sans", var(--font-google-sans), sans-serif' }}
             >
-              <span className="whitespace-nowrap">{loading ? "Redirecting to Google..." : "Continue As Internal Participant"}</span>
+              <span className="whitespace-nowrap">{pendingType === "internal" ? "Redirecting to Google..." : "Continue As Internal Participant"}</span>
               <svg className="w-3.5 h-3.5 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M7 17L17 7M17 7H9M17 7V15" />
               </svg>
@@ -134,7 +138,7 @@ export function PortalLogin() {
               className="group w-full max-w-[266px] sm:max-w-none sm:w-auto sm:min-w-[340px] md:min-w-[420px] h-7 sm:h-[58px] md:h-[64px] px-3 sm:px-10 rounded-full bg-white hover:bg-neutral-200 text-black border-none font-normal flex items-center justify-center gap-2 sm:gap-4 transition-colors duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer select-none text-[12px] sm:text-[18px] md:text-[22.5px] disabled:opacity-60"
               style={{ fontFamily: '"Google Sans", var(--font-google-sans), sans-serif' }}
             >
-              <span className="whitespace-nowrap">{loading ? "Redirecting to Google..." : "Continue As External Participant"}</span>
+              <span className="whitespace-nowrap">{pendingType === "external" ? "Redirecting to Google..." : "Continue As External Participant"}</span>
               <svg className="w-3.5 h-3.5 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M7 17L17 7M17 7H9M17 7V15" />
               </svg>
