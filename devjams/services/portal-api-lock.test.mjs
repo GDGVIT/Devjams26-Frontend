@@ -50,3 +50,51 @@ test("does not fall back to a local idea after a locked-team conflict", async ()
     globalThis.fetch = originalFetch;
   }
 });
+
+test("saves a draft for any team member without submitting it", async () => {
+  const originalFetch = globalThis.fetch;
+  const requests = [];
+  globalThis.fetch = async (url, options = {}) => {
+    requests.push({ url: String(url), options });
+    if (String(url).endsWith("/participant/team/idea")) {
+      return new Response(
+        JSON.stringify({
+          message: "idea draft saved",
+          idea: {
+            short_description: "Draft",
+            long_description: "Draft details",
+            links: "",
+            tracks: "Web",
+            is_submitted: false,
+            last_edited_by_name: "Participant",
+          },
+        }),
+        { status: 200, headers: { "content-type": "application/json" } },
+      );
+    }
+    return new Response(
+      JSON.stringify({ team_id: "team-1", team_name: "Draft Team", idea_submitted: false, members: [] }),
+      { status: 200, headers: { "content-type": "application/json" } },
+    );
+  };
+
+  try {
+    const response = await portalApi.saveIdea({
+      short_description: "Draft",
+      long_description: "Draft details",
+      links: "",
+      tracks: "Web",
+    });
+    assert.equal(response.message, "idea draft saved");
+    const saveRequest = requests.find(({ url }) => url.endsWith("/participant/team/idea"));
+    assert.deepEqual(JSON.parse(saveRequest.options.body), {
+      short_description: "Draft",
+      long_description: "Draft details",
+      links: "",
+      tracks: "Web",
+      submit: false,
+    });
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});

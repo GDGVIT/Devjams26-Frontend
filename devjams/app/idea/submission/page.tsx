@@ -30,9 +30,13 @@ export default function IdeaSubmissionPage() {
   const [selectedTracks, setSelectedTracks] = useState<string[]>(["Web", "AIML"]);
   const [isTracksOpen, setIsTracksOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   const [isLeader, setIsLeader] = useState(true);
+  const [submitConfirmationOpen, setSubmitConfirmationOpen] = useState(false);
+  const [lastEditedBy, setLastEditedBy] = useState("");
+  const [lastEditedAt, setLastEditedAt] = useState("");
   const [error, setError] = useState("");
 
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -70,45 +74,34 @@ export default function IdeaSubmissionPage() {
 
         const team = await portalApi.fetchTeam();
         const cachedSub = await portalApi.getSubmission(me.id);
-        if (team) {
-          if (team.idea_submitted) {
-            setIsLocked(true);
-            setSubmitted(true);
+        if (team?.idea) {
+          setShortDescription(team.idea.short_description);
+          setLongDescription(team.idea.long_description);
+          setLinks(team.idea.links);
+          setLastEditedBy(team.idea.last_edited_by_name || "");
+          setLastEditedAt(team.idea.updated_at || "");
+          const tracks = team.idea.tracks
+            .split(",")
+            .map((track) => track.trim())
+            .filter(Boolean);
+          if (tracks.length > 0) {
+            setSelectedTracks(tracks);
           }
-
-          if (team.idea) {
-            if (!shortDescription) {
-              setShortDescription(team.idea.short_description);
-            }
-            if (!longDescription) {
-              setLongDescription(team.idea.long_description);
-            }
-            setLinks(team.idea.links);
-            const tracks = team.idea.tracks
-              .split(",")
-              .map((track) => track.trim())
-              .filter(Boolean);
-            if (tracks.length > 0) {
-              setSelectedTracks(tracks);
-            }
-          }
+        } else if (cachedSub) {
+          setShortDescription(cachedSub.shortSummary || "");
+          setLongDescription(cachedSub.problemStatement || "");
         }
 
-        if (cachedSub) {
-          if (cachedSub.shortSummary && !shortDescription) {
-            setShortDescription(cachedSub.shortSummary);
-          }
-          if (cachedSub.problemStatement && !longDescription) {
-            setLongDescription(cachedSub.problemStatement);
-          }
-        }
+        const submittedNow = Boolean(team?.idea_submitted || team?.idea?.is_submitted);
+        setIsLocked(submittedNow);
+        setSubmitted(submittedNow);
       } catch (err: unknown) {
         console.warn("Failed to load idea submission:", err);
       }
     };
 
     loadSubmissionData();
-  }, [router, shortDescription, longDescription]);
+  }, [router]);
 
   const removeTrack = (track: string) => {
     if (isLocked) return;
@@ -123,7 +116,28 @@ export default function IdeaSubmissionPage() {
     setIsTracksOpen(false);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSave = async () => {
+    if (isLocked) return;
+
+    setError("");
+    setIsSaving(true);
+    try {
+      const response = await portalApi.saveIdea({
+        short_description: shortDescription.trim(),
+        long_description: longDescription.trim(),
+        links: links.trim(),
+        tracks: selectedTracks.join(", "),
+      });
+      setLastEditedBy(response.idea?.last_edited_by_name || portalApi.getSession()?.name || "");
+      setLastEditedAt(response.idea?.updated_at || new Date().toISOString());
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to save idea draft.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (isLocked) return;
     if (!isLeader) {
@@ -139,10 +153,16 @@ export default function IdeaSubmissionPage() {
     }
 
     setError("");
-    setIsSubmitting(true);
+    setSubmitConfirmationOpen(true);
+  };
 
+  const confirmSubmit = async () => {
+    setSubmitConfirmationOpen(false);
+    setIsSubmitting(true);
     try {
-      await portalApi.submitIdea({
+      const trimmedShort = shortDescription.trim();
+      const trimmedLong = longDescription.trim();
+      const response = await portalApi.submitIdea({
         short_description: trimmedShort,
         long_description: trimmedLong || trimmedShort,
         links: links.trim(),
@@ -168,11 +188,12 @@ export default function IdeaSubmissionPage() {
         isLocked: true,
       }, false);
 
+      setLastEditedBy(response.idea?.last_edited_by_name || portalApi.getSession()?.name || "");
+      setLastEditedAt(response.idea?.updated_at || new Date().toISOString());
       setIsLocked(true);
       setSubmitted(true);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to submit idea.";
-      setError(msg);
+      setError(err instanceof Error ? err.message : "Failed to submit idea.");
     } finally {
       setIsSubmitting(false);
     }
@@ -370,7 +391,7 @@ export default function IdeaSubmissionPage() {
               id="shortDescription"
               value={shortDescription}
               onChange={(e) => setShortDescription(e.target.value)}
-              disabled={isLocked || isSubmitting || (!isLeader && !isLocked)}
+              disabled={isLocked || isSubmitting || isSaving}
               placeholder="Brief summary of your project..."
               className="w-full bg-[#343434] text-white rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-7 py-2 sm:py-3 text-[clamp(12px,1.6vw,18px)] focus:outline-none focus:ring-1 focus:ring-white/40 resize-none min-h-[41px] sm:min-h-[82px] h-[41px] sm:h-[82px] transition-all placeholder:text-neutral-500 disabled:opacity-75 disabled:cursor-not-allowed"
               style={{
@@ -394,7 +415,7 @@ export default function IdeaSubmissionPage() {
               id="longDescription"
               value={longDescription}
               onChange={(e) => setLongDescription(e.target.value)}
-              disabled={isLocked || isSubmitting || (!isLeader && !isLocked)}
+              disabled={isLocked || isSubmitting || isSaving}
               placeholder="Detailed architecture, features, problem statement and solution..."
               className="w-full bg-[#343434] text-white rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-7 py-2 sm:py-3 text-[clamp(12px,1.6vw,18px)] focus:outline-none focus:ring-1 focus:ring-white/40 resize-none min-h-[85px] sm:min-h-[125px] h-[85px] sm:h-[125px] transition-all placeholder:text-neutral-500 disabled:opacity-75 disabled:cursor-not-allowed"
               style={{
@@ -419,7 +440,7 @@ export default function IdeaSubmissionPage() {
               type="text"
               value={links}
               onChange={(e) => setLinks(e.target.value)}
-              disabled={isLocked || isSubmitting || (!isLeader && !isLocked)}
+              disabled={isLocked || isSubmitting || isSaving}
               placeholder="GitHub repo, Figma, demo URLs (comma separated)..."
               className="w-full bg-[#343434] text-white rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-7 py-1.5 sm:py-3 text-[clamp(12px,1.6vw,18px)] focus:outline-none focus:ring-1 focus:ring-white/40 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] transition-all placeholder:text-neutral-500 disabled:opacity-75 disabled:cursor-not-allowed"
               style={{
@@ -442,12 +463,12 @@ export default function IdeaSubmissionPage() {
             {/* Custom Interactive Chip Dropdown Input Box */}
             <div
               onClick={() => {
-                if (!isLocked && (isLeader || isLocked)) {
+                if (!isLocked) {
                   setIsTracksOpen((prev) => !prev);
                 }
               }}
               className={`w-full min-h-[32px] sm:min-h-[56px] bg-[#343434] text-white rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-1.5 sm:py-2.5 flex items-center justify-between border border-transparent transition-all select-none ${
-                isLocked || (!isLeader && !isLocked)
+                isLocked
                   ? "opacity-75 cursor-not-allowed"
                   : "cursor-pointer hover:border-white/20"
               }`}
@@ -474,7 +495,7 @@ export default function IdeaSubmissionPage() {
                       }}
                     >
                       {track}
-                      {!isLocked && isLeader && (
+                      {!isLocked && (
                         <span
                           className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full text-white/80 hover:text-white hover:bg-white/20 transition-colors"
                           aria-label={`Remove ${track}`}
@@ -487,7 +508,7 @@ export default function IdeaSubmissionPage() {
                 )}
               </div>
 
-              {!isLocked && isLeader && (
+              {!isLocked && (
                 <svg
                   width="16"
                   height="9"
@@ -511,7 +532,7 @@ export default function IdeaSubmissionPage() {
 
             {/* Dropdown Menu Options */}
             <AnimatePresence>
-              {isTracksOpen && !isLocked && isLeader && (
+              {isTracksOpen && !isLocked && (
                 <motion.div
                   initial={{ opacity: 0, y: -10, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -551,57 +572,104 @@ export default function IdeaSubmissionPage() {
             </AnimatePresence>
           </div>
 
-          {/* Submit Button */}
-          <div className="pt-2 flex items-center gap-4">
-            <motion.button
-              type="submit"
-              disabled={isLocked || isSubmitting || !isLeader}
-              whileHover={!isLocked && isLeader ? { scale: 1.03 } : {}}
-              whileTap={!isLocked && isLeader ? { scale: 0.97 } : {}}
-              className={`font-medium text-[clamp(12px,1.6vw,20px)] rounded-full px-5 sm:px-8 py-1.5 sm:py-2.5 flex items-center justify-center gap-2 border-none shadow-md transition-all ${
-                isLocked
-                  ? "bg-emerald-600 text-white cursor-not-allowed opacity-90"
-                  : !isLeader
-                  ? "bg-neutral-600 text-neutral-300 cursor-not-allowed"
-                  : "bg-white text-black hover:bg-neutral-100 cursor-pointer"
-              }`}
-              style={{
-                fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
-                minWidth: "120px",
-                height: "36px",
-              }}
-            >
-              <span>
+          {/* Draft and submission actions */}
+          <div className="pt-2 flex flex-wrap items-center gap-3 sm:gap-4">
+            {!isLocked && (
+              <motion.button
+                type="button"
+                onClick={handleSave}
+                disabled={isSaving || isSubmitting}
+                whileHover={!isSaving && !isSubmitting ? { scale: 1.03 } : {}}
+                whileTap={!isSaving && !isSubmitting ? { scale: 0.97 } : {}}
+                className="font-medium text-[clamp(12px,1.6vw,20px)] rounded-full px-5 sm:px-8 py-1.5 sm:py-2.5 flex items-center justify-center gap-2 bg-neutral-700 text-white hover:bg-neutral-600 disabled:opacity-60 disabled:cursor-not-allowed shadow-md transition-all"
+                style={{
+                  fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+                  minWidth: "120px",
+                  height: "36px",
+                }}
+              >
+                {isSaving ? "Saving..." : "Save Draft"}
+              </motion.button>
+            )}
+
+            {isLeader && (
+              <motion.button
+                type="submit"
+                disabled={isLocked || isSubmitting || isSaving}
+                whileHover={!isLocked && !isSubmitting && !isSaving ? { scale: 1.03 } : {}}
+                whileTap={!isLocked && !isSubmitting && !isSaving ? { scale: 0.97 } : {}}
+                className={`font-medium text-[clamp(12px,1.6vw,20px)] rounded-full px-5 sm:px-8 py-1.5 sm:py-2.5 flex items-center justify-center gap-2 border-none shadow-md transition-all ${
+                  isLocked
+                    ? "bg-emerald-600 text-white cursor-not-allowed opacity-90"
+                    : "bg-white text-black hover:bg-neutral-100 disabled:opacity-60 disabled:cursor-not-allowed"
+                }`}
+                style={{
+                  fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+                  minWidth: "120px",
+                  height: "36px",
+                }}
+              >
                 {isLocked
                   ? lockedSubmissionStatus.buttonLabel
                   : isSubmitting
                   ? "Submitting..."
-                  : submitted
-                  ? "Submitted!"
                   : "Submit Proposal"}
-              </span>
-              {!isLocked && (
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="stroke-current flex-shrink-0"
-                >
-                  <path
-                    d="M4.5 11.5L11.5 4.5M11.5 4.5H5.5M11.5 4.5V10.5"
-                    stroke="currentColor"
-                    strokeWidth="2.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              )}
-            </motion.button>
+                {!isLocked && (
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="stroke-current flex-shrink-0"
+                  >
+                    <path
+                      d="M4.5 11.5L11.5 4.5M11.5 4.5H5.5M11.5 4.5V10.5"
+                      stroke="currentColor"
+                      strokeWidth="2.2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                )}
+              </motion.button>
+            )}
           </div>
-        </form>
+
+          {lastEditedBy && (
+            <p className="text-xs sm:text-sm text-neutral-400" role="status">
+              Last edited by {lastEditedBy}
+              {lastEditedAt ? ` on ${new Date(lastEditedAt).toLocaleString()}` : ""}
+            </p>
+          )}
+</form>
       </div>
+      {submitConfirmationOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" role="dialog" aria-modal="true" aria-labelledby="submit-confirmation-title">
+          <div className="w-full max-w-md rounded-2xl border border-neutral-700 bg-[#202020] p-6 shadow-2xl">
+            <h2 id="submit-confirmation-title" className="text-xl font-semibold">Submit this proposal?</h2>
+            <p className="mt-3 text-sm text-neutral-300">
+              Submission is final. After you confirm, your team&apos;s idea will be locked and no member can edit it.
+            </p>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setSubmitConfirmationOpen(false)}
+                className="rounded-full bg-neutral-700 px-4 py-2 text-sm text-white hover:bg-neutral-600"
+              >
+                Review Draft
+              </button>
+              <button
+                type="button"
+                onClick={confirmSubmit}
+                className="rounded-full bg-white px-4 py-2 text-sm font-medium text-black hover:bg-neutral-100"
+              >
+                Confirm Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
