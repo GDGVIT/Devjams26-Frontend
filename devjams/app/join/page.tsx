@@ -1,11 +1,10 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AssetImage from "../../components/AssetImage";
 import { motion } from "../../components/gsap-motion";
+import { GDGLockup } from "@/components/portal/GDGLockup";
 import { portalApi } from "@/services/portalApi";
 
 export default function JoinPage() {
@@ -59,39 +58,10 @@ export default function JoinPage() {
     <main className="relative h-screen w-screen bg-black text-white overflow-hidden select-none">
       {/* Top Left GDG Lockup */}
       <header
-        className="absolute top-6 md:top-8 left-[clamp(24px,6.5vw,94px)] z-30"
+        className="absolute top-4 sm:top-6 md:top-8 left-4 sm:left-6 md:left-10 z-30"
         aria-label="Google Developer Groups"
       >
-        <Link href="/" className="cursor-pointer flex items-center">
-          <motion.div
-            className="hero-gdg-lockup"
-            initial={false}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <Image
-              src="/assets/gdg-logo-white.svg"
-              alt="GDG Logo"
-              width={46}
-              height={23}
-              priority
-              className="hero-gdg-lockup__icon"
-            />
-            <span className="hero-gdg-lockup__wordmark" aria-hidden="true">
-              <Image
-                src="/assets/gdg-lockup-line.png"
-                alt="Google Developer Groups on Campus - VIT Chennai"
-                width={3003}
-                height={300}
-                priority
-                className="hero-gdg-lockup__wordmark-image"
-              />
-            </span>
-            <span className="hero-gdg-lockup__name">
-              On Campus VIT Vellore
-            </span>
-          </motion.div>
-        </Link>
+        <GDGLockup />
       </header>
 
       {/* Left Form Container - Vertically Centered with Screen Size */}

@@ -69,6 +69,7 @@ export function PreviousEvents() {
 
   return (
     <section
+      id="gallery"
       ref={sectionRef}
       className="relative w-full py-16 sm:py-20 md:py-28 bg-black overflow-hidden px-4 sm:px-6 md:px-8"
     >

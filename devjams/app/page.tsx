@@ -741,6 +741,23 @@ export default function Home() {
     viewportWidth,
   ]);
 
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+    e.preventDefault();
+    setMenuOpen(false);
+
+    if (targetId === "home") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.history.pushState(null, "", "#home");
+      return;
+    }
+
+    const element = document.getElementById(targetId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+      window.history.pushState(null, "", `#${targetId}`);
+    }
+  };
+
   const logoLetters = [
     { src: "/assets/logo/D.svg", alt: "D", left: -0.25, top: 8.53, width: 138.68, height: 162.3, zIndex: 10 },
     { src: "/assets/logo/e.svg", alt: "e", left: 114.1, top: 47.96, width: 116.46, height: 122.94, zIndex: 9 },
@@ -749,14 +766,15 @@ export default function Home() {
     { src: "/assets/logo/a.svg", alt: "a", left: 353.18, top: 47.52, width: 106.04, height: 122.94, zIndex: 6 },
     { src: "/assets/logo/m.svg", alt: "m", left: 448.28, top: 51.62, width: 178.27, height: 119.23, zIndex: 5 },
     { src: "/assets/logo/s.svg", alt: "s", left: 607.61, top: 47.96, width: 101.41, height: 122.94, zIndex: 4 },
-    { src: "/assets/logo/'.svg", alt: "'", left: 724.43, top: 1.98, width: 41.39, height: 54.74, zIndex: 3 },
+    { src: "/assets/logo/apostrophe.svg", alt: "'", left: 724.43, top: 1.98, width: 41.39, height: 54.74, zIndex: 3 },
     { src: "/assets/logo/2.svg", alt: "2", left: 773.45, top: 4.66, width: 104.42, height: 166.23, zIndex: 2 },
     { src: "/assets/logo/6.svg", alt: "6", left: 844.59, top: 0, width: 110.67, height: 170.86, zIndex: 1 },
   ];
 
-  // `sizes` is pinned to the widest each icon reaches once the scroll
-  // transition scales it into the About / Frame Four layout. That growth is a
-  // transform, so the browser never re-requests a larger candidate on its own —
+  // The intrinsic sizes here match the desktop Figma export bounds (260x159,
+  // 288x288, 301x301, 278x203). Because the hero logo box is ~955px wide,
+  // next/image picks sizes="100vw" by default and serves full-size raster
+  // source. Declaring the maximum layout width (up to 468px on 1440 screens)
   // without this the optimizer would size for the hero box and the icons would
   // be upscaled and soft at the end of the transition.
   const trackIcons = [
@@ -915,22 +933,22 @@ export default function Home() {
                 animate={{ opacity: menuOpen ? 1 : 0, x: menuOpen ? 0 : 28 }}
                 transition={{ duration: 0.22, delay: menuOpen ? 0.1 : 0, ease: [0.16, 1, 0.3, 1] }}
               >
-                <a className="hero-nav__link hero-nav__link--active" href="#home" tabIndex={menuOpen ? 0 : -1} onClick={() => setMenuOpen(false)}>
+                <a className="hero-nav__link hero-nav__link--active" href="#home" tabIndex={menuOpen ? 0 : -1} onClick={(e) => handleNavClick(e, "home")}>
                   Home
                 </a>
-                <a className="hero-nav__link" href="#about" tabIndex={menuOpen ? 0 : -1} onClick={() => setMenuOpen(false)}>
+                <a className="hero-nav__link" href="#about" tabIndex={menuOpen ? 0 : -1} onClick={(e) => handleNavClick(e, "about")}>
                   About
                 </a>
-                <a className="hero-nav__link" href="#tracks" tabIndex={menuOpen ? 0 : -1} onClick={() => setMenuOpen(false)}>
+                <a className="hero-nav__link" href="#tracks" tabIndex={menuOpen ? 0 : -1} onClick={(e) => handleNavClick(e, "tracks")}>
                   Tracks
                 </a>
-                <a className="hero-nav__link" href="#gallery" tabIndex={menuOpen ? 0 : -1} onClick={() => setMenuOpen(false)}>
+                <a className="hero-nav__link" href="#gallery" tabIndex={menuOpen ? 0 : -1} onClick={(e) => handleNavClick(e, "gallery")}>
                   Gallery
                 </a>
-                <a className="hero-nav__link" href="#faqs" tabIndex={menuOpen ? 0 : -1} onClick={() => setMenuOpen(false)}>
+                <a className="hero-nav__link" href="#faqs" tabIndex={menuOpen ? 0 : -1} onClick={(e) => handleNavClick(e, "faqs")}>
                   FAQs
                 </a>
-                <a className="hero-nav__link" href="#contact" tabIndex={menuOpen ? 0 : -1} onClick={() => setMenuOpen(false)}>
+                <a className="hero-nav__link" href="#contact" tabIndex={menuOpen ? 0 : -1} onClick={(e) => handleNavClick(e, "contact")}>
                   Contact
                 </a>
               </motion.div>
@@ -1131,7 +1149,7 @@ export default function Home() {
           />
         </motion.div>
       </section>
-      <section id="tracks" ref={frameThreeRef} className="frame-three">
+      <section id="about-gdg" ref={frameThreeRef} className="frame-three">
         <h2 className="frame-three__title">
           {isMobileViewport ? (
             "About GDG"
