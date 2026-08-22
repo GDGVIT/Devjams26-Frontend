@@ -126,11 +126,45 @@ test("serializes the established internal onboarding PATCH", async () => {
   });
 });
 
-test("selects routes from the participant-specific completion requirements", () => {
-  assert.equal(nextPortalRoute({ participantType: "internal", phone: "1", gender: "Male", hostelBlock: "MH-A", roomNumber: "402" }), "/portal/join-create");
-  assert.equal(nextPortalRoute({ participantType: "internal", phone: "1", gender: "Male", hostelBlock: "MH-A" }), "/portal/join-create");
-  assert.equal(nextPortalRoute({ participantType: "external", phone: "1", gender: "Female", collegeName: "College", collegeAddress: "Chennai", collegeRollNumber: "42" }), "/portal/join-create");
-  assert.equal(nextPortalRoute({ participantType: "external", phone: "1", gender: "Female", collegeName: "College", collegeAddress: "Chennai" }), "/portal/onboarding");
+test("routes authenticated participants through onboarding before team selection", () => {
+  assert.equal(
+    nextPortalRoute({
+      participantType: "internal",
+      phone: "1",
+      gender: "Male",
+      hostelBlock: "MH-A",
+      roomNumber: "402",
+    }),
+    "/portal/onboarding",
+  );
+  assert.equal(
+    nextPortalRoute({
+      participantType: "external",
+      phone: "1",
+      gender: "Female",
+      collegeName: "College",
+      collegeAddress: "Chennai",
+      collegeRollNumber: "42",
+    }),
+    "/portal/onboarding",
+  );
+  assert.equal(
+    nextPortalRoute({
+      participantType: "external",
+      phone: "1",
+      gender: "Female",
+      collegeName: "College",
+      collegeAddress: "Chennai",
+    }),
+    "/portal/onboarding",
+  );
+  assert.equal(
+    nextPortalRoute({
+      participantType: "internal",
+      teamId: "team-1",
+    }),
+    "/team",
+  );
 });
 
 test("serializes participant IDs for team management", async () => {

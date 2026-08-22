@@ -6,7 +6,7 @@ import { motion } from "@/components/gsap-motion";
 import AssetImage from "@/components/AssetImage";
 import { GDGLockup } from "@/components/portal/GDGLockup";
 import { AlertTriangle } from "lucide-react";
-import { isOnboardingComplete, portalApi, type ParticipantType } from "@/services/portalApi";
+import { portalApi, type ParticipantType } from "@/services/portalApi";
 const COUNTRY_CODES = [
   { code: "+91", country: "India", flag: "🇮🇳" },
 
@@ -335,10 +335,6 @@ export default function OnboardingPage() {
         if (me) {
           if (me.teamId) {
             router.push("/team");
-            return;
-          }
-          if (isOnboardingComplete(me)) {
-            router.push("/portal/join-create");
             return;
           }
           setParticipantType(me.participantType);
