@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { Lightbulb } from "lucide-react";
 import { PortalNavbar } from "@/components/portal/PortalNavbar";
 import {
   portalApi,
@@ -78,8 +79,8 @@ export default function PortalDashboardPage() {
         {/* If No Submission Yet */}
         {!submission ? (
           <div className="bg-[#121216] border border-white/10 rounded-3xl p-8 sm:p-12 text-center max-w-2xl mx-auto my-8">
-            <div className="w-16 h-16 rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-400 flex items-center justify-center text-3xl mx-auto mb-4">
-              💡
+            <div className="w-16 h-16 rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-400 flex items-center justify-center mx-auto mb-4">
+              <Lightbulb className="h-8 w-8" aria-hidden="true" />
             </div>
             <h2 className="text-2xl font-bold text-white mb-2">
               No Proposal Submitted Yet
