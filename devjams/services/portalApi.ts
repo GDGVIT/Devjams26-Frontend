@@ -66,6 +66,12 @@ export interface BackendTeamIdea {
   long_description: string;
   links: string;
   tracks: string;
+  is_submitted?: boolean;
+  submitted_at?: string | null;
+  submitted_by_name?: string;
+  last_edited_by_name?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface BackendTeam {
@@ -199,9 +205,53 @@ const STORAGE_KEY_ONBOARDING = "devjams26_portal_onboarding";
 const STORAGE_KEY_SUBMISSION = "devjams26_portal_submission";
 const STORAGE_KEY_TEAM = "devjams26_portal_team";
 
+async function persistIdea(
+  idea: BackendTeamIdea,
+  submit: boolean,
+): Promise<{ message: string; idea?: BackendTeamIdea }> {
+  try {
+    const response = await portalApi.request<{ message: string; idea?: BackendTeamIdea }>(
+      "/participant/team/idea",
+      {
+        method: "PATCH",
+        body: JSON.stringify({ ...idea, submit }),
+      },
+    );
+    await portalApi.fetchTeam().catch(() => null);
+    return response;
+  } catch (err: unknown) {
+    const httpErr = err as ApiHttpError;
+    if ([400, 401, 403, 404, 409].includes(httpErr?.status ?? 0)) {
+      throw err;
+    }
+
+    const errMsg = err instanceof Error ? err.message : String(err);
+    console.warn("idea save backend unavailable, using local mock:", errMsg);
+    const team = await portalApi.fetchTeam();
+    if (team) {
+      const session = portalApi.getSession();
+      team.idea = {
+        ...idea,
+        is_submitted: submit || team.idea_submitted,
+        last_edited_by_name: session?.name,
+        updated_at: new Date().toISOString(),
+      };
+      team.idea_submitted = Boolean(submit || team.idea_submitted);
+      if (typeof window !== "undefined") {
+        localStorage.setItem(STORAGE_KEY_TEAM, JSON.stringify(team));
+      }
+    }
+    return { message: submit ? "idea submitted" : "idea draft saved", idea: team?.idea };
+  }
+}
+
 export const portalApi = {
   getBaseUrl(): string {
-    return process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
+    const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL?.trim();
+    if (!baseUrl) {
+      throw new Error("NEXT_PUBLIC_BACKEND_URL must be set");
+    }
+    return baseUrl.replace(/\/+$/, "");
   },
 
   getEventAccessKey(): string {
@@ -651,28 +701,12 @@ export const portalApi = {
     return team;
   },
 
-  // Submit all idea fields atomically through the upstream team-idea contract.
-  async submitIdea(idea: BackendTeamIdea): Promise<{ message: string }> {
-    try {
-      const resp = await portalApi.request<{ message: string }>("/participant/team/idea", {
-        method: "PATCH",
-        body: JSON.stringify(idea),
-      });
-      await portalApi.fetchTeam().catch(() => null);
-      return resp;
-    } catch (err: unknown) {
-      const errMsg = err instanceof Error ? err.message : String(err);
-      console.warn("submitIdea backend unavailable, using local mock:", errMsg);
-      const team = await portalApi.fetchTeam();
-      if (team) {
-        team.idea = idea;
-        team.idea_submitted = true;
-        if (typeof window !== "undefined") {
-          localStorage.setItem(STORAGE_KEY_TEAM, JSON.stringify(team));
-        }
-      }
-      return { message: "idea submitted" };
-    }
+  async saveIdea(idea: BackendTeamIdea): Promise<{ message: string; idea?: BackendTeamIdea }> {
+    return persistIdea(idea, false);
+  },
+
+  async submitIdea(idea: BackendTeamIdea): Promise<{ message: string; idea?: BackendTeamIdea }> {
+    return persistIdea(idea, true);
   },
 
   // Save only mutable onboarding fields. Name, registration number, and email

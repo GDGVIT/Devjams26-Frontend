@@ -188,7 +188,7 @@ export function ExternalAuthModal({ isOpen, onClose, onSuccess }: ExternalAuthMo
             </label>
             <input
               type="email"
-              placeholder="e.g. alex@example.com"
+              placeholder="e.g. alex@college.edu"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
