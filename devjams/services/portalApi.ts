@@ -665,6 +665,11 @@ export const portalApi = {
       await portalApi.fetchTeam().catch(() => null);
       return resp;
     } catch (err: unknown) {
+      const httpErr = err as ApiHttpError;
+      if ([400, 401, 403, 404, 409].includes(httpErr?.status ?? 0)) {
+        throw err;
+      }
+
       const errMsg = err instanceof Error ? err.message : String(err);
       console.warn("submitIdea backend unavailable, using local mock:", errMsg);
       const team = await portalApi.fetchTeam();

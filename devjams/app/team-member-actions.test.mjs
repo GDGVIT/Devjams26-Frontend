@@ -16,3 +16,8 @@ test("leader member row exposes management action by participant ID", () => {
 test("non-leader cannot manage another member", () => {
   assert.equal(memberActionFor(teammate, me.id, false), null);
 });
+
+test("locked team exposes no member actions", () => {
+  assert.equal(memberActionFor(me, me.id, true, true), null);
+  assert.equal(memberActionFor(teammate, me.id, true, true), null);
+});
