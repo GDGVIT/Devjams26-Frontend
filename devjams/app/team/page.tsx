@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "../../components/gsap-motion";
 import { GDGLockup } from "@/components/portal/GDGLockup";
@@ -164,10 +164,10 @@ export default function TeamPage() {
   }, [memberToRemove]);
 
   return (
-    <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto select-none p-4 sm:p-6 md:p-10 pb-20">
+    <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-center overflow-x-hidden overflow-y-auto select-none p-4 sm:p-6 md:p-10 pb-24 md:pb-20">
       {/* Top Left GDG Lockup */}
       <header
-        className="absolute top-6 md:top-8 left-[clamp(20px,5vw,60px)] z-30"
+        className="absolute top-4 sm:top-6 md:top-8 left-4 sm:left-6 md:left-10 z-30"
         aria-label="Google Developer Groups"
       >
         <GDGLockup />
@@ -176,7 +176,7 @@ export default function TeamPage() {
       {/* Top Right Profile Link */}
       <Link
         href="/profile"
-        className="absolute right-6 top-6 md:right-10 md:top-8 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-white/90 hover:text-white transition-all group z-30"
+        className="absolute right-4 top-4 sm:right-6 sm:top-6 md:right-10 md:top-8 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-white/90 hover:text-white transition-all group z-30"
         aria-label="User Profile"
       >
         <span
@@ -201,9 +201,9 @@ export default function TeamPage() {
         </svg>
       </Link>
 
-      {/* Top 4 Logos Blend Banner (Group 1948755624) */}
+      {/* Top 4 Logos Blend Banner: Top on Desktop, Anchored to bottom on Mobile */}
       <div
-        className="relative pointer-events-none z-10 w-full max-w-[848px] h-[clamp(100px,18vw,314px)] -mt-[clamp(24px,5vw,135px)] flex items-center justify-center overflow-visible"
+        className="fixed md:relative bottom-6 sm:bottom-8 md:bottom-auto left-1/2 md:left-auto -translate-x-1/2 md:translate-x-0 translate-y-0 md:translate-y-0 pointer-events-none z-10 w-full max-w-[370px] md:max-w-[848px] h-[135px] md:h-[clamp(140px,22vw,314px)] md:-mt-[clamp(24px,5vw,135px)] flex items-center justify-center overflow-visible flex-shrink-0"
         aria-hidden="true"
       >
         <div className="relative w-full h-full flex items-center justify-center">
@@ -282,7 +282,7 @@ export default function TeamPage() {
       </div>
 
       {/* Main Responsive Content Container (Frame 1948755614) */}
-      <div className="w-full max-w-[1072px] mx-auto flex flex-col items-start gap-[clamp(18px,3vh,36px)] mt-2 z-20 px-1 sm:px-3 md:px-0">
+      <div className="w-full max-w-[1072px] mx-auto my-auto flex flex-col items-start gap-[clamp(18px,3vh,36px)] pt-16 sm:pt-20 md:pt-2 z-20 px-1 sm:px-3 md:px-0">
         {/* Team Page Title */}
         <h1
           className="text-white font-bold tracking-normal leading-[1.2] text-center capitalize m-0 select-none w-full text-[clamp(36px,4.5vw,64px)]"

@@ -29,7 +29,6 @@ export default function IdeaSubmissionPage() {
   const [isTracksOpen, setIsTracksOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   const [isLeader, setIsLeader] = useState(true);
   const [teamMemberCount, setTeamMemberCount] = useState(0);
@@ -94,7 +93,6 @@ export default function IdeaSubmissionPage() {
 
         const submittedNow = Boolean(team?.idea_submitted || team?.idea?.is_submitted);
         setIsLocked(submittedNow);
-        setSubmitted(submittedNow);
       } catch (err: unknown) {
         console.warn("Failed to load idea submission:", err);
       }
@@ -204,7 +202,6 @@ export default function IdeaSubmissionPage() {
       setLastEditedBy(response.idea?.last_edited_by_name || portalApi.getSession()?.name || "");
       setLastEditedAt(response.idea?.updated_at || new Date().toISOString());
       setIsLocked(true);
-      setSubmitted(true);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to submit idea.");
     } finally {
@@ -216,7 +213,7 @@ export default function IdeaSubmissionPage() {
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start overflow-x-hidden overflow-y-auto select-none p-4 sm:p-6 md:p-10 pb-20">
       {/* Top Left GDG Lockup */}
       <header
-        className="absolute top-6 md:top-8 left-[clamp(20px,5vw,60px)] z-30"
+        className="absolute top-4 sm:top-6 md:top-8 left-4 sm:left-6 md:left-10 z-30"
         aria-label="Google Developer Groups"
       >
         <GDGLockup />
@@ -225,7 +222,7 @@ export default function IdeaSubmissionPage() {
       {/* Top Right Profile Link */}
       <Link
         href="/profile"
-        className="absolute right-6 top-6 md:right-10 md:top-8 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-white/90 hover:text-white transition-all group z-30"
+        className="absolute right-4 top-4 sm:right-6 sm:top-6 md:right-10 md:top-8 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-white/90 hover:text-white transition-all group z-30"
         aria-label="User Profile"
       >
         <span
@@ -252,7 +249,7 @@ export default function IdeaSubmissionPage() {
 
       {/* 4 Logos Blend Banner: Top on Desktop, Anchored to bottom of screen on Mobile */}
       <div
-        className="fixed md:relative bottom-0 md:bottom-auto left-1/2 md:left-auto -translate-x-1/2 md:translate-x-0 translate-y-[40%] md:translate-y-0 pointer-events-none z-10 w-full max-w-[340px] md:max-w-[848px] h-[124px] md:h-[clamp(140px,22vw,314px)] md:-mt-[clamp(24px,5vw,135px)] flex items-center justify-center overflow-visible flex-shrink-0"
+        className="fixed md:relative bottom-6 sm:bottom-8 md:bottom-auto left-1/2 md:left-auto -translate-x-1/2 md:translate-x-0 translate-y-0 md:translate-y-0 pointer-events-none z-10 w-full max-w-[370px] md:max-w-[848px] h-[135px] md:h-[clamp(140px,22vw,314px)] md:-mt-[clamp(24px,5vw,135px)] flex items-center justify-center overflow-visible flex-shrink-0"
         aria-hidden="true"
       >
         <div className="relative w-full h-full flex items-center justify-center">
@@ -331,7 +328,7 @@ export default function IdeaSubmissionPage() {
       </div>
 
       {/* Main Form Content Container */}
-      <div className="w-full max-w-[1072px] mx-auto my-auto flex flex-col items-center justify-center gap-[clamp(14px,2vh,24px)] z-20 px-1 sm:px-3 md:px-0 py-6 sm:py-0">
+      <div className="w-full max-w-[1072px] mx-auto flex flex-col items-center justify-start gap-[clamp(12px,1.8vh,24px)] z-20 px-1 sm:px-3 md:px-0 pt-12 sm:pt-13 md:pt-0 pb-25 md:pb-0">
         <h1
           className="text-white font-bold tracking-normal leading-[1.2] text-center capitalize m-0 select-none w-full text-[clamp(36px,4.5vw,64px)]"
           style={{
@@ -345,10 +342,10 @@ export default function IdeaSubmissionPage() {
         {isLocked && (
           <div className="w-full p-3.5 sm:p-4 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs sm:text-sm flex items-center gap-3">
             <svg
-              aria-hidden="true"
-              className="h-5 w-5 shrink-0 stroke-current"
+              className="w-5 h-5 shrink-0"
               viewBox="0 0 24 24"
               fill="none"
+              stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -450,16 +447,19 @@ export default function IdeaSubmissionPage() {
             />
           </div>
 
-          {/* Field 3: Links */}
+          {/* Field 3: Links (Optional) */}
           <div className="w-full flex flex-col items-start gap-1.5 sm:gap-2.5">
             <label
               htmlFor="links"
-              className="text-white font-normal capitalize text-[clamp(16px,2vw,32px)] leading-[1.3]"
+              className="text-white font-normal capitalize text-[clamp(16px,2vw,32px)] leading-[1.3] flex items-center gap-2"
               style={{
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
               }}
             >
-              Links
+              <span>Links</span>
+              <span className="text-xs sm:text-sm font-normal text-white/50 lowercase">
+                (optional)
+              </span>
             </label>
             <input
               id="links"
@@ -467,7 +467,7 @@ export default function IdeaSubmissionPage() {
               value={links}
               onChange={(e) => setLinks(e.target.value)}
               disabled={isLocked || isSubmitting || isSaving}
-              placeholder="GitHub repo, Figma, demo URLs (comma separated)..."
+              placeholder="https://drive.google.com/"
               className="w-full bg-[#343434] text-white rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-7 py-1.5 sm:py-3 text-[clamp(12px,1.6vw,18px)] focus:outline-none focus:ring-1 focus:ring-white/40 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] transition-all placeholder:text-neutral-500 disabled:opacity-75 disabled:cursor-not-allowed"
               style={{
                 fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",

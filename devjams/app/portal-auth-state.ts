@@ -8,6 +8,17 @@ export function portalAuthErrorMessage(code: string | null): string {
       return "Your Google sign-in session expired. Please start again.";
     case "oauth_not_configured":
       return "Google sign-in is not configured. Please contact the event team.";
+    // The cases below are refusals from the self-registration path. Without
+    // them every one reads as "could not be completed", which tells someone
+    // nothing about what to change before trying again.
+    case "participant_type_mismatch":
+      return "That Google account does not match the participant type you chose. Use your VIT account for Internal, or a personal account for External.";
+    case "registration_number_unavailable":
+      return "We could not read your registration number from your VIT account. Its Google name should end with it, as in \"Jane Doe 21ABC1234\". Please contact the event team.";
+    case "registration_number_claimed":
+      return "Your registration number is already linked to a different Google account. Please contact the event team.";
+    case "participant_session_failed":
+      return "We could not finish setting up your account. Please try again, and contact the event team if it keeps happening.";
     default:
       return "Google sign-in could not be completed. Please try again.";
   }

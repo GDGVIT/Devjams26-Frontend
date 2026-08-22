@@ -34,7 +34,7 @@ export function TeamChoiceView() {
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-center overflow-hidden px-4 py-8 select-none">
       {/* Top Left GDG Lockup */}
       <header
-        className="absolute top-6 md:top-8 left-[clamp(20px,5vw,60px)] z-40"
+        className="absolute top-4 sm:top-6 md:top-8 left-4 sm:left-6 md:left-10 z-40"
         aria-label="Google Developer Groups"
       >
         <GDGLockup />

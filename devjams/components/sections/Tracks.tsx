@@ -17,6 +17,7 @@ export function Tracks() {
 
   return (
     <section
+      id="tracks"
       ref={sectionRef}
       className="relative w-full bg-black md:h-[320vh]"
     >

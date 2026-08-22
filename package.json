@@ -6,7 +6,9 @@
     "dev": "npm run dev --prefix devjams",
     "build": "npm run build --prefix devjams",
     "start": "npm run start --prefix devjams",
-    "lint": "npm run lint --prefix devjams"
+    "lint": "npm run lint --prefix devjams",
+    "//postinstall": "The app lives in devjams/, but every script here delegates into it. A root `npm install` only installs this file's own dependencies, so without this the delegated build runs against an empty devjams/node_modules and dies on the first import it cannot resolve — lucide-react, @tailwindcss/postcss and the rest.",
+    "postinstall": "npm install --prefix devjams"
   },
   "dependencies": {
     "next": "latest" 
