@@ -50,7 +50,7 @@ const googleSansFlex = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://devjams.gdgvit.com"),
-  title: "DevJams’26 | Wham Bam, Lets DevJam!",
+  title: "DevJams’26",
   description: "DevJams 2026 - Hack Pack, DevJams’ Back. Organized by Google Developer Groups On Campus, VIT Vellore.",
   icons: {
     icon: [
