@@ -13,9 +13,6 @@ import { lockedSubmissionStatus } from "../../idea-submission-status";
 
 const ALL_TRACKS = [
   "AI/ML",
-  "Web",
-  "Android",
-  "Cloud",
   "FinTech",
   "DevTools & Infra",
   "AR/VR",
