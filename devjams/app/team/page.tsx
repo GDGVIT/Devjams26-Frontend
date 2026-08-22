@@ -525,10 +525,10 @@ export default function TeamPage() {
           <motion.button
             type="button"
             onClick={handleInvite}
-            whileHover={{ scale: teamLocked ? 1 : 1.05 }}
-            whileTap={{ scale: teamLocked ? 1 : 0.95 }}
-            disabled={teamLocked}
-            aria-disabled={teamLocked}
+            whileHover={{ scale: teamLocked || members.length >= 4 ? 1 : 1.05 }}
+            whileTap={{ scale: teamLocked || members.length >= 4 ? 1 : 0.95 }}
+            disabled={teamLocked || members.length >= 4}
+            aria-disabled={teamLocked || members.length >= 4}
             className="bg-white text-black rounded-full flex items-center justify-center cursor-pointer border-none shadow-md hover:bg-neutral-100 transition-all px-5 sm:px-8 py-1.5 sm:py-2.5 min-w-[95px] sm:min-w-[138px] h-8 sm:h-11 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <span
@@ -538,7 +538,7 @@ export default function TeamPage() {
                 letterSpacing: "0.02em",
               }}
             >
-              {teamLocked ? "Team Locked" : inviteCopied ? "Copied Code!" : "Invite Members"}
+              {teamLocked ? "Team Locked" : members.length >= 4 ? "Team Full" : inviteCopied ? "Copied Code!" : "Invite Members"}
             </span>
           </motion.button>
 
@@ -744,10 +744,10 @@ export default function TeamPage() {
               </div>
               <div className="flex flex-col gap-2">
                 <h3 id="leave-team-title" className="text-white font-bold text-2xl m-0" style={{ fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif' }}>
-                  {isLeader ? "Transfer leadership first" : "Leave this team?"}
+                  {isLeader && members.length > 1 ? "Transfer leadership first" : "Leave this team?"}
                 </h3>
                 <p className="text-white/60 text-sm m-0">
-                  {isLeader
+                  {isLeader && members.length > 1
                     ? "Choose another member from the menu and make them leader before leaving."
                     : "You will lose access to this team and its idea submission."}
                 </p>
@@ -759,9 +759,9 @@ export default function TeamPage() {
                   className="flex-1 h-11 rounded-[35px] border border-white/30 text-white font-medium text-base hover:bg-white/10 transition-colors cursor-pointer"
                   style={{ fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif' }}
                 >
-                  {isLeader ? "Close" : "Cancel"}
+                  {isLeader && members.length > 1 ? "Close" : "Cancel"}
                 </button>
-                {!isLeader && (
+                {(!isLeader || members.length === 1) && (
                   <button
                     type="button"
                     onClick={leaveTeam}

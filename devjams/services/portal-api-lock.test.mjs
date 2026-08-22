@@ -98,3 +98,26 @@ test("saves a draft for any team member without submitting it", async () => {
     globalThis.fetch = originalFetch;
   }
 });
+
+test("does not save a solo-team idea after a minimum-size conflict", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => new Response(
+    JSON.stringify({ error: "at least two team members are required before saving or submitting an idea" }),
+    { status: 409, headers: { "content-type": "application/json" } },
+  );
+
+  try {
+    await assert.rejects(
+      portalApi.saveIdea({
+        short_description: "Solo draft",
+        long_description: "Solo details",
+        links: "",
+        tracks: "Web",
+      }),
+      (error) => error?.status === 409
+        && error?.message === "at least two team members are required before saving or submitting an idea",
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});

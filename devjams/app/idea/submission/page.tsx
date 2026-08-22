@@ -34,6 +34,7 @@ export default function IdeaSubmissionPage() {
   const [submitted, setSubmitted] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   const [isLeader, setIsLeader] = useState(true);
+  const [teamMemberCount, setTeamMemberCount] = useState(0);
   const [submitConfirmationOpen, setSubmitConfirmationOpen] = useState(false);
   const [lastEditedBy, setLastEditedBy] = useState("");
   const [lastEditedAt, setLastEditedAt] = useState("");
@@ -73,6 +74,7 @@ export default function IdeaSubmissionPage() {
         setIsLeader(!!me.isTeamLeader);
 
         const team = await portalApi.fetchTeam();
+        setTeamMemberCount(team?.members?.length ?? 0);
         const cachedSub = await portalApi.getSubmission(me.id);
         if (team?.idea) {
           setShortDescription(team.idea.short_description);
@@ -100,8 +102,10 @@ export default function IdeaSubmissionPage() {
       }
     };
 
+
     loadSubmissionData();
   }, [router]);
+  const teamTooSmall = teamMemberCount < 2;
 
   const removeTrack = (track: string) => {
     if (isLocked) return;
@@ -118,7 +122,10 @@ export default function IdeaSubmissionPage() {
 
   const handleSave = async () => {
     if (isLocked) return;
-
+    if (teamTooSmall) {
+      setError("At least two team members are required before saving an idea.");
+      return;
+    }
     setError("");
     setIsSaving(true);
     try {
@@ -140,6 +147,10 @@ export default function IdeaSubmissionPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (isLocked) return;
+    if (teamTooSmall) {
+      setError("At least two team members are required before submitting an idea.");
+      return;
+    }
     if (!isLeader) {
       setError("Only the Team Leader can submit the project proposal.");
       return;
@@ -157,6 +168,10 @@ export default function IdeaSubmissionPage() {
   };
 
   const confirmSubmit = async () => {
+    if (teamTooSmall) {
+      setError("At least two team members are required before submitting an idea.");
+      return;
+    }
     setSubmitConfirmationOpen(false);
     setIsSubmitting(true);
     try {
@@ -352,8 +367,21 @@ export default function IdeaSubmissionPage() {
           </div>
         )}
 
+        {/* Idea submission requires a complete team */}
+        {!isLocked && teamTooSmall && (
+          <div className="w-full p-3.5 sm:p-4 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs sm:text-sm flex items-center gap-3">
+            <span className="text-base sm:text-lg">ℹ️</span>
+            <div>
+              <p className="font-medium">At least two team members are required before saving or submitting an idea.</p>
+              <p className="text-xs text-amber-400/80 mt-0.5">
+                Invite another participant to your team, then return here to continue.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Leader Info Banner if not leader */}
-        {!isLocked && !isLeader && (
+        {!isLocked && !isLeader && !teamTooSmall && (
           <div className="w-full p-3.5 sm:p-4 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs sm:text-sm flex items-center gap-3">
             <span className="text-base sm:text-lg">ℹ️</span>
             <div>
@@ -578,9 +606,9 @@ export default function IdeaSubmissionPage() {
               <motion.button
                 type="button"
                 onClick={handleSave}
-                disabled={isSaving || isSubmitting}
-                whileHover={!isSaving && !isSubmitting ? { scale: 1.03 } : {}}
-                whileTap={!isSaving && !isSubmitting ? { scale: 0.97 } : {}}
+                disabled={teamTooSmall || isSaving || isSubmitting}
+                whileHover={!teamTooSmall && !isSaving && !isSubmitting ? { scale: 1.03 } : {}}
+                whileTap={!teamTooSmall && !isSaving && !isSubmitting ? { scale: 0.97 } : {}}
                 className="font-medium text-[clamp(12px,1.6vw,20px)] rounded-full px-5 sm:px-8 py-1.5 sm:py-2.5 flex items-center justify-center gap-2 bg-neutral-700 text-white hover:bg-neutral-600 disabled:opacity-60 disabled:cursor-not-allowed shadow-md transition-all"
                 style={{
                   fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
@@ -595,9 +623,9 @@ export default function IdeaSubmissionPage() {
             {isLeader && (
               <motion.button
                 type="submit"
-                disabled={isLocked || isSubmitting || isSaving}
-                whileHover={!isLocked && !isSubmitting && !isSaving ? { scale: 1.03 } : {}}
-                whileTap={!isLocked && !isSubmitting && !isSaving ? { scale: 0.97 } : {}}
+                disabled={isLocked || teamTooSmall || isSubmitting || isSaving}
+                whileHover={!isLocked && !teamTooSmall && !isSubmitting && !isSaving ? { scale: 1.03 } : {}}
+                whileTap={!isLocked && !teamTooSmall && !isSubmitting && !isSaving ? { scale: 0.97 } : {}}
                 className={`font-medium text-[clamp(12px,1.6vw,20px)] rounded-full px-5 sm:px-8 py-1.5 sm:py-2.5 flex items-center justify-center gap-2 border-none shadow-md transition-all ${
                   isLocked
                     ? "bg-emerald-600 text-white cursor-not-allowed opacity-90"
