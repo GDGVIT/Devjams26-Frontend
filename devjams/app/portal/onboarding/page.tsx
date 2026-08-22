@@ -269,9 +269,12 @@ const COUNTRY_CODES = [
   { code: "+263", country: "Zimbabwe", flag: "🇿🇼" },
 ];
 
-export const mhBlocks = Array.from({ length: 20 }, (_, i) => `MH-${String.fromCharCode(65 + i)}`).filter(
-  (block) => !["MH-I", "MH-O", "MH-S"].includes(block)
-);
+export const mhBlocks = [
+  ...Array.from({ length: 20 }, (_, i) => `MH-${String.fromCharCode(65 + i)}`).filter(
+    (block) => !["MH-I", "MH-O", "MH-S"].includes(block),
+  ),
+  "MH-D-Annex",
+];
 
 export const lhBlocks = [
   ...Array.from({ length: 10 }, (_, i) => `LH-${String.fromCharCode(65 + i)}`).filter(

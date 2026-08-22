@@ -787,9 +787,10 @@ body {
   top: 34px;
   right: 147.94px;
   left: auto;
-  /* Well clear of every page layer; the sheet must never be composited
-     against the additively blended shapes underneath it. */
+  /* Keep the sheet above every page layer with a fully opaque surface so
+     animated page artwork never bleeds through the navigation links. */
   z-index: 1000;
+  isolation: isolate;
   width: var(--hero-nav-open-width);
   height: 68px;
   margin-left: 0;
@@ -1003,10 +1004,7 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.32);
     border-right: 0;
     border-radius: 24px 0 0 24px;
-    /* Fully opaque, not 0.96. The remaining 4% was enough for the additively
-       blended page shapes to punch through and land on top of the menu links. */
-    background: #0a0a0a;
-    isolation: isolate;
+    background: #000;
     box-shadow: -18px 0 48px rgba(0, 0, 0, 0.45);
     overflow-y: auto;
   }

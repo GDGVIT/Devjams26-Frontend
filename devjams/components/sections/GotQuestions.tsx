@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
+import { ArrowRight } from "lucide-react";
 import { motion, useScroll, useTransform } from "../gsap-motion";
 import { GotQuestionsGraphic } from "../got-questions/GotQuestionsGraphic";
 import { GotQuestionsHeading } from "../got-questions/GotQuestionsHeading";
@@ -24,6 +25,18 @@ function FAQContent() {
         onSelectCategory={setActiveCategoryId}
       />
       <FAQsList category={activeCategory} />
+      <a
+        href="http://dscv.it/dj26-discord"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group mt-10 inline-flex items-center gap-2 text-left text-base font-medium text-white/80 transition-colors hover:text-white sm:mt-14 sm:text-lg"
+      >
+        <span>For more queries, raise a ticket on Discord</span>
+        <ArrowRight
+          aria-hidden="true"
+          className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1 sm:h-5 sm:w-5"
+        />
+      </a>
     </div>
   );
 }
