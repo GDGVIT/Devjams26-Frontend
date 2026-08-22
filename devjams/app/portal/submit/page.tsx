@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { AlertTriangle } from "lucide-react";
 import { PortalNavbar } from "@/components/portal/PortalNavbar";
 import {
   portalApi,
@@ -340,7 +341,7 @@ export default function SubmitProposalPage() {
 
         {error && (
           <div className="mb-6 p-4 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm flex items-center gap-3">
-            <span className="text-lg">⚠️</span>
+            <AlertTriangle className="h-5 w-5 shrink-0" aria-hidden="true" />
             <span>{error}</span>
           </div>
         )}

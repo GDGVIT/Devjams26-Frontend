@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertTriangle } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { nextPortalRoute, portalApi } from "../../services/portalApi";
@@ -111,7 +112,7 @@ export function ExternalAuthModal({ isOpen, onClose, onSuccess }: ExternalAuthMo
 
         {error && (
           <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs flex items-center gap-2">
-            <span>⚠️</span>
+            <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span>{error}</span>
           </div>
         )}

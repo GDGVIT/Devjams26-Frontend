@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "../../../components/gsap-motion";
+import { Info } from "lucide-react";
 import { GDGLockup } from "@/components/portal/GDGLockup";
 import { portalApi } from "@/services/portalApi";
 import { lockedSubmissionStatus } from "../../idea-submission-status";
@@ -370,7 +371,7 @@ export default function IdeaSubmissionPage() {
         {/* Idea submission requires a complete team */}
         {!isLocked && teamTooSmall && (
           <div className="w-full p-3.5 sm:p-4 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs sm:text-sm flex items-center gap-3">
-            <span className="text-base sm:text-lg">ℹ️</span>
+            <Info className="h-5 w-5 shrink-0" aria-hidden="true" />
             <div>
               <p className="font-medium">At least two team members are required before saving or submitting an idea.</p>
               <p className="text-xs text-amber-400/80 mt-0.5">
@@ -383,7 +384,7 @@ export default function IdeaSubmissionPage() {
         {/* Leader Info Banner if not leader */}
         {!isLocked && !isLeader && !teamTooSmall && (
           <div className="w-full p-3.5 sm:p-4 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs sm:text-sm flex items-center gap-3">
-            <span className="text-base sm:text-lg">ℹ️</span>
+            <Info className="h-5 w-5 shrink-0" aria-hidden="true" />
             <div>
               <p className="font-medium">Only the Team Leader can submit the project proposal.</p>
               <p className="text-xs text-amber-400/80 mt-0.5">
