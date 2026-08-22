@@ -750,7 +750,7 @@ export default function OnboardingPage() {
               }}
             >
               <span className="whitespace-nowrap">
-                {loading ? "Saving..." : "Continue To Join or Create Page"}
+                {loading ? "Saving..." : "Get Onboarded"}
               </span>
               <svg
                 className="w-5 h-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 shrink-0"
