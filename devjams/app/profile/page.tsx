@@ -61,7 +61,7 @@ export default function ProfilePage() {
     <div className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-start select-none overflow-x-hidden pb-20">
       {/* Top Left GDG Lockup */}
       <header
-        className="absolute top-6 md:top-8 left-[clamp(20px,5vw,60px)] z-40"
+        className="absolute top-4 sm:top-6 md:top-8 left-4 sm:left-6 md:left-10 z-40"
         aria-label="Google Developer Groups"
       >
         <GDGLockup />
@@ -69,7 +69,7 @@ export default function ProfilePage() {
 
       {/* Top Floating Graphics Banner: Left (notebookllm + cursor), Center (antigravity + folder), Right (maps + four-petal) */}
       <div
-        className="absolute top-0 left-0 right-0 w-full pointer-events-none z-10 select-none overflow-visible"
+        className="hidden md:block absolute top-0 left-0 right-0 w-full pointer-events-none z-10 select-none overflow-visible"
         aria-hidden="true"
       >
         {/* 1. Left Pair (Align Top-Left Corner with Bleed) */}
@@ -182,7 +182,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Main Content Container (Semantic Main) */}
-      <main className="w-full max-w-[1072px] mx-auto flex flex-col items-start gap-[clamp(18px,3vh,36px)] z-20 pt-[clamp(75px,11vw,155px)] px-4 sm:px-6 md:px-0">
+      <main className="w-full max-w-[1072px] mx-auto flex flex-col items-start gap-[clamp(18px,3vh,36px)] z-20 pt-20 sm:pt-24 md:pt-[clamp(75px,11vw,155px)] px-4 sm:px-6 md:px-0">
         <div className="w-full flex items-center justify-between">
           <h1
             className="text-white font-bold tracking-normal leading-[1.2] text-left capitalize m-0 select-none text-[clamp(36px,4.5vw,64px)]"

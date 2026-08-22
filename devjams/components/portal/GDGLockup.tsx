@@ -40,8 +40,8 @@ export function GDGLockup({ className = "", animate = true }: GDGLockupProps) {
     <Link href="/" className="cursor-pointer inline-flex items-center" aria-label="Google Developer Groups - Home">
       {animate ? (
         <motion.div
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
           {content}
