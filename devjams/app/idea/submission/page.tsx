@@ -12,7 +12,7 @@ import { lockedSubmissionStatus } from "../../idea-submission-status";
 
 
 const ALL_TRACKS = [
-  "AIML",
+  "AI/ML",
   "Web",
   "Android",
   "Cloud",
@@ -20,7 +20,7 @@ const ALL_TRACKS = [
   "DevTools & Infra",
   "AR/VR",
   "Open Innovation",
-  "Multimedia",
+  "Multimedia Tech",
 ];
 
 export default function IdeaSubmissionPage() {
@@ -28,7 +28,7 @@ export default function IdeaSubmissionPage() {
   const [shortDescription, setShortDescription] = useState("");
   const [longDescription, setLongDescription] = useState("");
   const [links, setLinks] = useState("");
-  const [selectedTracks, setSelectedTracks] = useState<string[]>(["Web", "AIML"]);
+  const [selectedTracks, setSelectedTracks] = useState<string[]>(["Web", "AI/ML"]);
   const [isTracksOpen, setIsTracksOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
