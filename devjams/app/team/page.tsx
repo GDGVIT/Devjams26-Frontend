@@ -22,6 +22,7 @@ export default function TeamPage() {
   const [members, setMembers] = useState<BackendTeamMember[]>([]);
   const [currentParticipantId, setCurrentParticipantId] = useState("");
   const [isLeader, setIsLeader] = useState(false);
+  const [teamLocked, setTeamLocked] = useState(false);
   const [actionError, setActionError] = useState("");
   const [isManagingMembers, setIsManagingMembers] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -46,6 +47,7 @@ export default function TeamPage() {
 
         const team = await portalApi.fetchTeam();
         if (team) {
+          setTeamLocked(Boolean(team.idea_submitted));
           setTeamName(team.team_name || me.teamName || "My Team");
           setTeamCode(team.invite_code || "");
           if (team.members && Array.isArray(team.members)) {
@@ -60,6 +62,7 @@ export default function TeamPage() {
             ]);
           }
         } else {
+          setTeamLocked(false);
           setTeamName(me.teamName || "My Team");
           setTeamCode("");
           setMembers([
@@ -83,6 +86,7 @@ export default function TeamPage() {
   const refreshMembers = async () => {
     const team = await portalApi.fetchTeam();
     if (team) {
+      setTeamLocked(Boolean(team.idea_submitted));
       setMembers(team.members);
     }
   };
@@ -406,6 +410,11 @@ export default function TeamPage() {
             Members
           </h2>
 
+          {teamLocked && (
+            <p role="status" className="m-0 text-sm text-amber-200">
+              Team locked after idea submission. Members and the submitted idea cannot be changed.
+            </p>
+          )}
           {actionError && (
             <p role="alert" className="m-0 text-sm text-red-300">
               {actionError}
@@ -420,7 +429,7 @@ export default function TeamPage() {
               <div className="text-sm text-neutral-400">No members registered yet.</div>
             ) : (
               members.map((member, index) => {
-                const action = memberActionFor(member, currentParticipantId, isLeader);
+                const action = memberActionFor(member, currentParticipantId, isLeader, teamLocked);
                 const isMemberMenuOpen = memberMenu?.id === member.id;
                 return (
                   <div
@@ -516,9 +525,11 @@ export default function TeamPage() {
           <motion.button
             type="button"
             onClick={handleInvite}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-white text-black rounded-full flex items-center justify-center cursor-pointer border-none shadow-md hover:bg-neutral-100 transition-all px-5 sm:px-8 py-1.5 sm:py-2.5 min-w-[95px] sm:min-w-[138px] h-8 sm:h-11"
+            whileHover={{ scale: teamLocked || members.length >= 4 ? 1 : 1.05 }}
+            whileTap={{ scale: teamLocked || members.length >= 4 ? 1 : 0.95 }}
+            disabled={teamLocked || members.length >= 4}
+            aria-disabled={teamLocked || members.length >= 4}
+            className="bg-white text-black rounded-full flex items-center justify-center cursor-pointer border-none shadow-md hover:bg-neutral-100 transition-all px-5 sm:px-8 py-1.5 sm:py-2.5 min-w-[95px] sm:min-w-[138px] h-8 sm:h-11 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <span
               className="text-[clamp(12px,1.6vw,20px)] leading-none font-medium text-center"
@@ -527,7 +538,7 @@ export default function TeamPage() {
                 letterSpacing: "0.02em",
               }}
             >
-              {inviteCopied ? "Copied Code!" : "Invite Members"}
+              {teamLocked ? "Team Locked" : members.length >= 4 ? "Team Full" : inviteCopied ? "Copied Code!" : "Invite Members"}
             </span>
           </motion.button>
 
@@ -733,10 +744,10 @@ export default function TeamPage() {
               </div>
               <div className="flex flex-col gap-2">
                 <h3 id="leave-team-title" className="text-white font-bold text-2xl m-0" style={{ fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif' }}>
-                  {isLeader ? "Transfer leadership first" : "Leave this team?"}
+                  {isLeader && members.length > 1 ? "Transfer leadership first" : "Leave this team?"}
                 </h3>
                 <p className="text-white/60 text-sm m-0">
-                  {isLeader
+                  {isLeader && members.length > 1
                     ? "Choose another member from the menu and make them leader before leaving."
                     : "You will lose access to this team and its idea submission."}
                 </p>
@@ -748,9 +759,9 @@ export default function TeamPage() {
                   className="flex-1 h-11 rounded-[35px] border border-white/30 text-white font-medium text-base hover:bg-white/10 transition-colors cursor-pointer"
                   style={{ fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif' }}
                 >
-                  {isLeader ? "Close" : "Cancel"}
+                  {isLeader && members.length > 1 ? "Close" : "Cancel"}
                 </button>
-                {!isLeader && (
+                {(!isLeader || members.length === 1) && (
                   <button
                     type="button"
                     onClick={leaveTeam}

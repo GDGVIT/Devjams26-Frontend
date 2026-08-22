@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "@/components/gsap-motion";
 import AssetImage from "@/components/AssetImage";
 import { GDGLockup } from "@/components/portal/GDGLockup";
+import { AlertTriangle } from "lucide-react";
 import { isOnboardingComplete, portalApi, type ParticipantType } from "@/services/portalApi";
 const COUNTRY_CODES = [
   { code: "+91", country: "India", flag: "🇮🇳" },
@@ -473,7 +474,7 @@ export default function OnboardingPage() {
 
         {error && (
           <div className="mb-6 p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs sm:text-sm flex items-center gap-2">
-            <span>⚠️</span>
+            <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span>{error}</span>
           </div>
         )}
@@ -750,7 +751,7 @@ export default function OnboardingPage() {
               }}
             >
               <span className="whitespace-nowrap">
-                {loading ? "Saving..." : "Continue To Join or Create Page"}
+                {loading ? "Saving..." : "Get Onboarded"}
               </span>
               <svg
                 className="w-5 h-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 shrink-0"

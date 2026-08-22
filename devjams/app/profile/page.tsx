@@ -256,7 +256,7 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Row 2: Internal registration number and phone */}
+          {/* Row 2: Internal registration number and gender, followed by mobile */}
           <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-14 mt-1 sm:mt-2">
             {profile?.participantType === "internal" && (
               <div className="w-full flex flex-col items-start gap-2">
@@ -278,9 +278,29 @@ export default function ProfilePage() {
                 </div>
               </div>
             )}
+            {profile?.participantType === "internal" && (
+              <div className="w-full flex flex-col items-start gap-2">
+                <label
+                  className="text-white font-normal capitalize text-[clamp(16px,2vw,32px)] leading-[1.3]"
+                  style={{
+                    fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+                  }}
+                >
+                  Gender
+                </label>
+                <div
+                  className="w-full bg-[#343434] text-white/90 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center text-[clamp(12px,1.6vw,22px)] font-normal select-text"
+                  style={{
+                    fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+                  }}
+                >
+                  {loading ? "Loading..." : profile.gender || "N/A"}
+                </div>
+              </div>
+            )}
 
             {/* Phone Field */}
-            <div className={`w-full flex flex-col items-start gap-2 ${profile?.participantType === "external" ? "md:col-span-2" : ""}`}>
+            <div className="w-full flex flex-col items-start gap-2 md:col-span-2">
               <label
                 className="text-white font-normal capitalize text-[clamp(16px,2vw,32px)] leading-[1.3]"
                 style={{
