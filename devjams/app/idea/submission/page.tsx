@@ -28,7 +28,7 @@ export default function IdeaSubmissionPage() {
   const [shortDescription, setShortDescription] = useState("");
   const [longDescription, setLongDescription] = useState("");
   const [links, setLinks] = useState("");
-  const [selectedTracks, setSelectedTracks] = useState<string[]>(["Web", "AI/ML"]);
+  const [selectedTracks, setSelectedTracks] = useState<string[]>([]);
   const [isTracksOpen, setIsTracksOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
