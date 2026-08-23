@@ -5,12 +5,23 @@ export type ParticipantType = "internal" | "external";
 
 export type TrackType = "android" | "web" | "gemini" | "cloud" | "open-innovation";
 
+const vitRegistrationNumberPattern = /^[0-9]{2}[A-Z]{2,4}[0-9]{4}$/;
+
+export function isLockedInternalOAuthIdentity(
+  participantType: ParticipantType,
+  registrationNumber?: string,
+): boolean {
+  return participantType === "internal" &&
+    vitRegistrationNumberPattern.test((registrationNumber || "").trim().toUpperCase());
+}
+
 export interface UserSession {
   id: string;
   name: string;
   email: string;
   participantType: ParticipantType;
   registrationNumber?: string;
+  oauthIdentityLocked?: boolean;
   college?: string;
   phone?: string;
   gender?: string;
@@ -368,6 +379,10 @@ export const portalApi = {
       portalApi.logout();
       throw new Error("Could not load the authenticated participant profile.");
     }
+    profile.oauthIdentityLocked = isLockedInternalOAuthIdentity(
+      response.user.participant_type,
+      response.user.registration_number,
+    );
     profile.token = response.token;
     portalApi.saveSession(profile);
     return profile;
@@ -405,6 +420,7 @@ export const portalApi = {
       // Fetch fresh participant profile from GET /participant/me
       const profile = await portalApi.fetchMe();
       if (profile) {
+        profile.oauthIdentityLocked = false;
         if (resp.token) profile.token = resp.token;
         portalApi.saveSession(profile);
         return profile;
@@ -419,6 +435,7 @@ export const portalApi = {
         ...(resp.user.participant_type === "internal"
           ? { registrationNumber: resp.user.registration_number }
           : {}),
+        oauthIdentityLocked: false,
         token: resp.token,
         createdAt: new Date().toISOString(),
       };
@@ -467,6 +484,7 @@ export const portalApi = {
         method: "GET",
       });
 
+      const previousSession = portalApi.getSession();
       const session: UserSession = {
         id: data.id,
         name: data.name,
@@ -483,6 +501,7 @@ export const portalApi = {
               collegeAddress: data.college_address,
               collegeRollNumber: data.college_roll_number,
             }),
+        oauthIdentityLocked: previousSession?.oauthIdentityLocked,
         gender: data.gender,
         phone: data.phone,
         isTeamLeader: data.is_team_leader,

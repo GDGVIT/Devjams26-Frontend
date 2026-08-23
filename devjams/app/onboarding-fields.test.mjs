@@ -4,18 +4,22 @@ import { readFileSync } from "node:fs";
 
 const source = readFileSync(new URL("./portal/onboarding/page.tsx", import.meta.url), "utf8");
 
-test("onboarding keeps the name editable with the requested placeholder", () => {
+test("onboarding locks name and registration for a valid OAuth internal identity", () => {
   const nameInput = source.match(/<input[\s\S]*?value=\{name\}[\s\S]*?\/>/)?.[0] || "";
-  assert.match(nameInput, /onChange=\{\(e\) => setName\(e\.target\.value\)\}/);
-  assert.match(nameInput, /placeholder="E\.G Neeraj Sathish Kumar"/);
-  assert.doesNotMatch(nameInput, /readOnly/);
+  const registrationInput = source.match(/<input[\s\S]*?value=\{registrationNumber\}[\s\S]*?\/>/)?.[0] || "";
+
+  assert.match(nameInput, /readOnly=\{identityLocked\}/);
+  assert.match(registrationInput, /readOnly=\{identityLocked\}/);
 });
 
-test("internal onboarding keeps registration number editable with the requested placeholder", () => {
-  const registrationInput = source.match(/<input[\s\S]*?value=\{registrationNumber\}[\s\S]*?\/>/)?.[0] || "";
-  assert.match(registrationInput, /onChange=\{\(e\) => setRegistrationNumber\(e\.target\.value\.toUpperCase\(\)\)\}/);
-  assert.match(registrationInput, /placeholder="E\.G 25BCE2055"/);
-  assert.doesNotMatch(registrationInput, /readOnly/);
+test("onboarding keeps malformed OAuth identity fields editable", () => {
+  assert.match(source, /const \[identityLocked, setIdentityLocked\] = useState\(false\)/);
+  assert.match(source, /oauthIdentityLocked/);
+});
+
+test("onboarding keeps the requested identity placeholders", () => {
+  assert.match(source, /placeholder="E\.G Neeraj Sathish Kumar"/);
+  assert.match(source, /placeholder="E\.G 25BCE2055"/);
 });
 
 test("onboarding keeps the OAuth email read-only", () => {
