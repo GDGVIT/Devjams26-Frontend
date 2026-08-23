@@ -252,7 +252,7 @@ export default function IdeaSubmissionPage() {
 
       {/* 4 Logos Blend Banner: Top on Desktop, Anchored to bottom of screen on Mobile */}
       <div
-        className="fixed md:relative bottom-6 sm:bottom-8 md:bottom-auto left-1/2 md:left-auto -translate-x-1/2 md:translate-x-0 translate-y-0 md:translate-y-0 pointer-events-none z-10 w-full max-w-[370px] md:max-w-[848px] h-[135px] md:h-[clamp(140px,22vw,314px)] md:-mt-[clamp(24px,5vw,135px)] flex items-center justify-center overflow-visible flex-shrink-0"
+        className="relative order-2 mt-6 sm:mt-8 md:order-none md:mt-0 pointer-events-none z-10 w-full max-w-[370px] md:max-w-[848px] h-[135px] md:h-[clamp(140px,22vw,314px)] md:-mt-[clamp(24px,5vw,135px)] flex items-center justify-center overflow-visible flex-shrink-0"
         aria-hidden="true"
       >
         <div className="relative w-full h-full flex items-center justify-center">
@@ -331,7 +331,7 @@ export default function IdeaSubmissionPage() {
       </div>
 
       {/* Main Form Content Container */}
-      <div className="w-full max-w-[1072px] mx-auto flex flex-col items-center justify-start gap-[clamp(12px,1.8vh,24px)] z-20 px-1 sm:px-3 md:px-0 pt-12 sm:pt-13 md:pt-0 pb-25 md:pb-0">
+      <div className="order-1 md:order-none w-full max-w-[1072px] mx-auto flex flex-col items-center justify-start gap-[clamp(12px,1.8vh,24px)] z-20 px-1 sm:px-3 md:px-0 pt-24 sm:pt-24 md:pt-0 pb-8 md:pb-0">
         <h1
           className="text-white font-bold tracking-normal leading-[1.2] text-center capitalize m-0 select-none w-full text-[clamp(36px,4.5vw,64px)]"
           style={{
@@ -620,16 +620,14 @@ export default function IdeaSubmissionPage() {
           </div>
 
           {/* Draft and submission actions */}
-          <div className="pt-2 flex flex-wrap items-center gap-3 sm:gap-4">
-            <Link href="/team">
+          <div className="pt-2 w-full grid grid-cols-3 items-stretch gap-2 sm:flex sm:w-auto sm:items-center sm:gap-4">
+            <Link href="/team" className="w-full sm:w-auto">
               <motion.div
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
-                className="font-medium text-[clamp(12px,1.6vw,20px)] rounded-full px-5 sm:px-8 py-1.5 sm:py-2.5 flex items-center justify-center gap-2 bg-[#343434] text-white hover:bg-[#444444] border border-white/10 shadow-md transition-all cursor-pointer select-none"
+                className="w-full sm:w-auto min-w-0 sm:min-w-[100px] h-10 sm:h-9 font-medium text-[clamp(11px,1.6vw,20px)] rounded-full px-2 sm:px-8 py-1.5 sm:py-2.5 flex items-center justify-center gap-1.5 sm:gap-2 bg-[#343434] text-white hover:bg-[#444444] border border-white/10 shadow-md transition-all cursor-pointer select-none"
                 style={{
                   fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
-                  minWidth: "100px",
-                  height: "36px",
                 }}
               >
                 <svg
@@ -659,11 +657,9 @@ export default function IdeaSubmissionPage() {
                 disabled={teamTooSmall || isSaving || isSubmitting}
                 whileHover={!teamTooSmall && !isSaving && !isSubmitting ? { scale: 1.03 } : {}}
                 whileTap={!teamTooSmall && !isSaving && !isSubmitting ? { scale: 0.97 } : {}}
-                className="font-medium text-[clamp(12px,1.6vw,20px)] rounded-full px-5 sm:px-8 py-1.5 sm:py-2.5 flex items-center justify-center gap-2 bg-neutral-700 text-white hover:bg-neutral-600 disabled:opacity-60 disabled:cursor-not-allowed shadow-md transition-all"
+                className="w-full sm:w-auto min-w-0 sm:min-w-[120px] h-10 sm:h-9 font-medium text-[clamp(11px,1.6vw,20px)] rounded-full px-2 sm:px-8 py-1.5 sm:py-2.5 flex items-center justify-center gap-1.5 sm:gap-2 bg-neutral-700 text-white hover:bg-neutral-600 disabled:opacity-60 disabled:cursor-not-allowed shadow-md transition-all"
                 style={{
                   fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
-                  minWidth: "120px",
-                  height: "36px",
                 }}
               >
                 {isSaving ? "Saving..." : "Save Draft"}
@@ -676,22 +672,25 @@ export default function IdeaSubmissionPage() {
                 disabled={isLocked || teamTooSmall || isSubmitting || isSaving}
                 whileHover={!isLocked && !teamTooSmall && !isSubmitting && !isSaving ? { scale: 1.03 } : {}}
                 whileTap={!isLocked && !teamTooSmall && !isSubmitting && !isSaving ? { scale: 0.97 } : {}}
-                className={`font-medium text-[clamp(12px,1.6vw,20px)] rounded-full px-5 sm:px-8 py-1.5 sm:py-2.5 flex items-center justify-center gap-2 border-none shadow-md transition-all ${
+                className={`w-full sm:w-auto min-w-0 sm:min-w-[120px] h-10 sm:h-9 font-medium text-[clamp(11px,1.6vw,20px)] rounded-full px-2 sm:px-8 py-1.5 sm:py-2.5 flex items-center justify-center gap-1.5 sm:gap-2 border-none shadow-md transition-all ${
                   isLocked
                     ? "bg-emerald-600 text-white cursor-not-allowed opacity-90"
                     : "bg-white text-black hover:bg-neutral-100 disabled:opacity-60 disabled:cursor-not-allowed"
                 }`}
                 style={{
                   fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
-                  minWidth: "120px",
-                  height: "36px",
                 }}
               >
                 {isLocked
                   ? lockedSubmissionStatus.buttonLabel
                   : isSubmitting
                   ? "Submitting..."
-                  : "Submit Proposal"}
+                  : (
+                    <>
+                      <span className="sm:hidden">Submit</span>
+                      <span className="hidden sm:inline">Submit Proposal</span>
+                    </>
+                  )}
                 {!isLocked && (
                   <svg
                     width="12"
@@ -715,7 +714,7 @@ export default function IdeaSubmissionPage() {
           </div>
 
           {lastEditedBy && (
-            <p className="text-xs sm:text-sm text-neutral-400" role="status">
+            <p className="mb-4 sm:mb-0 text-xs sm:text-sm text-neutral-400" role="status">
               Last edited by {lastEditedBy}
               {lastEditedAt ? ` on ${new Date(lastEditedAt).toLocaleString()}` : ""}
             </p>
