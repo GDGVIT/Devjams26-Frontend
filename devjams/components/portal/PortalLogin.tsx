@@ -2,14 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertCircle, ExternalLink } from "lucide-react";
 import { motion } from "../gsap-motion";
 import { HeroLogo } from "../hero/HeroLogo";
 import { HeroTrackIcons } from "../hero/HeroTrackIcons";
 import { portalAuthErrorMessage } from "../../app/portal-auth-state";
 import { nextPortalRoute, portalApi } from "../../services/portalApi";
 import { GDGLockup } from "./GDGLockup";
-import { GRAVITAS_PORTAL_URL } from "@/app/gravitas-notice";
 
 export function PortalLogin() {
   const router = useRouter();
@@ -97,40 +95,6 @@ export function PortalLogin() {
           <HeroLogo />
           <HeroTrackIcons />
         </div>
-
-        {/* Gravitas Registration Info Notice */}
-        <div className="relative z-30 mt-1 max-w-xl mx-auto px-4 py-2 rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-200 text-xs sm:text-sm flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-left">
-            <AlertCircle className="w-4 h-4 shrink-0 text-amber-400" />
-            <span>
-              Registration on{" "}
-              <a
-                href={GRAVITAS_PORTAL_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline font-semibold hover:text-amber-100"
-              >
-                gravitas.vit.ac.in
-              </a>{" "}
-              is required before idea submission.
-            </span>
-          </div>
-          <a
-            href={GRAVITAS_PORTAL_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden sm:inline-flex items-center gap-1 text-xs font-semibold text-amber-300 hover:text-white shrink-0"
-          >
-            <span>Gravitas</span>
-            <ExternalLink className="w-3 h-3" />
-          </a>
-        </div>
-
-        {error && (
-          <div className="relative z-30 mt-3 max-w-xl rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-center text-sm text-red-200">
-            {error}
-          </div>
-        )}
 
         <motion.div
           initial={{ opacity: 0, y: 25 }}

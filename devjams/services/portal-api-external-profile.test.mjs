@@ -53,12 +53,15 @@ test("serializes an external onboarding PATCH without hostel keys", async () => 
   });
 
   assert.deepEqual(patch, {
+    name: "External Participant",
     phone: "+91 9876543210",
     gender: "Female",
     college_name: "Example College",
     college_address: "Chennai",
     college_roll_number: "EX-42",
   });
+  assert.equal("email" in patch, false);
+  assert.equal("registration_number" in patch, false);
   assert.equal("hostel_block" in patch, false);
   assert.equal("room_number" in patch, false);
 });
@@ -119,11 +122,14 @@ test("serializes the established internal onboarding PATCH", async () => {
   });
 
   assert.deepEqual(patch, {
+    name: "Internal Participant",
+    registration_number: "22BCE0001",
     phone: "+91 9876543210",
     gender: "Male",
     hostel_block: "MH-A",
     room_number: "402",
   });
+  assert.equal("email" in patch, false);
 });
 
 test("routes authenticated participants through onboarding before team selection", () => {
