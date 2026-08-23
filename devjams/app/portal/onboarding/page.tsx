@@ -293,6 +293,7 @@ export default function OnboardingPage() {
   const [participantType, setParticipantType] = useState<ParticipantType>(
     () => storedOnboarding?.participantType || portalApi.getSession()?.participantType || "internal"
   );
+  const [identityLocked, setIdentityLocked] = useState(false);
   const [name, setName] = useState(() => storedOnboarding?.name || "");
   const [registrationNumber, setRegistrationNumber] = useState<string>(
     () => storedOnboarding?.participantType === "internal" ? storedOnboarding.registrationNumber : ""
@@ -330,6 +331,7 @@ export default function OnboardingPage() {
         router.push("/portal");
         return;
       }
+      setIdentityLocked(portalApi.getSession()?.oauthIdentityLocked === true);
       try {
         const me = await portalApi.fetchMe();
         if (me) {
@@ -501,7 +503,9 @@ export default function OnboardingPage() {
                   onChange={(e) => setName(e.target.value)}
                   placeholder="E.G Neeraj Sathish Kumar"
                   required
-                  className="w-full px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white placeholder-neutral-500 text-sm sm:text-base focus:outline-none transition-all"
+                  readOnly={identityLocked}
+                  aria-readonly={identityLocked}
+                  className="w-full px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white placeholder-neutral-500 text-sm sm:text-base focus:outline-none transition-all read-only:cursor-not-allowed read-only:opacity-75"
                 />
               </div>
 
@@ -516,8 +520,10 @@ export default function OnboardingPage() {
                     onChange={(e) => setRegistrationNumber(e.target.value.toUpperCase())}
                     placeholder="E.G 25BCE2055"
                     required
+                    readOnly={identityLocked}
+                    aria-readonly={identityLocked}
                     aria-label="Registration Number"
-                    className="w-full px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white placeholder-neutral-500 text-sm sm:text-base focus:outline-none transition-all uppercase"
+                    className="w-full px-4 py-3 rounded-xl bg-[#2D2D2D] hover:bg-[#333333] focus:bg-[#333333] border border-transparent focus:border-white/20 text-white placeholder-neutral-500 text-sm sm:text-base focus:outline-none transition-all uppercase read-only:cursor-not-allowed read-only:opacity-75"
                   />
                 </div>
               )}

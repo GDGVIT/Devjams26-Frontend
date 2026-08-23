@@ -89,7 +89,7 @@ export function FooterHeader() {
         {/* Left Column: Let's talk tech + Social Buttons below for desktop */}
         <div className="flex flex-col items-start gap-3 sm:gap-4">
           <motion.a
-            href="mailto:contact@devjams.in"
+            href="mailto:dscvitvellore@gmail.com"
             initial={{ opacity: 0, x: -12 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}

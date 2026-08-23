@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { backendUrl } from "./test-environment.mjs";
-import { nextPortalRoute, portalApi } from "./portalApi.ts";
+import { isLockedInternalOAuthIdentity, nextPortalRoute, portalApi } from "./portalApi.ts";
 
 const storage = new Map();
 globalThis.window = globalThis;
@@ -173,6 +173,46 @@ test("routes authenticated participants through onboarding before team selection
   );
 });
 
+test("locks only internal identities with a valid OAuth registration suffix", () => {
+  assert.equal(isLockedInternalOAuthIdentity("internal", "25BCE2055"), true);
+  assert.equal(isLockedInternalOAuthIdentity("internal", "Neeraj"), false);
+  assert.equal(isLockedInternalOAuthIdentity("external", "25BCE2055"), false);
+});
+
+test("Google login locks only identities parsed from the OAuth name", async () => {
+  const cases = [
+    { registration_number: "25BCE2055", expected: true },
+    { registration_number: undefined, expected: false },
+  ];
+
+  for (const testCase of cases) {
+    await withFetch(async (url) => {
+      if (String(url).endsWith("/auth/participant/google/exchange")) {
+        return new Response(JSON.stringify({
+          token: "oauth-token",
+          user: {
+            id: "internal-1",
+            name: "Neeraj Sathish Kumar",
+            email: "participant@vitstudent.ac.in",
+            role: "participant",
+            participant_type: "internal",
+            registration_number: testCase.registration_number,
+          },
+        }), { headers: { "content-type": "application/json" } });
+      }
+      return new Response(JSON.stringify({
+        id: "internal-1",
+        name: "Neeraj Sathish Kumar",
+        email: "participant@vitstudent.ac.in",
+        participant_type: "internal",
+        registration_number: testCase.registration_number,
+      }), { headers: { "content-type": "application/json" } });
+    }, async () => {
+      await portalApi.completeGoogleLogin("oauth-code");
+      assert.equal(portalApi.getSession()?.oauthIdentityLocked, testCase.expected);
+    });
+  }
+});
 test("serializes participant IDs for team management", async () => {
   const requests = [];
   await withFetch(async (url, options = {}) => {
