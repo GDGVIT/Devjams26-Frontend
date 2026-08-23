@@ -331,7 +331,7 @@ export default function IdeaSubmissionPage() {
       </div>
 
       {/* Main Form Content Container */}
-      <div className="order-1 md:order-none w-full max-w-[1072px] mx-auto flex flex-col items-center justify-start gap-[clamp(12px,1.8vh,24px)] z-20 px-1 sm:px-3 md:px-0 pt-16 sm:pt-17 md:pt-0 pb-8 md:pb-0">
+      <div className="order-1 md:order-none w-full max-w-[1072px] mx-auto flex flex-col items-center justify-start gap-[clamp(12px,1.8vh,24px)] z-20 px-1 sm:px-3 md:px-0 pt-24 sm:pt-24 md:pt-0 pb-8 md:pb-0">
         <h1
           className="text-white font-bold tracking-normal leading-[1.2] text-center capitalize m-0 select-none w-full text-[clamp(36px,4.5vw,64px)]"
           style={{
