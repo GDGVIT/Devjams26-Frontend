@@ -722,11 +722,11 @@ export default function IdeaSubmissionPage() {
 </form>
       </div>
       {submitConfirmationOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" role="dialog" aria-modal="true" aria-labelledby="submit-confirmation-title">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" role="dialog" aria-modal="true" aria-labelledby="submit-confirmation-title" aria-describedby="submit-confirmation-description">
           <div className="w-full max-w-md rounded-2xl border border-neutral-700 bg-[#202020] p-6 shadow-2xl">
-            <h2 id="submit-confirmation-title" className="text-xl font-semibold">Submit this proposal?</h2>
-            <p className="mt-3 text-sm text-neutral-300">
-              Submission is final. After you confirm, your team&apos;s idea will be locked and no member can edit it.
+            <h2 id="submit-confirmation-title" className="text-xl font-semibold">Are you sure?</h2>
+            <p id="submit-confirmation-description" className="mt-3 text-sm text-neutral-300">
+              Your idea will be submitted and locked. You will not be able to edit it after confirmation.
             </p>
             <div className="mt-6 flex justify-end gap-3">
               <button
@@ -741,7 +741,7 @@ export default function IdeaSubmissionPage() {
                 onClick={confirmSubmit}
                 className="rounded-full bg-white px-4 py-2 text-sm font-medium text-black hover:bg-neutral-100"
               >
-                Confirm Submit
+                Submit &amp; Lock
               </button>
             </div>
           </div>
