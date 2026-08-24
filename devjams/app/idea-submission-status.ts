@@ -1,5 +1,5 @@
-export const lockedSubmissionStatus = {
-  headline: "Your idea has been submitted and locked for review.",
-  detail: "Submissions are one-time and final. Mentor evaluation will proceed based on these details.",
-  buttonLabel: "Submitted and Locked",
+export const submittedSubmissionStatus = {
+  headline: "Your idea has been submitted.",
+  detail: "Only the team leader can edit and resubmit the submitted idea.",
+  buttonLabel: "Submitted",
 } as const;

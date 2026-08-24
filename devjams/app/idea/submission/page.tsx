@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "../../../components/gsap-motion";
 import { Info } from "lucide-react";
 import { GDGLockup } from "@/components/portal/GDGLockup";
 import { portalApi } from "@/services/portalApi";
-import { lockedSubmissionStatus } from "../../idea-submission-status";
+import { submittedSubmissionStatus } from "../../idea-submission-status";
 const SHORT_DESCRIPTION_MAX_LENGTH = 100;
 const LONG_DESCRIPTION_MAX_LENGTH = 1000;
 
@@ -32,7 +32,7 @@ export default function IdeaSubmissionPage() {
   const [isTracksOpen, setIsTracksOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [isLocked, setIsLocked] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLeader, setIsLeader] = useState(true);
   const [teamMemberCount, setTeamMemberCount] = useState(0);
   const [submitConfirmationOpen, setSubmitConfirmationOpen] = useState(false);
@@ -95,7 +95,7 @@ export default function IdeaSubmissionPage() {
         }
 
         const submittedNow = Boolean(team?.idea_submitted || team?.idea?.is_submitted);
-        setIsLocked(submittedNow);
+        setIsSubmitted(submittedNow);
       } catch (err: unknown) {
         console.warn("Failed to load idea submission:", err);
       }
@@ -105,14 +105,15 @@ export default function IdeaSubmissionPage() {
     loadSubmissionData();
   }, [router]);
   const teamTooSmall = teamMemberCount < 2;
+  const isReadOnly = isSubmitted && !isLeader;
 
   const removeTrack = (track: string) => {
-    if (isLocked) return;
+    if (isReadOnly) return;
     setSelectedTracks((prev) => prev.filter((t) => t !== track));
   };
 
   const addTrack = (track: string) => {
-    if (isLocked) return;
+    if (isReadOnly) return;
     if (!selectedTracks.includes(track)) {
       setSelectedTracks((prev) => [...prev, track]);
     }
@@ -120,7 +121,10 @@ export default function IdeaSubmissionPage() {
   };
 
   const handleSave = async () => {
-    if (isLocked) return;
+    if (isSubmitted) {
+      setError("Submitted ideas can only be edited and resubmitted by the team leader.");
+      return;
+    }
     if (teamTooSmall) {
       setError("At least two team members are required before saving an idea.");
       return;
@@ -145,7 +149,10 @@ export default function IdeaSubmissionPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (isLocked) return;
+    if (isReadOnly) {
+      setError("Only the team leader can edit and resubmit a submitted idea.");
+      return;
+    }
     if (teamTooSmall) {
       setError("At least two team members are required before submitting an idea.");
       return;
@@ -204,7 +211,7 @@ export default function IdeaSubmissionPage() {
 
       setLastEditedBy(response.idea?.last_edited_by_name || portalApi.getSession()?.name || "");
       setLastEditedAt(response.idea?.updated_at || new Date().toISOString());
-      setIsLocked(true);
+      setIsSubmitted(true);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to submit idea.");
     } finally {
@@ -341,8 +348,8 @@ export default function IdeaSubmissionPage() {
           Idea Submission
         </h1>
 
-        {/* Locked / Submitted Status Banner */}
-        {isLocked && (
+        {/* Submitted status banner */}
+        {isSubmitted && (
           <div className="w-full p-3.5 sm:p-4 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs sm:text-sm flex items-center gap-3">
             <svg
               className="w-5 h-5 shrink-0"
@@ -353,20 +360,20 @@ export default function IdeaSubmissionPage() {
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <rect x="4" y="10" width="16" height="10" rx="2" />
-              <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+              <circle cx="12" cy="12" r="8" />
+              <path d="m8.5 12 2.25 2.25L15.5 9.5" />
             </svg>
             <div>
-              <p className="font-semibold">{lockedSubmissionStatus.headline}</p>
+              <p className="font-semibold">{submittedSubmissionStatus.headline}</p>
               <p className="text-xs text-emerald-400/80 mt-0.5">
-                {lockedSubmissionStatus.detail}
+                {submittedSubmissionStatus.detail}
               </p>
             </div>
           </div>
         )}
 
         {/* Idea submission requires a complete team */}
-        {!isLocked && teamTooSmall && (
+        {teamTooSmall && (
           <div className="w-full p-3.5 sm:p-4 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs sm:text-sm flex items-center gap-3">
             <Info className="h-5 w-5 shrink-0" aria-hidden="true" />
             <div>
@@ -379,7 +386,7 @@ export default function IdeaSubmissionPage() {
         )}
 
         {/* Leader Info Banner if not leader */}
-        {!isLocked && !isLeader && !teamTooSmall && (
+        {!isSubmitted && !isLeader && !teamTooSmall && (
           <div className="w-full p-3.5 sm:p-4 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs sm:text-sm flex items-center gap-3">
             <Info className="h-5 w-5 shrink-0" aria-hidden="true" />
             <div>
@@ -420,7 +427,7 @@ export default function IdeaSubmissionPage() {
                 setShortDescription(e.target.value.slice(0, SHORT_DESCRIPTION_MAX_LENGTH))
               }
               maxLength={SHORT_DESCRIPTION_MAX_LENGTH}
-              disabled={isLocked || isSubmitting || isSaving}
+              disabled={isReadOnly || isSubmitting || isSaving}
               placeholder="Brief summary of your project..."
               className="w-full bg-[#343434] text-white rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-7 py-2 sm:py-3 text-[clamp(12px,1.6vw,18px)] focus:outline-none focus:ring-1 focus:ring-white/40 resize-none min-h-[41px] sm:min-h-[82px] h-[41px] sm:h-[82px] transition-all placeholder:text-neutral-500 disabled:opacity-75 disabled:cursor-not-allowed"
               style={{
@@ -453,7 +460,7 @@ export default function IdeaSubmissionPage() {
                 setLongDescription(e.target.value.slice(0, LONG_DESCRIPTION_MAX_LENGTH))
               }
               maxLength={LONG_DESCRIPTION_MAX_LENGTH}
-              disabled={isLocked || isSubmitting || isSaving}
+              disabled={isReadOnly || isSubmitting || isSaving}
               placeholder="Detailed architecture, features, problem statement and solution..."
               className="w-full bg-[#343434] text-white rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-7 py-2 sm:py-3 text-[clamp(12px,1.6vw,18px)] focus:outline-none focus:ring-1 focus:ring-white/40 resize-none min-h-[85px] sm:min-h-[125px] h-[85px] sm:h-[125px] transition-all placeholder:text-neutral-500 disabled:opacity-75 disabled:cursor-not-allowed"
               style={{
@@ -487,7 +494,7 @@ export default function IdeaSubmissionPage() {
               type="text"
               value={links}
               onChange={(e) => setLinks(e.target.value)}
-              disabled={isLocked || isSubmitting || isSaving}
+              disabled={isReadOnly || isSubmitting || isSaving}
               placeholder="https://drive.google.com/"
               className="w-full bg-[#343434] text-white rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-7 py-1.5 sm:py-3 text-[clamp(12px,1.6vw,18px)] focus:outline-none focus:ring-1 focus:ring-white/40 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] transition-all placeholder:text-neutral-500 disabled:opacity-75 disabled:cursor-not-allowed"
               style={{
@@ -510,12 +517,12 @@ export default function IdeaSubmissionPage() {
             {/* Custom Interactive Chip Dropdown Input Box */}
             <div
               onClick={() => {
-                if (!isLocked) {
+                if (!isReadOnly) {
                   setIsTracksOpen((prev) => !prev);
                 }
               }}
               className={`w-full min-h-[32px] sm:min-h-[56px] bg-[#343434] text-white rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-1.5 sm:py-2.5 flex items-center justify-between border border-transparent transition-all select-none ${
-                isLocked
+                isReadOnly
                   ? "opacity-75 cursor-not-allowed"
                   : "cursor-pointer hover:border-white/20"
               }`}
@@ -535,14 +542,14 @@ export default function IdeaSubmissionPage() {
                         fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
                       }}
                       onClick={(e) => {
-                        if (!isLocked) {
+                        if (!isReadOnly) {
                           e.stopPropagation();
                           removeTrack(track);
                         }
                       }}
                     >
                       {track}
-                      {!isLocked && (
+                      {!isReadOnly && (
                         <span
                           className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full text-white/80 hover:text-white hover:bg-white/20 transition-colors"
                           aria-label={`Remove ${track}`}
@@ -555,7 +562,7 @@ export default function IdeaSubmissionPage() {
                 )}
               </div>
 
-              {!isLocked && (
+              {!isReadOnly && (
                 <svg
                   width="16"
                   height="9"
@@ -579,7 +586,7 @@ export default function IdeaSubmissionPage() {
 
             {/* Dropdown Menu Options */}
             <AnimatePresence>
-              {isTracksOpen && !isLocked && (
+              {isTracksOpen && !isReadOnly && (
                 <motion.div
                   initial={{ opacity: 0, y: -10, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -650,7 +657,7 @@ export default function IdeaSubmissionPage() {
               </motion.div>
             </Link>
 
-            {!isLocked && (
+            {!isSubmitted && (
               <motion.button
                 type="button"
                 onClick={handleSave}
@@ -669,11 +676,11 @@ export default function IdeaSubmissionPage() {
             {isLeader && (
               <motion.button
                 type="submit"
-                disabled={isLocked || teamTooSmall || isSubmitting || isSaving}
-                whileHover={!isLocked && !teamTooSmall && !isSubmitting && !isSaving ? { scale: 1.03 } : {}}
-                whileTap={!isLocked && !teamTooSmall && !isSubmitting && !isSaving ? { scale: 0.97 } : {}}
+                disabled={isReadOnly || teamTooSmall || isSubmitting || isSaving}
+                whileHover={!isReadOnly && !teamTooSmall && !isSubmitting && !isSaving ? { scale: 1.03 } : {}}
+                whileTap={!isReadOnly && !teamTooSmall && !isSubmitting && !isSaving ? { scale: 0.97 } : {}}
                 className={`w-full sm:w-auto min-w-0 sm:min-w-[120px] h-10 sm:h-9 font-medium text-[clamp(11px,1.6vw,20px)] rounded-full px-2 sm:px-8 py-1.5 sm:py-2.5 flex items-center justify-center gap-1.5 sm:gap-2 border-none shadow-md transition-all ${
-                  isLocked
+                  isReadOnly
                     ? "bg-emerald-600 text-white cursor-not-allowed opacity-90"
                     : "bg-white text-black hover:bg-neutral-100 disabled:opacity-60 disabled:cursor-not-allowed"
                 }`}
@@ -681,17 +688,19 @@ export default function IdeaSubmissionPage() {
                   fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
                 }}
               >
-                {isLocked
-                  ? lockedSubmissionStatus.buttonLabel
+                {isReadOnly
+                  ? submittedSubmissionStatus.buttonLabel
                   : isSubmitting
                   ? "Submitting..."
+                  : isSubmitted
+                  ? "Resubmit Proposal"
                   : (
                     <>
                       <span className="sm:hidden">Submit</span>
                       <span className="hidden sm:inline">Submit Proposal</span>
                     </>
                   )}
-                {!isLocked && (
+                {!isReadOnly && (
                   <svg
                     width="12"
                     height="12"

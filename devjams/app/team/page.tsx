@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "../../components/gsap-motion";
 import { GDGLockup } from "@/components/portal/GDGLockup";
 import { portalApi, type BackendTeamMember } from "@/services/portalApi";
-import { memberActionFor } from "../team-member-actions";
+import { memberActionFor, shouldWarnSubmittedIdeaRemoval } from "../team-member-actions";
 
 export default function TeamPage() {
   const router = useRouter();
@@ -22,7 +22,7 @@ export default function TeamPage() {
   const [members, setMembers] = useState<BackendTeamMember[]>([]);
   const [currentParticipantId, setCurrentParticipantId] = useState("");
   const [isLeader, setIsLeader] = useState(false);
-  const [teamLocked, setTeamLocked] = useState(false);
+  const [ideaSubmitted, setIdeaSubmitted] = useState(false);
   const [actionError, setActionError] = useState("");
   const [isManagingMembers, setIsManagingMembers] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -47,7 +47,7 @@ export default function TeamPage() {
 
         const team = await portalApi.fetchTeam();
         if (team) {
-          setTeamLocked(Boolean(team.idea_submitted));
+          setIdeaSubmitted(Boolean(team.idea_submitted));
           setTeamName(team.team_name || me.teamName || "My Team");
           setTeamCode(team.invite_code || "");
           if (team.members && Array.isArray(team.members)) {
@@ -62,7 +62,7 @@ export default function TeamPage() {
             ]);
           }
         } else {
-          setTeamLocked(false);
+          setIdeaSubmitted(false);
           setTeamName(me.teamName || "My Team");
           setTeamCode("");
           setMembers([
@@ -86,7 +86,7 @@ export default function TeamPage() {
   const refreshMembers = async () => {
     const team = await portalApi.fetchTeam();
     if (team) {
-      setTeamLocked(Boolean(team.idea_submitted));
+      setIdeaSubmitted(Boolean(team.idea_submitted));
       setMembers(team.members);
     }
   };
@@ -97,8 +97,8 @@ export default function TeamPage() {
     setIsManagingMembers(true);
     try {
       await portalApi.removeTeamMember(memberToRemove.id);
-      setMembers((previous) => previous.filter((member) => member.id !== memberToRemove.id));
       setMemberToRemove(null);
+      await refreshMembers();
     } catch (err: unknown) {
       setActionError(err instanceof Error ? err.message : "Could not remove team member.");
     } finally {
@@ -162,6 +162,8 @@ export default function TeamPage() {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [memberToRemove]);
+
+  const willInvalidateSubmittedIdea = shouldWarnSubmittedIdeaRemoval(ideaSubmitted, members.length);
 
   return (
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-center overflow-x-hidden overflow-y-auto select-none p-4 sm:p-6 md:p-10 pb-24 md:pb-20">
@@ -410,9 +412,9 @@ export default function TeamPage() {
             Members
           </h2>
 
-          {teamLocked && (
+          {ideaSubmitted && (
             <p role="status" className="m-0 text-sm text-amber-200">
-              Team locked after idea submission. Members and the submitted idea cannot be changed.
+              Idea submitted. Only the team leader can edit and resubmit it.
             </p>
           )}
           {actionError && (
@@ -429,7 +431,7 @@ export default function TeamPage() {
               <div className="text-sm text-neutral-400">No members registered yet.</div>
             ) : (
               members.map((member, index) => {
-                const action = memberActionFor(member, currentParticipantId, isLeader, teamLocked);
+                const action = memberActionFor(member, currentParticipantId, isLeader);
                 const isMemberMenuOpen = memberMenu?.id === member.id;
                 return (
                   <div
@@ -525,11 +527,10 @@ export default function TeamPage() {
           <motion.button
             type="button"
             onClick={handleInvite}
-            whileHover={{ scale: teamLocked || members.length >= 4 ? 1 : 1.05 }}
-            whileTap={{ scale: teamLocked || members.length >= 4 ? 1 : 0.95 }}
-            disabled={teamLocked || members.length >= 4}
-            aria-disabled={teamLocked || members.length >= 4}
-            className="bg-white text-black rounded-full flex items-center justify-center cursor-pointer border-none shadow-md hover:bg-neutral-100 transition-all px-5 sm:px-8 py-1.5 sm:py-2.5 min-w-[95px] sm:min-w-[138px] h-8 sm:h-11 disabled:cursor-not-allowed disabled:opacity-50"
+            whileHover={{ scale: members.length >= 4 ? 1 : 1.05 }}
+            whileTap={{ scale: members.length >= 4 ? 1 : 0.95 }}
+            disabled={members.length >= 4}
+            aria-disabled={members.length >= 4}
           >
             <span
               className="text-[clamp(12px,1.6vw,20px)] leading-none font-medium text-center"
@@ -538,7 +539,7 @@ export default function TeamPage() {
                 letterSpacing: "0.02em",
               }}
             >
-              {teamLocked ? "Team Locked" : members.length >= 4 ? "Team Full" : inviteCopied ? "Copied Code!" : "Invite Members"}
+              {members.length >= 4 ? "Team Full" : inviteCopied ? "Copied Code!" : "Invite Members"}
             </span>
           </motion.button>
 
@@ -682,7 +683,9 @@ export default function TeamPage() {
                   Sure you want to remove {memberToRemove.name}?
                 </h3>
                 <p className="text-white/60 text-sm m-0">
-                  This action will remove the member from your team.
+                  {willInvalidateSubmittedIdea
+                    ? `Removing ${memberToRemove.name} will leave your team with fewer than two members. Your submitted idea will become invalid and need to be resubmitted.`
+                    : "This action will remove the member from your team."}
                 </p>
               </div>
 
