@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "../../components/gsap-motion";
 import { GDGLockup } from "@/components/portal/GDGLockup";
 import { portalApi, type BackendTeamMember } from "@/services/portalApi";
-import { memberActionFor } from "../team-member-actions";
+import { memberActionFor, shouldWarnSubmittedIdeaRemoval } from "../team-member-actions";
 
 export default function TeamPage() {
   const router = useRouter();
@@ -19,10 +19,12 @@ export default function TeamPage() {
   const [memberToPromote, setMemberToPromote] = useState<BackendTeamMember | null>(null);
   const [memberMenu, setMemberMenu] = useState<BackendTeamMember | null>(null);
   const [leaveConfirmationOpen, setLeaveConfirmationOpen] = useState(false);
+  const [leaveBlockedByPolicy, setLeaveBlockedByPolicy] = useState(false);
   const [members, setMembers] = useState<BackendTeamMember[]>([]);
   const [currentParticipantId, setCurrentParticipantId] = useState("");
   const [isLeader, setIsLeader] = useState(false);
-  const [teamLocked, setTeamLocked] = useState(false);
+  const [ideaSubmitted, setIdeaSubmitted] = useState(false);
+  const [allowMembersToLeave, setAllowMembersToLeave] = useState(false);
   const [actionError, setActionError] = useState("");
   const [isManagingMembers, setIsManagingMembers] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -47,7 +49,8 @@ export default function TeamPage() {
 
         const team = await portalApi.fetchTeam();
         if (team) {
-          setTeamLocked(Boolean(team.idea_submitted));
+          setIdeaSubmitted(Boolean(team.idea_submitted));
+          setAllowMembersToLeave(Boolean(team.allow_members_to_leave_team));
           setTeamName(team.team_name || me.teamName || "My Team");
           setTeamCode(team.invite_code || "");
           if (team.members && Array.isArray(team.members)) {
@@ -62,7 +65,8 @@ export default function TeamPage() {
             ]);
           }
         } else {
-          setTeamLocked(false);
+          setIdeaSubmitted(false);
+          setAllowMembersToLeave(false);
           setTeamName(me.teamName || "My Team");
           setTeamCode("");
           setMembers([
@@ -83,22 +87,29 @@ export default function TeamPage() {
     loadTeamData();
   }, [router]);
 
-  const refreshMembers = async () => {
+  const refreshMembers = async (removedMemberId?: string) => {
     const team = await portalApi.fetchTeam();
     if (team) {
-      setTeamLocked(Boolean(team.idea_submitted));
-      setMembers(team.members);
+      setIdeaSubmitted(Boolean(team.idea_submitted));
+      setAllowMembersToLeave(Boolean(team.allow_members_to_leave_team));
+      setMembers(
+        removedMemberId
+          ? team.members.filter((member) => member.id !== removedMemberId)
+          : team.members,
+      );
     }
   };
 
   const confirmRemoveMember = async () => {
     if (!memberToRemove?.id) return;
+    const removedMemberId = memberToRemove.id;
     setActionError("");
     setIsManagingMembers(true);
     try {
-      await portalApi.removeTeamMember(memberToRemove.id);
-      setMembers((previous) => previous.filter((member) => member.id !== memberToRemove.id));
+      await portalApi.removeTeamMember(removedMemberId);
+      setMembers((previous) => previous.filter((member) => member.id !== removedMemberId));
       setMemberToRemove(null);
+      await refreshMembers(removedMemberId);
     } catch (err: unknown) {
       setActionError(err instanceof Error ? err.message : "Could not remove team member.");
     } finally {
@@ -162,6 +173,8 @@ export default function TeamPage() {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [memberToRemove]);
+
+  const willInvalidateSubmittedIdea = shouldWarnSubmittedIdeaRemoval(ideaSubmitted, members.length);
 
   return (
     <main className="relative min-h-screen w-full bg-black text-white flex flex-col items-center justify-center overflow-x-hidden overflow-y-auto select-none p-4 sm:p-6 md:p-10 pb-24 md:pb-20">
@@ -410,9 +423,9 @@ export default function TeamPage() {
             Members
           </h2>
 
-          {teamLocked && (
+          {ideaSubmitted && (
             <p role="status" className="m-0 text-sm text-amber-200">
-              Team locked after idea submission. Members and the submitted idea cannot be changed.
+              Idea submitted. Only the team leader can edit and resubmit it.
             </p>
           )}
           {actionError && (
@@ -429,7 +442,7 @@ export default function TeamPage() {
               <div className="text-sm text-neutral-400">No members registered yet.</div>
             ) : (
               members.map((member, index) => {
-                const action = memberActionFor(member, currentParticipantId, isLeader, teamLocked);
+                const action = memberActionFor(member, currentParticipantId, isLeader, allowMembersToLeave);
                 const isMemberMenuOpen = memberMenu?.id === member.id;
                 return (
                   <div
@@ -453,11 +466,14 @@ export default function TeamPage() {
                     </div>
 
                     <div className="relative ml-3 flex shrink-0 items-center">
-                      {action === "leave" && (
+                      {(action === "leave" || action === "request-leave") && (
                         <button
                           type="button"
-                          onClick={() => setLeaveConfirmationOpen(true)}
-                          aria-label="Leave team"
+                          onClick={() => {
+                            setLeaveBlockedByPolicy(action === "request-leave");
+                            setLeaveConfirmationOpen(true);
+                          }}
+                          aria-label={action === "request-leave" ? "Ask leader to remove you" : "Leave team"}
                           className="w-7 h-7 flex items-center justify-center cursor-pointer bg-transparent border-none p-0 text-white/60 hover:text-red-300 transition-colors"
                         >
                           <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
@@ -525,11 +541,10 @@ export default function TeamPage() {
           <motion.button
             type="button"
             onClick={handleInvite}
-            whileHover={{ scale: teamLocked || members.length >= 4 ? 1 : 1.05 }}
-            whileTap={{ scale: teamLocked || members.length >= 4 ? 1 : 0.95 }}
-            disabled={teamLocked || members.length >= 4}
-            aria-disabled={teamLocked || members.length >= 4}
-            className="bg-white text-black rounded-full flex items-center justify-center cursor-pointer border-none shadow-md hover:bg-neutral-100 transition-all px-5 sm:px-8 py-1.5 sm:py-2.5 min-w-[95px] sm:min-w-[138px] h-8 sm:h-11 disabled:cursor-not-allowed disabled:opacity-50"
+            whileHover={{ scale: members.length >= 4 ? 1 : 1.05 }}
+            whileTap={{ scale: members.length >= 4 ? 1 : 0.95 }}
+            disabled={members.length >= 4}
+            aria-disabled={members.length >= 4}
           >
             <span
               className="text-[clamp(12px,1.6vw,20px)] leading-none font-medium text-center"
@@ -538,7 +553,7 @@ export default function TeamPage() {
                 letterSpacing: "0.02em",
               }}
             >
-              {teamLocked ? "Team Locked" : members.length >= 4 ? "Team Full" : inviteCopied ? "Copied Code!" : "Invite Members"}
+              {members.length >= 4 ? "Team Full" : inviteCopied ? "Copied Code!" : "Invite Members"}
             </span>
           </motion.button>
 
@@ -682,7 +697,9 @@ export default function TeamPage() {
                   Sure you want to remove {memberToRemove.name}?
                 </h3>
                 <p className="text-white/60 text-sm m-0">
-                  This action will remove the member from your team.
+                  {willInvalidateSubmittedIdea
+                    ? `Removing ${memberToRemove.name} will leave your team with fewer than two members. Your submitted idea will become invalid and need to be resubmitted.`
+                    : "This action will remove the member from your team."}
                 </p>
               </div>
 
@@ -744,11 +761,21 @@ export default function TeamPage() {
               </div>
               <div className="flex flex-col gap-2">
                 <h3 id="leave-team-title" className="text-white font-bold text-2xl m-0" style={{ fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif' }}>
-                  {isLeader && members.length > 1 ? "Transfer leadership first" : "Leave this team?"}
+                  {leaveBlockedByPolicy
+                    ? "Ask your team leader"
+                    : isLeader && members.length > 1
+                    ? "Transfer leadership first"
+                    : willInvalidateSubmittedIdea
+                    ? "Leave and invalidate submission?"
+                    : "Leave this team?"}
                 </h3>
                 <p className="text-white/60 text-sm m-0">
-                  {isLeader && members.length > 1
+                  {leaveBlockedByPolicy
+                    ? "Members cannot leave the team. Ask your team leader to remove you."
+                    : isLeader && members.length > 1
                     ? "Choose another member from the menu and make them leader before leaving."
+                    : willInvalidateSubmittedIdea
+                    ? "Leaving will remove the final teammate and invalidate the submitted idea. It must be resubmitted after the team has at least two members."
                     : "You will lose access to this team and its idea submission."}
                 </p>
               </div>
@@ -756,12 +783,12 @@ export default function TeamPage() {
                 <button
                   type="button"
                   onClick={() => setLeaveConfirmationOpen(false)}
-                  className="flex-1 h-11 rounded-[35px] border border-white/30 text-white font-medium text-base hover:bg-white/10 transition-colors cursor-pointer"
+                  className={`${leaveBlockedByPolicy ? "w-full" : "flex-1"} h-11 rounded-[35px] border border-white/30 text-white font-medium text-base hover:bg-white/10 transition-colors cursor-pointer`}
                   style={{ fontFamily: 'var(--font-google-sans), "Google Sans", sans-serif' }}
                 >
-                  {isLeader && members.length > 1 ? "Close" : "Cancel"}
+                  {leaveBlockedByPolicy || (isLeader && members.length > 1) ? "Close" : "Cancel"}
                 </button>
-                {(!isLeader || members.length === 1) && (
+                {!leaveBlockedByPolicy && (!isLeader || members.length === 1) && (
                   <button
                     type="button"
                     onClick={leaveTeam}
