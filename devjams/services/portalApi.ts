@@ -91,6 +91,7 @@ export interface BackendTeam {
   invite_code?: string;
   idea?: BackendTeamIdea;
   idea_submitted?: boolean;
+  allow_members_to_leave_team?: boolean;
   round?: number;
   color_mark?: string;
   total_points?: number;
