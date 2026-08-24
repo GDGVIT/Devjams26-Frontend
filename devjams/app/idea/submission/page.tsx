@@ -733,9 +733,13 @@ export default function IdeaSubmissionPage() {
       {submitConfirmationOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" role="dialog" aria-modal="true" aria-labelledby="submit-confirmation-title" aria-describedby="submit-confirmation-description">
           <div className="w-full max-w-md rounded-2xl border border-neutral-700 bg-[#202020] p-6 shadow-2xl">
-            <h2 id="submit-confirmation-title" className="text-xl font-semibold">Are you sure?</h2>
+            <h2 id="submit-confirmation-title" className="text-xl font-semibold">
+              {isSubmitted ? "Resubmit this proposal?" : "Submit this proposal?"}
+            </h2>
             <p id="submit-confirmation-description" className="mt-3 text-sm text-neutral-300">
-              Your idea will be submitted and locked. You will not be able to edit it after confirmation.
+              {isSubmitted
+                ? "Your changes will be submitted again for review. As team leader, you can edit and resubmit this proposal again if needed."
+                : "After submission, your team leader can edit and resubmit the proposal if changes are needed."}
             </p>
             <div className="mt-6 flex justify-end gap-3">
               <button
@@ -750,7 +754,7 @@ export default function IdeaSubmissionPage() {
                 onClick={confirmSubmit}
                 className="rounded-full bg-white px-4 py-2 text-sm font-medium text-black hover:bg-neutral-100"
               >
-                Submit &amp; Lock
+                {isSubmitted ? "Resubmit Proposal" : "Submit & Lock"}
               </button>
             </div>
           </div>

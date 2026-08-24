@@ -87,23 +87,29 @@ export default function TeamPage() {
     loadTeamData();
   }, [router]);
 
-  const refreshMembers = async () => {
+  const refreshMembers = async (removedMemberId?: string) => {
     const team = await portalApi.fetchTeam();
     if (team) {
       setIdeaSubmitted(Boolean(team.idea_submitted));
       setAllowMembersToLeave(Boolean(team.allow_members_to_leave_team));
-      setMembers(team.members);
+      setMembers(
+        removedMemberId
+          ? team.members.filter((member) => member.id !== removedMemberId)
+          : team.members,
+      );
     }
   };
 
   const confirmRemoveMember = async () => {
     if (!memberToRemove?.id) return;
+    const removedMemberId = memberToRemove.id;
     setActionError("");
     setIsManagingMembers(true);
     try {
-      await portalApi.removeTeamMember(memberToRemove.id);
+      await portalApi.removeTeamMember(removedMemberId);
+      setMembers((previous) => previous.filter((member) => member.id !== removedMemberId));
       setMemberToRemove(null);
-      await refreshMembers();
+      await refreshMembers(removedMemberId);
     } catch (err: unknown) {
       setActionError(err instanceof Error ? err.message : "Could not remove team member.");
     } finally {
@@ -759,6 +765,8 @@ export default function TeamPage() {
                     ? "Ask your team leader"
                     : isLeader && members.length > 1
                     ? "Transfer leadership first"
+                    : willInvalidateSubmittedIdea
+                    ? "Leave and invalidate submission?"
                     : "Leave this team?"}
                 </h3>
                 <p className="text-white/60 text-sm m-0">
@@ -766,6 +774,8 @@ export default function TeamPage() {
                     ? "Members cannot leave the team. Ask your team leader to remove you."
                     : isLeader && members.length > 1
                     ? "Choose another member from the menu and make them leader before leaving."
+                    : willInvalidateSubmittedIdea
+                    ? "Leaving will remove the final teammate and invalidate the submitted idea. It must be resubmitted after the team has at least two members."
                     : "You will lose access to this team and its idea submission."}
                 </p>
               </div>
