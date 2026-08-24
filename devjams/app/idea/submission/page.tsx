@@ -33,6 +33,7 @@ export default function IdeaSubmissionPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isEditingSubmitted, setIsEditingSubmitted] = useState(false);
   const [isLeader, setIsLeader] = useState(true);
   const [teamMemberCount, setTeamMemberCount] = useState(0);
   const [submitConfirmationOpen, setSubmitConfirmationOpen] = useState(false);
@@ -96,6 +97,7 @@ export default function IdeaSubmissionPage() {
 
         const submittedNow = Boolean(team?.idea_submitted || team?.idea?.is_submitted);
         setIsSubmitted(submittedNow);
+        setIsEditingSubmitted(false);
       } catch (err: unknown) {
         console.warn("Failed to load idea submission:", err);
       }
@@ -105,7 +107,8 @@ export default function IdeaSubmissionPage() {
     loadSubmissionData();
   }, [router]);
   const teamTooSmall = teamMemberCount < 2;
-  const isReadOnly = isSubmitted && !isLeader;
+  const isReadOnly = isSubmitted && (!isLeader || !isEditingSubmitted);
+  const cannotEditSubmission = isSubmitted && !isLeader;
 
   const removeTrack = (track: string) => {
     if (isReadOnly) return;
@@ -122,7 +125,7 @@ export default function IdeaSubmissionPage() {
 
   const handleSave = async () => {
     if (isSubmitted) {
-      setError("Submitted ideas can only be edited and resubmitted by the team leader.");
+      setError("Submitted ideas can only be edited and submitted by the team leader.");
       return;
     }
     if (teamTooSmall) {
@@ -149,8 +152,13 @@ export default function IdeaSubmissionPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitted && isLeader && !isEditingSubmitted) {
+      setIsEditingSubmitted(true);
+      setError("");
+      return;
+    }
     if (isReadOnly) {
-      setError("Only the team leader can edit and resubmit a submitted idea.");
+      setError("Only the team leader can edit and submit a submitted idea.");
       return;
     }
     if (teamTooSmall) {
@@ -212,6 +220,7 @@ export default function IdeaSubmissionPage() {
       setLastEditedBy(response.idea?.last_edited_by_name || portalApi.getSession()?.name || "");
       setLastEditedAt(response.idea?.updated_at || new Date().toISOString());
       setIsSubmitted(true);
+      setIsEditingSubmitted(false);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to submit idea.");
     } finally {
@@ -676,11 +685,11 @@ export default function IdeaSubmissionPage() {
             {isLeader && (
               <motion.button
                 type="submit"
-                disabled={isReadOnly || teamTooSmall || isSubmitting || isSaving}
-                whileHover={!isReadOnly && !teamTooSmall && !isSubmitting && !isSaving ? { scale: 1.03 } : {}}
-                whileTap={!isReadOnly && !teamTooSmall && !isSubmitting && !isSaving ? { scale: 0.97 } : {}}
+                disabled={cannotEditSubmission || teamTooSmall || isSubmitting || isSaving}
+                whileHover={!cannotEditSubmission && !teamTooSmall && !isSubmitting && !isSaving ? { scale: 1.03 } : {}}
+                whileTap={!cannotEditSubmission && !teamTooSmall && !isSubmitting && !isSaving ? { scale: 0.97 } : {}}
                 className={`w-full sm:w-auto min-w-0 sm:min-w-[120px] h-10 sm:h-9 font-medium text-[clamp(11px,1.6vw,20px)] rounded-full px-2 sm:px-8 py-1.5 sm:py-2.5 flex items-center justify-center gap-1.5 sm:gap-2 border-none shadow-md transition-all ${
-                  isReadOnly
+                  cannotEditSubmission
                     ? "bg-emerald-600 text-white cursor-not-allowed opacity-90"
                     : "bg-white text-black hover:bg-neutral-100 disabled:opacity-60 disabled:cursor-not-allowed"
                 }`}
@@ -688,19 +697,21 @@ export default function IdeaSubmissionPage() {
                   fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
                 }}
               >
-                {isReadOnly
+                {cannotEditSubmission
                   ? submittedSubmissionStatus.buttonLabel
                   : isSubmitting
                   ? "Submitting..."
+                  : isSubmitted && !isEditingSubmitted
+                  ? "Edit Submission"
                   : isSubmitted
-                  ? "Resubmit Proposal"
+                  ? "Submit Changes"
                   : (
                     <>
                       <span className="sm:hidden">Submit</span>
                       <span className="hidden sm:inline">Submit Proposal</span>
                     </>
                   )}
-                {!isReadOnly && (
+                {!cannotEditSubmission && (
                   <svg
                     width="12"
                     height="12"
@@ -734,12 +745,12 @@ export default function IdeaSubmissionPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" role="dialog" aria-modal="true" aria-labelledby="submit-confirmation-title" aria-describedby="submit-confirmation-description">
           <div className="w-full max-w-md rounded-2xl border border-neutral-700 bg-[#202020] p-6 shadow-2xl">
             <h2 id="submit-confirmation-title" className="text-xl font-semibold">
-              {isSubmitted ? "Resubmit this proposal?" : "Submit this proposal?"}
+              {isSubmitted ? "Submit edited submission?" : "Submit this proposal?"}
             </h2>
             <p id="submit-confirmation-description" className="mt-3 text-sm text-neutral-300">
               {isSubmitted
-                ? "Your changes will be submitted again for review. As team leader, you can edit and resubmit this proposal again if needed."
-                : "After submission, your team leader can edit and resubmit the proposal if changes are needed."}
+                ? "Your edits will be submitted for review. The team leader can edit and submit this proposal again if needed."
+                : "After submission, your team leader can edit and submit the proposal if changes are needed."}
             </p>
             <div className="mt-6 flex justify-end gap-3">
               <button
@@ -754,7 +765,7 @@ export default function IdeaSubmissionPage() {
                 onClick={confirmSubmit}
                 className="rounded-full bg-white px-4 py-2 text-sm font-medium text-black hover:bg-neutral-100"
               >
-                {isSubmitted ? "Resubmit Proposal" : "Submit & Lock"}
+                {isSubmitted ? "Submit Changes" : "Submit & Lock"}
               </button>
             </div>
           </div>
