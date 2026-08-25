@@ -91,6 +91,7 @@ export interface BackendTeam {
   invite_code?: string;
   idea?: BackendTeamIdea;
   idea_submitted?: boolean;
+  allow_members_to_leave_team?: boolean;
   round?: number;
   color_mark?: string;
   total_points?: number;
@@ -214,6 +215,7 @@ const STORAGE_KEY_SESSION = "devjams26_portal_session";
 const STORAGE_KEY_ONBOARDING = "devjams26_portal_onboarding";
 const STORAGE_KEY_SUBMISSION = "devjams26_portal_submission";
 const STORAGE_KEY_TEAM = "devjams26_portal_team";
+const pendingRemovedMemberIds = new Set<string>();
 
 async function persistIdea(
   idea: BackendTeamIdea,
@@ -527,9 +529,24 @@ export const portalApi = {
       const data = await portalApi.request<BackendTeam>("/participant/team", {
         method: "GET",
       });
+      const pendingIds = [...pendingRemovedMemberIds];
+      if (pendingIds.length > 0) {
+        data.members = data.members.filter((member) => !pendingRemovedMemberIds.has(member.id || ""));
+        if (data.members.length < 2) {
+          data.idea_submitted = false;
+        }
+        for (const memberId of pendingIds) {
+          if (data.members.every((member) => member.id !== memberId)) {
+            pendingRemovedMemberIds.delete(memberId);
+          }
+        }
+      }
 
       if (typeof window !== "undefined") {
         localStorage.setItem(STORAGE_KEY_TEAM, JSON.stringify(data));
+        if (!data.idea_submitted) {
+          localStorage.removeItem(STORAGE_KEY_SUBMISSION);
+        }
       }
       return data;
     } catch (err: unknown) {
@@ -551,6 +568,7 @@ export const portalApi = {
   async getParticipantTeam(): Promise<BackendTeam | null> {
     return portalApi.fetchTeam();
   },
+
   // Join a team with its six-character case-insensitive invite code.
   async joinTeam(inviteCode: string): Promise<{ team_id: string; team_name: string; team_size: number }> {
     const normalizedInviteCode = inviteCode.trim().toUpperCase();
@@ -596,6 +614,25 @@ export const portalApi = {
       method: "DELETE",
       body: JSON.stringify({ member_id: memberId }),
     });
+    pendingRemovedMemberIds.add(memberId);
+    if (typeof window !== "undefined") {
+      const raw = localStorage.getItem(STORAGE_KEY_TEAM);
+      if (raw) {
+        try {
+          const cachedTeam = JSON.parse(raw) as BackendTeam;
+          const members = cachedTeam.members.filter((member) => member.id !== memberId);
+          const updatedTeam: BackendTeam = {
+            ...cachedTeam,
+            members,
+            idea_submitted: members.length < 2 ? false : cachedTeam.idea_submitted,
+          };
+          localStorage.setItem(STORAGE_KEY_TEAM, JSON.stringify(updatedTeam));
+          if (!updatedTeam.idea_submitted) {
+            localStorage.removeItem(STORAGE_KEY_SUBMISSION);
+          }
+        } catch {}
+      }
+    }
   },
 
   async leaveTeam(): Promise<void> {

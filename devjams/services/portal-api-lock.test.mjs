@@ -28,24 +28,48 @@ globalThis.localStorage = {
   removeItem: (key) => storage.delete(key),
 };
 
-test("does not fall back to a local idea after a locked-team conflict", async () => {
+test("submits an edited idea for an already-submitted team", async () => {
   const originalFetch = globalThis.fetch;
-  globalThis.fetch = async () => new Response(
-    JSON.stringify({ error: "team is locked after idea submission" }),
-    { status: 409, headers: { "content-type": "application/json" } },
-  );
+  const requests = [];
+  globalThis.fetch = async (url, options = {}) => {
+    requests.push({ url: String(url), options });
+    if (String(url).endsWith("/participant/team/idea")) {
+      return new Response(
+        JSON.stringify({
+          message: "idea submitted",
+          idea: {
+            short_description: "Updated idea",
+            long_description: "Updated idea details",
+            links: "",
+            tracks: "Web",
+            is_submitted: true,
+          },
+        }),
+        { status: 200, headers: { "content-type": "application/json" } },
+      );
+    }
+    return new Response(
+      JSON.stringify({ team_id: "team-1", team_name: "Locked Team", idea_submitted: true, members: [] }),
+      { status: 200, headers: { "content-type": "application/json" } },
+    );
+  };
 
   try {
-    await assert.rejects(
-      portalApi.submitIdea({
-        short_description: "Updated idea",
-        long_description: "Updated idea details",
-        links: "",
-        tracks: "Web",
-      }),
-      (error) => error?.message === "team is locked after idea submission" && error?.status === 409,
-    );
-    assert.equal(JSON.parse(storage.get("devjams26_portal_team")).idea, undefined);
+    const response = await portalApi.submitIdea({
+      short_description: "Updated idea",
+      long_description: "Updated idea details",
+      links: "",
+      tracks: "Web",
+    });
+    assert.equal(response.message, "idea submitted");
+    const submitRequest = requests.find(({ url }) => url.endsWith("/participant/team/idea"));
+    assert.deepEqual(JSON.parse(submitRequest.options.body), {
+      short_description: "Updated idea",
+      long_description: "Updated idea details",
+      links: "",
+      tracks: "Web",
+      submit: true,
+    });
   } finally {
     globalThis.fetch = originalFetch;
   }
@@ -94,6 +118,26 @@ test("saves a draft for any team member without submitting it", async () => {
       tracks: "Web",
       submit: false,
     });
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("clears the cached submission after team idea invalidation", async () => {
+  const originalFetch = globalThis.fetch;
+  storage.set("devjams26_portal_submission", JSON.stringify({
+    userId: "participant-1",
+    status: "submitted",
+    isLocked: true,
+  }));
+  globalThis.fetch = async () => new Response(
+    JSON.stringify({ team_id: "team-1", team_name: "Solo Team", idea_submitted: false, members: [] }),
+    { status: 200, headers: { "content-type": "application/json" } },
+  );
+
+  try {
+    await portalApi.fetchTeam();
+    assert.equal(storage.has("devjams26_portal_submission"), false);
   } finally {
     globalThis.fetch = originalFetch;
   }
