@@ -2,6 +2,7 @@
 
 import { useId } from "react";
 import Image from "next/image";
+import AssetImage from "../AssetImage";
 import { motion } from "../gsap-motion";
 import { TIER_LABEL, type Sponsor } from "./SponsorsData";
 
@@ -57,6 +58,19 @@ export function SponsorCard({ sponsor, index = 0 }: SponsorCardProps) {
           </clipPath>
         </defs>
       </svg>
+
+      {sponsor.dino && (
+        /* Stands upright on the card's top edge, toward the left. */
+        <AssetImage
+          src="/assets/spons-dino.svg"
+          alt=""
+          width={138}
+          height={146}
+          sizes="68px"
+          aria-hidden="true"
+          className="sponsor-card__dino"
+        />
+      )}
 
       <Image
         src={sponsor.logo}

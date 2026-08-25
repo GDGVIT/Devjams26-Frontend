@@ -24,7 +24,6 @@ const DECORATIONS: Deco[] = [
   { src: "/assets/android.svg", width: 260, height: 159 },
   { src: "/assets/cloud.svg", width: 278, height: 203 },
   { src: "/assets/ded.svg", width: 92, height: 63 },
-  { src: "/assets/spons-dino.svg", width: 69, height: 73 },
   { src: "/assets/sponsc1.svg", width: 65, height: 65 },
   { src: "/assets/sponsc2.svg", width: 68, height: 70 },
   { src: "/assets/umbrella.svg", width: 310, height: 222 },
@@ -35,16 +34,19 @@ const DECORATIONS: Deco[] = [
 const DECO_WIDTH = 60;
 
 /**
- * Two decorations per quadrant, in reading order: top-left, top-right,
- * bottom-left, bottom-right. Ranges keep clear of the section edges and the
- * centred heading.
+ * One decoration in the top-left quadrant, two in each of the others — the
+ * dino lives on the Exasol card instead of the scatter, so there are seven.
+ * Ranges keep clear of the section edges and the centred heading.
  */
 const QUADRANTS: Array<{ x: [number, number]; y: [number, number] }> = [
-  { x: [4, 42], y: [4, 32] },
-  { x: [58, 94], y: [4, 32] },
-  { x: [4, 42], y: [68, 94] },
-  { x: [58, 94], y: [68, 94] },
+  { x: [4, 42], y: [4, 32] }, // top-left
+  { x: [58, 94], y: [4, 32] }, // top-right
+  { x: [4, 42], y: [68, 94] }, // bottom-left
+  { x: [58, 94], y: [68, 94] }, // bottom-right
 ];
+
+/** Slot order: 1 in top-left, 2 in top-right, bottom-left, bottom-right. */
+const SLOT_QUADRANTS = [0, 1, 1, 2, 2, 3, 3];
 
 /** Minimum centre-to-centre spacing between any two decorations. */
 const MIN_DIST = 18;
@@ -68,7 +70,7 @@ const rand = (min: number, max: number) => min + Math.random() * (max - min);
 const placed: Array<{ x: number; y: number }> = [];
 
 const SCATTER = shuffle(DECORATIONS).map((deco, index) => {
-  const quadrant = QUADRANTS[index >> 1];
+  const quadrant = QUADRANTS[SLOT_QUADRANTS[index]];
   let x = rand(quadrant.x[0], quadrant.x[1]);
   let y = rand(quadrant.y[0], quadrant.y[1]);
   // Rejection sample until the centre is MIN_DIST clear of every deco placed

@@ -14,6 +14,8 @@ export interface Sponsor {
   invertLogo?: boolean;
   /** Optional site to link the card to. */
   url?: string;
+  /** Stands the pixel dino on the card's top edge. */
+  dino?: boolean;
 }
 
 /**
@@ -27,6 +29,7 @@ export const SPONSORS: Sponsor[] = [
     tier: "gold",
     name: "Exasol",
     logo: "/exasol-light.svg",
+    dino: true,
   },
   {
     id: "bronze-1",

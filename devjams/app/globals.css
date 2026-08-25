@@ -1284,6 +1284,20 @@ body {
   display: block;
 }
 
+/* Stands upright on the card top edge rather than overlapping the corner:
+   bottom:100% puts its feet exactly on the edge. */
+.sponsor-card__dino {
+  position: absolute;
+  bottom: 100%;
+  left: clamp(14px, 2vw, 26px);
+  z-index: 2;
+  width: clamp(34px, 3.2vw, 44px);
+  height: auto;
+  margin-bottom: -2px;
+  pointer-events: none;
+  user-select: none;
+}
+
 .sponsor-card__logo {
   position: relative;
   z-index: 1;
