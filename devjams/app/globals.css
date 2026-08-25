@@ -805,15 +805,19 @@ body {
 .hero-nav__links {
   position: absolute;
   top: 22.5px;
-  right: 61.25px;
-  /* Sized to its content rather than a fixed 574.75px: that width was tuned for
-     six links and clipped the seventh once Sponsors was added, because
-     .hero-nav sets overflow: hidden. The gap tightens to keep the row inside
-     the pill. */
+  /* Centred across the pill rather than anchored to its right edge. Anchoring
+     left the row hugging the left curve — 16px of space there against 62px on
+     the right — once Sponsors made it a seventh link. Spanning the full width
+     and centring splits the slack evenly. The fixed 574.75px width is gone for
+     the same reason: it was tuned for six links and clipped the seventh,
+     because .hero-nav sets overflow: hidden. */
+  left: 0;
+  right: 0;
   width: auto;
   height: 23px;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 34px;
 }
 
