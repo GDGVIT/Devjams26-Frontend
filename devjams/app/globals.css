@@ -1357,7 +1357,17 @@ body {
   }
 }
 
-/* Decorative starbursts around the sponsors heading. */
+/* The sun lives outside the section (see Sponsors.tsx) so it is never
+   clipped; this wrapper only anchors it to the section's box. It must span
+   the full width — main is a flex container, so an auto-width block would
+   shrink-wrap to the section and drag the sun in from the page edge. */
+.sponsors-wrap {
+  position: relative;
+  width: 100%;
+}
+
+/* Decorative starburst around the sponsors heading. The wrapper keeps it
+   unclipped, so the original top-left placement now renders whole. */
 .sponsors__sun {
   position: absolute;
   height: auto;
@@ -1367,7 +1377,7 @@ body {
 
 .sponsors__sun--lead {
   top: clamp(-22px, -1.4vw, 4px);
-  left: clamp(8px, 12vw, 200px);
+  left: clamp(0px, 5vw, 72px);
   width: clamp(104px, 10vw, 150px);
 }
 
@@ -1408,9 +1418,10 @@ body {
 /* Both starbursts crowd the heading on a phone, where the section is much
    narrower — keep the large one only. */
 @media (max-width: 700px) {
+  /* Original top-left corner placement, fully inside the viewport. */
   .sponsors__sun--lead {
-    top: -6px;
-    left: -20px;
+    top: -8px;
+    left: 0;
     width: 104px;
   }
 
