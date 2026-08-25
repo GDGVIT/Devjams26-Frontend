@@ -204,6 +204,47 @@ export interface IdeaSubmission {
   createdAt: string;
   updatedAt: string;
 }
+export function ensureTeamLeader(team: BackendTeam): BackendTeam {
+  if (!Array.isArray(team.members) || team.members.length === 0) {
+    return {
+      ...team,
+      members: Array.isArray(team.members) ? team.members : [],
+    };
+  }
+
+  if (team.members.some((member) => member.is_team_leader === true)) {
+    return team;
+  }
+
+  return {
+    ...team,
+    members: team.members.map((member, index) => ({
+      ...member,
+      is_team_leader: index === 0,
+    })),
+  };
+}
+
+function syncSessionTeamLeadership(team: BackendTeam): BackendTeam {
+  const session = portalApi.getSession();
+  if (!session || team.members.length === 0) {
+    return team;
+  }
+
+  const currentMember = team.members.find((member) => member.id === session.id);
+  if (!currentMember) {
+    return team;
+  }
+
+  const isTeamLeader = currentMember.is_team_leader === true;
+  if (session.isTeamLeader !== isTeamLeader) {
+    session.isTeamLeader = isTeamLeader;
+    portalApi.saveSession(session);
+  }
+
+  return team;
+}
+
 
 export interface ApiHttpError extends Error {
   status?: number;
@@ -526,9 +567,10 @@ export const portalApi = {
   // Fetch team from GET /participant/team
   async fetchTeam(): Promise<BackendTeam | null> {
     try {
-      const data = await portalApi.request<BackendTeam>("/participant/team", {
+      const response = await portalApi.request<BackendTeam>("/participant/team", {
         method: "GET",
       });
+      let data = response;
       const pendingIds = [...pendingRemovedMemberIds];
       if (pendingIds.length > 0) {
         data.members = data.members.filter((member) => !pendingRemovedMemberIds.has(member.id || ""));
@@ -541,7 +583,7 @@ export const portalApi = {
           }
         }
       }
-
+      data = syncSessionTeamLeadership(ensureTeamLeader(data));
       if (typeof window !== "undefined") {
         localStorage.setItem(STORAGE_KEY_TEAM, JSON.stringify(data));
         if (!data.idea_submitted) {
@@ -557,7 +599,7 @@ export const portalApi = {
         const raw = localStorage.getItem(STORAGE_KEY_TEAM);
         if (raw) {
           try {
-            return JSON.parse(raw) as BackendTeam;
+            return syncSessionTeamLeadership(ensureTeamLeader(JSON.parse(raw) as BackendTeam));
           } catch {}
         }
       }
@@ -565,12 +607,18 @@ export const portalApi = {
     }
   },
 
+
   async getParticipantTeam(): Promise<BackendTeam | null> {
     return portalApi.fetchTeam();
   },
 
   // Join a team with its six-character case-insensitive invite code.
-  async joinTeam(inviteCode: string): Promise<{ team_id: string; team_name: string; team_size: number }> {
+  async joinTeam(inviteCode: string): Promise<{
+    team_id: string;
+    team_name: string;
+    team_size: number;
+    is_team_leader?: boolean;
+  }> {
     const normalizedInviteCode = inviteCode.trim().toUpperCase();
     if (!/^[A-Z0-9]{6}$/.test(normalizedInviteCode)) {
       throw new Error("Enter the six-character alphanumeric invite code.");
@@ -581,6 +629,7 @@ export const portalApi = {
       team_id: string;
       team_name: string;
       team_size: number;
+      is_team_leader?: boolean;
     }>("/participant/team/join", {
       method: "POST",
       body: JSON.stringify({ invite_code: normalizedInviteCode }),
@@ -590,7 +639,7 @@ export const portalApi = {
     if (session) {
       session.teamId = response.team_id;
       session.teamName = response.team_name;
-      session.isTeamLeader = false;
+      session.isTeamLeader = response.is_team_leader ?? response.team_size === 1;
       portalApi.saveSession(session);
     }
     await portalApi.fetchTeam();
@@ -621,11 +670,11 @@ export const portalApi = {
         try {
           const cachedTeam = JSON.parse(raw) as BackendTeam;
           const members = cachedTeam.members.filter((member) => member.id !== memberId);
-          const updatedTeam: BackendTeam = {
+          const updatedTeam = syncSessionTeamLeadership(ensureTeamLeader({
             ...cachedTeam,
             members,
             idea_submitted: members.length < 2 ? false : cachedTeam.idea_submitted,
-          };
+          }));
           localStorage.setItem(STORAGE_KEY_TEAM, JSON.stringify(updatedTeam));
           if (!updatedTeam.idea_submitted) {
             localStorage.removeItem(STORAGE_KEY_SUBMISSION);
@@ -671,8 +720,6 @@ export const portalApi = {
           members,
         }),
       });
-
-      // Update local session
       const session = portalApi.getSession();
       if (session) {
         session.teamId = resp.team_id;
@@ -718,6 +765,7 @@ export const portalApi = {
             email: session?.email || "leader@vitstudent.ac.in",
             registration_number: session?.registrationNumber,
             checked_in: false,
+            is_team_leader: true,
           },
         ],
       };
