@@ -5,13 +5,30 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "../../components/gsap-motion";
 import { GDGLockup } from "@/components/portal/GDGLockup";
-import { portalApi, type UserSession } from "@/services/portalApi";
+import {
+  portalApi,
+  type AttendanceCheckin,
+  type AttendanceStatus,
+  type UserSession,
+} from "@/services/portalApi";
+
+function formatAttendanceTimestamp(timestamp: string): string {
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) {
+    return timestamp;
+  }
+  return date.toLocaleString(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+}
 
 export default function ProfilePage() {
   const router = useRouter();
   const [profile, setProfile] = useState<UserSession | null>(null);
+  const [attendanceStatus, setAttendanceStatus] = useState<AttendanceStatus | null>(null);
+  const [attendanceHistory, setAttendanceHistory] = useState<AttendanceCheckin[]>([]);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const loadProfile = async () => {
       const token = portalApi.getToken();
@@ -21,15 +38,37 @@ export default function ProfilePage() {
       }
 
       try {
-        const me = await portalApi.fetchMe();
-        if (me) {
-          setProfile(me);
-        } else {
-          setProfile(portalApi.getSession());
-        }
+        const [me, status, history] = await Promise.all([
+          portalApi.fetchMe(),
+          portalApi.fetchAttendanceStatus(),
+          portalApi.fetchAttendanceHistory(),
+        ]);
+        const resolvedProfile = me ?? portalApi.getSession();
+        setProfile(resolvedProfile);
+        setAttendanceStatus(
+          status ?? (
+            resolvedProfile
+              ? {
+                  isCheckedIn: Boolean(resolvedProfile.isCheckedIn),
+                  checkedInAt: resolvedProfile.checkedInAt ?? null,
+                }
+              : null
+          ),
+        );
+        setAttendanceHistory(history ?? []);
       } catch (err: unknown) {
         console.warn("Failed to fetch profile:", err);
-        setProfile(portalApi.getSession());
+        const session = portalApi.getSession();
+        setProfile(session);
+        setAttendanceStatus(
+          session
+            ? {
+                isCheckedIn: Boolean(session.isCheckedIn),
+                checkedInAt: session.checkedInAt ?? null,
+              }
+            : null,
+        );
+        setAttendanceHistory([]);
       } finally {
         setLoading(false);
       }
@@ -43,7 +82,7 @@ export default function ProfilePage() {
     router.push("/portal");
   };
 
-  const isCheckedIn = profile?.isCheckedIn;
+  const isCheckedIn = attendanceStatus?.isCheckedIn ?? profile?.isCheckedIn ?? false;
 
   const profileFields = profile?.participantType === "external"
     ? [
@@ -419,43 +458,31 @@ export default function ProfilePage() {
               </span>
             </div>
 
-            {/* 2. Morning Session */}
-            <div
-              className="w-full bg-[#343434] text-white/90 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center justify-between text-[clamp(12px,1.6vw,20px)] font-normal"
-              style={{
-                fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
-              }}
-            >
-              <span>Morning Session</span>
-              <span
-                className={`text-xs sm:text-sm px-2.5 py-1 rounded-full font-medium ${
-                  isCheckedIn
-                    ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                    : "bg-neutral-600/30 text-neutral-400 border border-neutral-600/40"
-                }`}
+            {attendanceHistory.length === 0 ? (
+              <div
+                className="w-full bg-[#343434] text-white/70 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] flex items-center text-[clamp(12px,1.6vw,20px)] font-normal"
+                style={{
+                  fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+                }}
               >
-                {isCheckedIn ? "Present" : "Pending"}
-              </span>
-            </div>
-
-            {/* 3. Evening Session */}
-            <div
-              className="w-full bg-[#343434] text-white/90 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] h-[32px] sm:h-[56px] flex items-center justify-between text-[clamp(12px,1.6vw,20px)] font-normal"
-              style={{
-                fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
-              }}
-            >
-              <span>Evening Session</span>
-              <span
-                className={`text-xs sm:text-sm px-2.5 py-1 rounded-full font-medium ${
-                  isCheckedIn
-                    ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                    : "bg-neutral-600/30 text-neutral-400 border border-neutral-600/40"
-                }`}
-              >
-                {isCheckedIn ? "Present" : "Pending"}
-              </span>
-            </div>
+                {loading ? "Loading attendance history..." : "No check-ins recorded yet."}
+              </div>
+            ) : (
+              attendanceHistory.map((checkin, index) => (
+                <div
+                  key={`${checkin.timestamp}-${index}`}
+                  className="w-full bg-[#343434] text-white/90 rounded-[4px] sm:rounded-[8px] px-3.5 sm:px-6 py-2 sm:py-3.5 min-h-[32px] sm:min-h-[56px] flex items-center justify-between gap-4 text-[clamp(12px,1.6vw,20px)] font-normal"
+                  style={{
+                    fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif",
+                  }}
+                >
+                  <span>{`Check-in ${index + 1}`}</span>
+                  <span className="text-xs sm:text-sm text-neutral-300 text-right">
+                    {formatAttendanceTimestamp(checkin.timestamp)}
+                  </span>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
