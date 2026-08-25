@@ -1,7 +1,7 @@
 "use client";
 
+import { useId } from "react";
 import Image from "next/image";
-import AssetImage from "../AssetImage";
 import { motion } from "../gsap-motion";
 import { TIER_LABEL, type Sponsor } from "./SponsorsData";
 
@@ -13,19 +13,50 @@ interface SponsorCardProps {
 
 export function SponsorCard({ sponsor, index = 0 }: SponsorCardProps) {
   const label = TIER_LABEL[sponsor.tier];
+  // Unique clipPath id so multiple cards don't collide — the Figma export
+  // uses a single global id (bgblur_0_2104_9537_clip_path).
+  const clipId = `bgblur_${useId().replace(/:/g, "_")}`;
 
   const card = (
-    <div className="sponsor-card">
-      {/* Stands upright on the card's top edge, toward the left. */}
-      <AssetImage
-        src="/assets/spons-dino.svg"
-        alt=""
-        width={138}
-        height={146}
-        sizes="68px"
+    <div className={`sponsor-card sponsor-card--${sponsor.tier}`}>
+      {/* Figma card background: 350×480 rx24 #202124 with 22.55px backdrop blur.
+          Inlined so the blur + fill live exactly as exported. For bronze this
+          is the spec; gold/silver reuse the same shape for visual consistency. */}
+      <svg
+        className="sponsor-card__bg"
+        width="350"
+        height="480"
+        viewBox="0 0 350 480"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
         aria-hidden="true"
-        className="sponsor-card__dino"
-      />
+        preserveAspectRatio="none"
+      >
+        <foreignObject x="-45.1" y="-45.1" width="440.2" height="570.2">
+          <div
+            style={
+              {
+                backdropFilter: "blur(22.55px)",
+                clipPath: `url(#${clipId})`,
+                height: "100%",
+                width: "100%",
+              } as React.CSSProperties
+            }
+          />
+        </foreignObject>
+        <rect
+          data-figma-bg-blur-radius="45.1"
+          width="350"
+          height="480"
+          rx="24"
+          fill="#202124"
+        />
+        <defs>
+          <clipPath id={clipId} transform="translate(45.1 45.1)">
+            <rect width="350" height="480" rx="24" />
+          </clipPath>
+        </defs>
+      </svg>
 
       <Image
         src={sponsor.logo}

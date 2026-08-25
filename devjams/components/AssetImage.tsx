@@ -27,6 +27,7 @@ const BAKED_ASSETS = new Set([
   "rightbracket",
   "umbrella",
   "spons-dino",
+  "ded",
   "logo/triangle",
   "logo/circle",
 ]);
