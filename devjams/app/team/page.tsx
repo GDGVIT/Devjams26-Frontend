@@ -54,6 +54,8 @@ export default function TeamPage() {
           setTeamName(team.team_name || me.teamName || "My Team");
           setTeamCode(team.invite_code || "");
           if (team.members && Array.isArray(team.members)) {
+            const currentMember = team.members.find((member) => member.id === me.id);
+            setIsLeader(currentMember?.is_team_leader === true);
             setMembers(team.members);
           } else {
             setMembers([
@@ -92,11 +94,15 @@ export default function TeamPage() {
     if (team) {
       setIdeaSubmitted(Boolean(team.idea_submitted));
       setAllowMembersToLeave(Boolean(team.allow_members_to_leave_team));
-      setMembers(
-        removedMemberId
-          ? team.members.filter((member) => member.id !== removedMemberId)
-          : team.members,
+      const refreshedMembers = removedMemberId
+        ? team.members.filter((member) => member.id !== removedMemberId)
+        : team.members;
+      setIsLeader(
+        refreshedMembers.some(
+          (member) => member.id === currentParticipantId && member.is_team_leader === true,
+        ),
       );
+      setMembers(refreshedMembers);
     }
   };
 
