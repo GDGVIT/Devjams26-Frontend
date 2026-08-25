@@ -806,11 +806,15 @@ body {
   position: absolute;
   top: 22.5px;
   right: 61.25px;
-  width: 574.75px;
+  /* Sized to its content rather than a fixed 574.75px: that width was tuned for
+     six links and clipped the seventh once Sponsors was added, because
+     .hero-nav sets overflow: hidden. The gap tightens to keep the row inside
+     the pill. */
+  width: auto;
   height: 23px;
   display: flex;
   align-items: center;
-  gap: 46.15px;
+  gap: 34px;
 }
 
 .hero-nav__link {
@@ -1198,5 +1202,176 @@ body {
     line-height: 1.45;
     letter-spacing: normal;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  }
+}
+
+/* ==========================================================================
+   Sponsors
+   ========================================================================== */
+
+/* Owns a full screen so the neighbouring sections do not bleed into it,
+   which was most obvious on mobile. */
+.sponsors {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  min-height: 100svh;
+  background: #000;
+  color: #fff;
+  padding: clamp(56px, 9vw, 104px) 16px clamp(64px, 10vw, 120px);
+  overflow: hidden;
+}
+
+.sponsors__title {
+  margin: 0 0 clamp(40px, 6vw, 72px);
+  font-family: "Google Sans", sans-serif;
+  font-weight: 700;
+  /* Spec is 64px; clamped so it does not overflow narrow phones. */
+  font-size: clamp(34px, 8vw, 64px);
+  line-height: 100%;
+  letter-spacing: 0;
+  text-align: center;
+  color: #fff;
+}
+
+.sponsors__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: clamp(28px, 5vw, 76px);
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.sponsor-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(14px, 2vw, 22px);
+}
+
+.sponsor-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(220px, 24vw, 280px);
+  height: clamp(300px, 33vw, 380px);
+  padding: 0 clamp(20px, 2.4vw, 28px);
+  border-radius: 24px;
+  background: #1a1a1d;
+  /* overflow stays visible so the dino can sit on the top edge */
+  overflow: visible;
+}
+
+/* Stands upright on the card top edge rather than overlapping the corner:
+   bottom:100% puts its feet exactly on the edge. */
+.sponsor-card__dino {
+  position: absolute;
+  bottom: 100%;
+  left: clamp(14px, 2vw, 26px);
+  z-index: 2;
+  width: clamp(34px, 3.2vw, 44px);
+  height: auto;
+  margin-bottom: -2px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.sponsor-card__logo {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 44%;
+  object-fit: contain;
+}
+
+/* Escape hatch for a sponsor logo that only ships dark-on-light. Exasol no
+   longer needs it (exasol-light.svg is a real light variant that keeps the
+   green X); this flattens a logo to solid white, losing any accent colour. */
+.sponsor-card__logo--invert {
+  filter: brightness(0) invert(1);
+}
+
+.sponsor-tier {
+  margin: 0;
+  font-family: "Google Sans", sans-serif;
+  font-weight: 700;
+  /* Spec is 58.43px. */
+  font-size: clamp(30px, 7vw, 58.43px);
+  line-height: 100%;
+  letter-spacing: 0;
+  text-align: center;
+}
+
+.sponsor-tier--gold {
+  background: linear-gradient(126.45deg, #efef46 28.81%, #b77d00 118.45%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.sponsor-tier--silver {
+  background: linear-gradient(126.45deg, #ffffff 28.81%, #8b8b8b 118.45%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.sponsor-tier--bronze {
+  background: linear-gradient(126.45deg, #f2a25c 28.81%, #a4531b 118.45%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sponsor-slot {
+    transition: none;
+  }
+}
+
+/* Decorative starbursts around the sponsors heading. */
+.sponsors__sun {
+  position: absolute;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+}
+
+.sponsors__sun--lead {
+  top: clamp(-22px, -1.4vw, 4px);
+  left: clamp(8px, 12vw, 200px);
+  width: clamp(104px, 10vw, 150px);
+}
+
+/* Both starbursts crowd the heading on a phone, where the section is much
+   narrower — keep the large one only. */
+@media (max-width: 700px) {
+  .sponsors__sun--lead {
+    top: -6px;
+    left: -20px;
+    width: 104px;
+  }
+
+  /* The dino stands above the card, so the heading needs clearance it does
+     not need on desktop, where the gap is already large enough. */
+  .sponsors__title {
+    margin-bottom: 56px;
+  }
+
+  /* Wider than the 220px floor so the card carries the section instead of
+     looking stranded in the middle of a narrow screen. */
+  .sponsor-card {
+    width: min(62vw, 262px);
+    height: min(84vw, 354px);
+  }
+
+  /* The section is mostly empty below the tier label at this width. */
+  .sponsors {
+    padding-bottom: 64px;
   }
 }

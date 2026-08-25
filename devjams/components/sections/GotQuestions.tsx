@@ -18,7 +18,11 @@ function FAQContent() {
     FAQ_CATEGORIES.find((category) => category.id === activeCategoryId) ?? FAQ_CATEGORIES[0];
 
   return (
-    <div className="relative z-10 max-w-[960px] w-full mx-auto px-2 sm:px-4 flex flex-col items-center pb-8 sm:pb-12">
+    // The gemini/gear decorations are anchored to the bottom-right of the FAQ
+    // block and only render on mobile, where they landed on top of the Discord
+    // link below. The extra bottom padding there grows the block, carrying the
+    // decorations clear of the link.
+    <div className="relative z-10 max-w-[960px] w-full mx-auto px-2 sm:px-4 flex flex-col items-center pb-28 sm:pb-12">
       <FAQsTabs
         categories={FAQ_CATEGORIES}
         activeCategoryId={activeCategoryId}
