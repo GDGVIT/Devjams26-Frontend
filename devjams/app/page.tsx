@@ -51,6 +51,7 @@ import {
 type ShapeKey = "web" | "android";
 import { Tracks } from "../components/sections/Tracks";
 import { PreviousEvents } from "../components/sections/PreviousEvents";
+import { Sponsors } from "../components/sections/Sponsors";
 import { GotQuestions } from "../components/sections/GotQuestions";
 import { Footer } from "../components/sections/Footer";
 
@@ -953,6 +954,9 @@ export default function Home() {
                 <a className="hero-nav__link" href="#gallery" tabIndex={menuOpen ? 0 : -1} onClick={(e) => handleNavClick(e, "gallery")}>
                   Gallery
                 </a>
+                <a className="hero-nav__link" href="#sponsors" tabIndex={menuOpen ? 0 : -1} onClick={(e) => handleNavClick(e, "sponsors")}>
+                  Sponsors
+                </a>
                 <a className="hero-nav__link" href="#faqs" tabIndex={menuOpen ? 0 : -1} onClick={(e) => handleNavClick(e, "faqs")}>
                   FAQs
                 </a>
@@ -1285,6 +1289,7 @@ export default function Home() {
       {/* Remaining site sections */}
       <Tracks />
       <PreviousEvents />
+      <Sponsors />
       <GotQuestions />
 
       {/* Footer Section */}

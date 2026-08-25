@@ -49,6 +49,8 @@ const TARGETS = [
   // Stretched edge to edge with preserveAspectRatio="none", and it is a soft
   // blur, so it needs no more resolution than its own coordinate space.
   { src: "faq-mesh.svg", out: "faq-mesh.png", width: 1000, height: 650 },
+  // Sponsor card dino: 69x73 viewBox, shown at ~68px wide.
+  { src: "spons-dino.svg", out: "spons-dino.png", width: 138, height: 146 },
 ];
 
 const CHROME_CANDIDATES = [
