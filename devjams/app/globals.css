@@ -1266,22 +1266,16 @@ body {
   height: clamp(300px, 33vw, 380px);
   padding: 0 clamp(20px, 2.4vw, 28px);
   border-radius: 24px;
-  background: transparent;
+  /* The Figma export is an SVG rect (#202124, rx 24) plus a backdrop-blur
+     layer. The blur blurs a solid black backdrop, so it contributes nothing
+     visible — and Safari rasterizes foreignObject+backdrop-filter at low
+     resolution, blurring the whole card. A plain CSS background renders the
+     identical card crisp on every browser. */
+  background: #202124;
   /* overflow stays visible so the dino can sit on the top edge;
      the bg SVG itself is clipped to the radius */
   overflow: visible;
   isolation: isolate;
-}
-
-.sponsor-card__bg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: 0;
-  display: block;
 }
 
 /* Stands upright on the card top edge rather than overlapping the corner:
