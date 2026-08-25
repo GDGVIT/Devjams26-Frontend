@@ -59,6 +59,26 @@ export interface BackendParticipantMe {
   checked_in_at?: string | null;
 }
 
+export interface BackendAttendanceStatus {
+  checked_in: boolean;
+  checked_in_at: string | null;
+}
+
+export interface BackendAttendanceHistory {
+  checkins: Array<{
+    timestamp: string;
+  }>;
+}
+
+export interface AttendanceStatus {
+  isCheckedIn: boolean;
+  checkedInAt: string | null;
+}
+
+export interface AttendanceCheckin {
+  timestamp: string;
+}
+
 export interface BackendTeamMember {
   id?: string;
   name: string;
@@ -561,6 +581,37 @@ export const portalApi = {
     } catch (err: unknown) {
       console.warn("fetchMe error:", err);
       return portalApi.getSession();
+    }
+  },
+
+  // Fetch current participant attendance status.
+  async fetchAttendanceStatus(): Promise<AttendanceStatus | null> {
+    try {
+      const data = await portalApi.request<BackendAttendanceStatus>("/participant/attendance/status", {
+        method: "GET",
+      });
+      return {
+        isCheckedIn: data.checked_in,
+        checkedInAt: data.checked_in_at,
+      };
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      console.warn("fetchAttendanceStatus error:", errMsg);
+      return null;
+    }
+  },
+
+  // Fetch the authenticated participant's ordered attendance history.
+  async fetchAttendanceHistory(): Promise<AttendanceCheckin[] | null> {
+    try {
+      const data = await portalApi.request<BackendAttendanceHistory>("/participant/attendance/history", {
+        method: "GET",
+      });
+      return Array.isArray(data.checkins) ? data.checkins : [];
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      console.warn("fetchAttendanceHistory error:", errMsg);
+      return null;
     }
   },
 
