@@ -1266,26 +1266,27 @@ body {
   height: clamp(300px, 33vw, 380px);
   padding: 0 clamp(20px, 2.4vw, 28px);
   border-radius: 24px;
-  background: #1a1a1d;
-  /* overflow stays visible so the dino can sit on the top edge */
+  background: transparent;
+  /* overflow stays visible so the dino can sit on the top edge;
+     the bg SVG itself is clipped to the radius */
   overflow: visible;
+  isolation: isolate;
 }
 
-/* Stands upright on the card top edge rather than overlapping the corner:
-   bottom:100% puts its feet exactly on the edge. */
-.sponsor-card__dino {
+.sponsor-card__bg {
   position: absolute;
-  bottom: 100%;
-  left: clamp(14px, 2vw, 26px);
-  z-index: 2;
-  width: clamp(34px, 3.2vw, 44px);
-  height: auto;
-  margin-bottom: -2px;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
   pointer-events: none;
-  user-select: none;
+  z-index: 0;
+  display: block;
 }
 
 .sponsor-card__logo {
+  position: relative;
+  z-index: 1;
   display: block;
   width: 100%;
   height: auto;
@@ -1336,6 +1337,10 @@ body {
   .sponsor-slot {
     transition: none;
   }
+
+  .sponsors__deco {
+    animation: none;
+  }
 }
 
 /* Decorative starbursts around the sponsors heading. */
@@ -1352,6 +1357,40 @@ body {
   width: clamp(104px, 10vw, 150px);
 }
 
+/* Scatter of themed svgs (android, cloud, ded, spons-dino, sponsc1/2,
+   umbrella, maps). Position and --deco-rot come inline from
+   SponsorDecorations.tsx, which re-rolls them on every page load; the anchor
+   is the deco's centre. */
+.sponsors__deco {
+  position: absolute;
+  z-index: 0;
+  height: auto;
+  --deco-s: 1;
+  transform: translate(-50%, -50%) rotate(var(--deco-rot, 0deg))
+    scale(var(--deco-s));
+  pointer-events: none;
+  user-select: none;
+  /* The scatter mounts client-side, a beat after first paint; fade it in so
+     the arrival reads as intentional rather than a pop. */
+  animation: sponsors-deco-in 0.6s ease-out both;
+}
+
+@keyframes sponsors-deco-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Keep the heading and cards above the scattered decorations. */
+.sponsors__title,
+.sponsors__row {
+  position: relative;
+  z-index: 1;
+}
+
 /* Both starbursts crowd the heading on a phone, where the section is much
    narrower — keep the large one only. */
 @media (max-width: 700px) {
@@ -1361,8 +1400,12 @@ body {
     width: 104px;
   }
 
-  /* The dino stands above the card, so the heading needs clearance it does
-     not need on desktop, where the gap is already large enough. */
+  /* Shrink the scatter so it stays airy on a narrow screen. */
+  .sponsors__deco {
+    --deco-s: 0.68;
+  }
+
+  /* Extra clearance between the heading and the cards on phones. */
   .sponsors__title {
     margin-bottom: 56px;
   }

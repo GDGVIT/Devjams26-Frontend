@@ -1,9 +1,20 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { motion } from "../gsap-motion";
 import { SponsorCard } from "../sponsors/SponsorCard";
 import { SPONSORS } from "../sponsors/SponsorsData";
+
+/**
+ * Client-only: the scatter rolls fresh random positions on every page load,
+ * so it must never run during SSR (a server/client split would desync the
+ * hydration styles). It mounts right after hydration.
+ */
+const SponsorDecorations = dynamic(
+  () => import("../sponsors/SponsorDecorations"),
+  { ssr: false },
+);
 
 export function Sponsors() {
   if (SPONSORS.length === 0) return null;
@@ -20,6 +31,8 @@ export function Sponsors() {
         aria-hidden="true"
         className="sponsors__sun sponsors__sun--lead"
       />
+
+      <SponsorDecorations />
 
       <motion.h2
         className="sponsors__title"

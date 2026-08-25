@@ -51,6 +51,8 @@ const TARGETS = [
   { src: "faq-mesh.svg", out: "faq-mesh.png", width: 1000, height: 650 },
   // Sponsor card dino: 69x73 viewBox, shown at ~68px wide.
   { src: "spons-dino.svg", out: "spons-dino.png", width: 138, height: 146 },
+  // Sponsors decoration: 92x63 viewBox, scattered at ~66px wide.
+  { src: "ded.svg", out: "ded.png", width: 184, height: 126 },
 ];
 
 const CHROME_CANDIDATES = [

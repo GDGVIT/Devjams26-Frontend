@@ -28,6 +28,12 @@ export const SPONSORS: Sponsor[] = [
     name: "Exasol",
     logo: "/exasol-light.svg",
   },
+  {
+    id: "bronze-1",
+    tier: "bronze",
+    name: "Bronze Sponsor",
+    logo: "/bronze-logo.svg",
+  },
 ];
 
 export const TIER_LABEL: Record<SponsorTier, string> = {
