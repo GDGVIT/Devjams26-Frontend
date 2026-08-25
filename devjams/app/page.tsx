@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import gsap from "gsap";
 import {
   motion,
@@ -1072,7 +1073,7 @@ export default function Home() {
         </div>
         <h2 className="hero-cta-title">Wham Bam, Lets DevJam!</h2>
         {/* Idea Submission Button */}
-        <Link href="/portal" className="hero-idea-link inline-block relative z-30">
+        <Link href="/portal" className="hero-idea-link group inline-block relative z-30">
           <BorderGlow
             className="hero-idea-border-glow"
             edgeSensitivity={24}
@@ -1102,12 +1103,18 @@ export default function Home() {
                 backgroundColor: "#ffffff",
               }}
               whileTap={{ scale: 0.94 }}
-              className="hero-idea-button cursor-pointer bg-white text-black font-bold text-lg flex items-center justify-center relative"
+              className="hero-idea-button cursor-pointer bg-white text-black font-bold text-lg flex items-center justify-center gap-2 relative"
               style={{
                 fontFamily: '"Google Sans", var(--font-google-sans), sans-serif',
               }}
             >
               Idea Submission
+              {/* Signals that this goes somewhere. Nudges forward on hover, the
+                  same affordance the Discord link in the FAQs uses. */}
+              <ArrowRight
+                aria-hidden="true"
+                className="h-[1.05em] w-[1.05em] shrink-0 transition-transform duration-200 group-hover:translate-x-1"
+              />
             </motion.button>
           </BorderGlow>
         </Link>
