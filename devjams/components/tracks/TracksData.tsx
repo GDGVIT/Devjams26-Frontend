@@ -3,7 +3,10 @@ import { TrackData } from "../ui/TrackCarousel";
 export const TRACKS_DATA: TrackData[] = [
   {
     id: "aiml",
-    title: "AI/ML",
+    // Reka sponsors this track, so the name carries through everywhere the
+    // title is shown; the card also gets a sticker.
+    title: "Reka AI/ML",
+    sponsored: true,
     colorFrom: "#7AD97A",
     colorTo: "#3EA655",
     iconSrc: "/assets/logo/aiml.svg",

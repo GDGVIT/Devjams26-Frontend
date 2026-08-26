@@ -630,50 +630,15 @@ body {
   margin: 0;
 }
 
-.hero-gdg-lockup__icon {
-  position: absolute;
-  top: 0;
-  left: 0;
+/* One image fills the lockup box. contain keeps the asset aspect (297:44)
+   inside the original 257.9 x 42.42 footprint, so the header layout is
+   untouched. */
+.hero-gdg-lockup__image {
   display: block;
-  width: 46px;
-  height: 23px;
-}
-.hero-gdg-lockup__wordmark {
-  position: absolute;
-  top: 0;
-  left: 50px;
-  width: 202.42px;
-  height: 26.0925px;
-  overflow: hidden;
-}
-
-.hero-gdg-lockup__wordmark-image {
-  position: absolute;
-  top: 0;
-  left: -58.98px;
-  display: block;
-  width: 261.4px;
-  height: 26.0925px;
-  max-width: none;
-  object-fit: fill;
-  filter: brightness(0) invert(1);
-}
-
-.hero-gdg-lockup__name {
-  position: absolute;
-  top: 26.42px;
-  left: 50px;
-  width: 202.42px;
-  height: 16px;
-  color: #fff;
-  font-family: "Google Sans", sans-serif;
-  font-size: 12.731px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 16px;
-  letter-spacing: 0;
-  text-align: center;
-  white-space: nowrap;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: left center;
 }
 
 .hero-menu {
@@ -947,12 +912,6 @@ body {
     transform: scale(0.72);
     transform-origin: top left;
   }
-  .hero-gdg-lockup__wordmark,
-  .hero-gdg-lockup__name {
-    transform: scale(0.8);
-    transform-origin: top left;
-  }
-
   .hero-menu {
     top: 4px;
     right: 4px;
@@ -1313,11 +1272,24 @@ body {
   margin: 0;
   font-family: "Google Sans", sans-serif;
   font-weight: 700;
-  /* Spec is 58.43px. */
-  font-size: clamp(30px, 7vw, 58.43px);
+  /* The 58.43px spec was sized against GOLD, four characters. DIAMOND is seven
+     and ran 290px wide against a 280px card — measured — so the ceiling drops
+     to fit the longest label with margin to spare. */
+  font-size: clamp(28px, 6vw, 46px);
   line-height: 100%;
   letter-spacing: 0;
   text-align: center;
+  max-width: 100%;
+}
+
+/* Spec came from Figma as a white layer stacked over the blue gradient. In CSS
+   the first layer paints on top, so keeping the white would hide the gradient
+   entirely — it is Figma's base fill, not part of the visible treatment. */
+.sponsor-tier--diamond {
+  background: linear-gradient(327.19deg, #06a0ff -83.2%, #003ce1 93.53%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .sponsor-tier--gold {
@@ -1440,4 +1412,70 @@ body {
   .sponsors {
     padding-bottom: 64px;
   }
+}
+
+/* Linked sponsor cards. The anchor is the hover target so the whole card
+   responds, and transform-only growth keeps it off the layout path — the row
+   does not reflow when a card lifts. */
+.sponsor-link {
+  display: block;
+  border-radius: 24px;
+  text-decoration: none;
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.sponsor-link:hover,
+.sponsor-link:focus-visible {
+  transform: scale(1.045);
+}
+
+.sponsor-link:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sponsor-link {
+    transition: none;
+  }
+
+  .sponsor-link:hover,
+  .sponsor-link:focus-visible {
+    transform: none;
+  }
+}
+
+
+/* Corner ribbon on a sponsor-backed track card. The wrapper spans the card and
+   clips with the card's own radius (border-radius: inherit), so the diagonal
+   band is cut cleanly by the rounded corner instead of poking past it. The
+   cards are light gradients with black text, so a dark band reads as an
+   applied label rather than part of the artwork. */
+.track-sponsor-ribbon {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.track-sponsor-ribbon__band {
+  position: absolute;
+  top: 20px;
+  right: -56px;
+  width: 190px;
+  padding: 6px 0;
+  transform: rotate(45deg);
+  background: #0b0b0d;
+  color: #fff;
+  font-family: "Google Sans", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
 }

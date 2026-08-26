@@ -815,27 +815,17 @@ export default function Home() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
           >
+            {/* Single asset carrying the mark, the wordmark and the chapter
+                line, replacing the three pieces that were composed by hand.
+                The lockup box keeps its original 257.9 x 42.42 footprint. */}
             <Image
-              src="/assets/gdg-logo-white.svg"
-              alt=""
-              width={46}
-              height={23}
+              src="/assets/gdg-logo.svg"
+              alt="Google Developer Groups On Campus, VIT Vellore"
+              width={297}
+              height={44}
               priority
-              className="hero-gdg-lockup__icon"
+              className="hero-gdg-lockup__image"
             />
-            <span className="hero-gdg-lockup__wordmark" aria-hidden="true">
-              <Image
-                src="/assets/gdg-lockup-line.png"
-                alt=""
-                width={3003}
-                height={300}
-                priority
-                className="hero-gdg-lockup__wordmark-image"
-              />
-            </span>
-            <span className="hero-gdg-lockup__name">
-              On Campus VIT Vellore
-            </span>
           </motion.div>
           </div>
         </header>

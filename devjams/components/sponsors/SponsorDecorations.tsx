@@ -17,14 +17,13 @@ interface Deco {
 
 /**
  * Decorative assets scattered around the section. Heavy Figma exports
- * (android, cloud, ded, spons-dino, umbrella, maps) resolve to baked PNGs
- * through AssetImage; sponsc1/sponsc2 are small real vectors shipped as-is.
+ * (android, cloud, ded, umbrella, maps) resolve to baked PNGs
+ * through AssetImage; sponsc2 is a small real vector shipped as-is.
  */
 const DECORATIONS: Deco[] = [
   { src: "/assets/android.svg", width: 260, height: 159 },
   { src: "/assets/cloud.svg", width: 278, height: 203 },
   { src: "/assets/ded.svg", width: 92, height: 63 },
-  { src: "/assets/sponsc1.svg", width: 65, height: 65 },
   { src: "/assets/sponsc2.svg", width: 68, height: 70 },
   { src: "/assets/umbrella.svg", width: 310, height: 222 },
   { src: "/assets/maps.svg", width: 365, height: 465, size: 48 },
@@ -34,19 +33,23 @@ const DECORATIONS: Deco[] = [
 const DECO_WIDTH = 60;
 
 /**
- * One decoration in the top-left quadrant, two in each of the others — the
- * dino lives on the Exasol card instead of the scatter, so there are seven.
- * Ranges keep clear of the section edges and the centred heading.
+ * Regions the scatter may use. Measured against the rendered section, the card
+ * row and its tier labels occupy x 15.8-84.2%, y 31.8-81.6% — the previous
+ * bottom bands ran straight through that, so a decoration landing on a tier
+ * label was certain rather than unlucky. These sit in the gutters around it,
+ * with roughly half a decoration's width (~2%) of clearance on each side.
  */
 const QUADRANTS: Array<{ x: [number, number]; y: [number, number] }> = [
-  { x: [4, 42], y: [4, 32] }, // top-left
-  { x: [58, 94], y: [4, 32] }, // top-right
-  { x: [4, 42], y: [68, 94] }, // bottom-left
-  { x: [58, 94], y: [68, 94] }, // bottom-right
+  { x: [3, 27], y: [3, 27] }, // top-left, clear of the centred heading
+  { x: [73, 97], y: [3, 27] }, // top-right
+  { x: [3, 13], y: [34, 78] }, // left gutter, beside the cards
+  { x: [87, 97], y: [34, 78] }, // right gutter
+  { x: [10, 90], y: [85, 95] }, // below the tier labels
 ];
 
-/** Slot order: 1 in top-left, 2 in top-right, bottom-left, bottom-right. */
-const SLOT_QUADRANTS = [0, 1, 1, 2, 2, 3, 3];
+/** Six decorations, one per slot: top-left, top-right, both gutters, and two
+ *  along the bottom band. The dino lives on the Exasol card, not the scatter. */
+const SLOT_QUADRANTS = [0, 1, 2, 3, 4, 4];
 
 /** Minimum centre-to-centre spacing between any two decorations. */
 const MIN_DIST = 18;

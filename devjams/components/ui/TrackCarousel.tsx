@@ -10,6 +10,12 @@ export interface TrackData {
   colorFrom: string;
   colorTo: string;
   iconSrc: string;
+  /**
+   * Marks a track a sponsor has backed. Renders a sticker on the card; the
+   * sponsor's name belongs in `title` too, so the track reads correctly
+   * wherever the title alone is shown (the mobile label below the carousel).
+   */
+  sponsored?: boolean;
 }
 
 interface TrackCarouselProps {
@@ -356,6 +362,12 @@ export function TrackCarousel({ tracks, scrollProgress, sectionRef }: TrackCarou
                     backfaceVisibility: "hidden",
                   }}
                 >
+                  {track.sponsored && (
+                    <span className="track-sponsor-ribbon" aria-hidden="true">
+                      <span className="track-sponsor-ribbon__band">Sponsored</span>
+                    </span>
+                  )}
+
                   {/* Track Vector Icon */}
                   <div className="relative w-[110px] h-[110px] sm:w-[130px] sm:h-[130px] flex items-center justify-center my-auto pointer-events-none">
                     <Image
@@ -472,6 +484,12 @@ export function TrackCarousel({ tracks, scrollProgress, sectionRef }: TrackCarou
                   backfaceVisibility: "hidden",
                 }}
               >
+                {track.sponsored && (
+                  <span className="track-sponsor-ribbon" aria-hidden="true">
+                      <span className="track-sponsor-ribbon__band">Sponsored</span>
+                    </span>
+                )}
+
                 {/* Track Title inside Card */}
                 <h3 className="text-black font-extrabold text-2xl lg:text-3xl text-center leading-tight tracking-tight drop-shadow-sm pointer-events-none">
                   {track.title}
