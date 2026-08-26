@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import AssetImage from "../AssetImage";
 import { motion } from "../gsap-motion";
 import { TIER_LABEL, type Sponsor } from "./SponsorsData";
@@ -29,7 +28,7 @@ export function SponsorCard({ sponsor, index = 0 }: SponsorCardProps) {
         />
       )}
 
-      <Image
+      <AssetImage
         src={sponsor.logo}
         alt={`${sponsor.name} — ${label} sponsor`}
         width={1693}
@@ -53,7 +52,8 @@ export function SponsorCard({ sponsor, index = 0 }: SponsorCardProps) {
           href={sponsor.url}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={`${sponsor.name}, ${label} sponsor`}
+          className="sponsor-link"
+          aria-label={`${sponsor.name}, ${label} sponsor — opens in a new tab`}
         >
           {card}
         </a>

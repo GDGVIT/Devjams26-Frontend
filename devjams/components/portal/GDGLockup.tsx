@@ -12,27 +12,16 @@ interface GDGLockupProps {
 export function GDGLockup({ className = "", animate = true }: GDGLockupProps) {
   const content = (
     <div className={`hero-gdg-lockup group select-none ${className}`}>
+      {/* Same single lockup asset the site header uses, so the portal and the
+          landing page cannot drift apart. */}
       <Image
-        src="/assets/gdg-logo-white.svg"
-        alt="GDG Logo"
-        width={46}
-        height={23}
+        src="/assets/gdg-logo.svg"
+        alt="Google Developer Groups On Campus, VIT Vellore"
+        width={297}
+        height={44}
         priority
-        className="hero-gdg-lockup__icon transition-transform group-hover:scale-105"
+        className="hero-gdg-lockup__image transition-transform group-hover:scale-105"
       />
-      <span className="hero-gdg-lockup__wordmark" aria-hidden="true">
-        <Image
-          src="/assets/gdg-lockup-line.png"
-          alt="Google Developer Groups"
-          width={3003}
-          height={300}
-          priority
-          className="hero-gdg-lockup__wordmark-image"
-        />
-      </span>
-      <span className="hero-gdg-lockup__name">
-        On Campus VIT Vellore
-      </span>
     </div>
   );
 

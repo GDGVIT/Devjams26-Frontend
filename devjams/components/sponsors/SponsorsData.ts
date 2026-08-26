@@ -1,4 +1,4 @@
-export type SponsorTier = "gold" | "silver" | "bronze";
+export type SponsorTier = "diamond" | "gold" | "silver" | "bronze";
 
 export interface Sponsor {
   id: string;
@@ -25,21 +25,31 @@ export interface Sponsor {
  */
 export const SPONSORS: Sponsor[] = [
   {
+    id: "reka",
+    tier: "diamond",
+    name: "Reka",
+    logo: "/assets/reka-spons.svg",
+    url: "https://reka.ai/",
+  },
+  {
     id: "exasol",
     tier: "gold",
     name: "Exasol",
     logo: "/exasol-light.svg",
+    url: "https://www.exasol.com/",
     dino: true,
   },
   {
-    id: "bronze-1",
+    id: "aems",
     tier: "bronze",
-    name: "Bronze Sponsor",
+    name: "AEMS",
     logo: "/bronze-logo.svg",
+    url: "https://www.aemsinfra.com/",
   },
 ];
 
 export const TIER_LABEL: Record<SponsorTier, string> = {
+  diamond: "DIAMOND",
   gold: "GOLD",
   silver: "SILVER",
   bronze: "BRONZE",
