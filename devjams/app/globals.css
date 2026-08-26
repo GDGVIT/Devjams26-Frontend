@@ -1266,22 +1266,30 @@ body {
   height: clamp(300px, 33vw, 380px);
   padding: 0 clamp(20px, 2.4vw, 28px);
   border-radius: 24px;
-  background: transparent;
+  /* The Figma export is an SVG rect (#202124, rx 24) plus a backdrop-blur
+     layer. The blur blurs a solid black backdrop, so it contributes nothing
+     visible — and Safari rasterizes foreignObject+backdrop-filter at low
+     resolution, blurring the whole card. A plain CSS background renders the
+     identical card crisp on every browser. */
+  background: #202124;
   /* overflow stays visible so the dino can sit on the top edge;
      the bg SVG itself is clipped to the radius */
   overflow: visible;
   isolation: isolate;
 }
 
-.sponsor-card__bg {
+/* Stands upright on the card top edge rather than overlapping the corner:
+   bottom:100% puts its feet exactly on the edge. */
+.sponsor-card__dino {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
+  bottom: 100%;
+  left: clamp(14px, 2vw, 26px);
+  z-index: 2;
+  width: clamp(34px, 3.2vw, 44px);
+  height: auto;
+  margin-bottom: -2px;
   pointer-events: none;
-  z-index: 0;
-  display: block;
+  user-select: none;
 }
 
 .sponsor-card__logo {
@@ -1343,7 +1351,17 @@ body {
   }
 }
 
-/* Decorative starbursts around the sponsors heading. */
+/* The sun lives outside the section (see Sponsors.tsx) so it is never
+   clipped; this wrapper only anchors it to the section's box. It must span
+   the full width — main is a flex container, so an auto-width block would
+   shrink-wrap to the section and drag the sun in from the page edge. */
+.sponsors-wrap {
+  position: relative;
+  width: 100%;
+}
+
+/* Decorative starburst around the sponsors heading. The wrapper keeps it
+   unclipped, so the original top-left placement now renders whole. */
 .sponsors__sun {
   position: absolute;
   height: auto;
@@ -1353,7 +1371,7 @@ body {
 
 .sponsors__sun--lead {
   top: clamp(-22px, -1.4vw, 4px);
-  left: clamp(8px, 12vw, 200px);
+  left: clamp(0px, 5vw, 72px);
   width: clamp(104px, 10vw, 150px);
 }
 
@@ -1394,9 +1412,10 @@ body {
 /* Both starbursts crowd the heading on a phone, where the section is much
    narrower — keep the large one only. */
 @media (max-width: 700px) {
+  /* Original top-left corner placement, fully inside the viewport. */
   .sponsors__sun--lead {
-    top: -6px;
-    left: -20px;
+    top: -8px;
+    left: 0;
     width: 104px;
   }
 
