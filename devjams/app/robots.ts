@@ -10,7 +10,7 @@ export default function robots(): MetadataRoute.Robots {
       // Participant pages behind the portal login. A crawler only ever sees the
       // redirect shell, so there is nothing to index and no reason to spend
       // crawl budget on them.
-      disallow: ["/portal/", "/profile", "/team", "/idea/", "/join", "/create"],
+      disallow: ["/portal/", "/profile", "/team", "/idea/", "/join", "/create", "/submissions/"],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
   };
