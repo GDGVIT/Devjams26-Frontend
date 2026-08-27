@@ -44,6 +44,77 @@ function answerDisplayValue(value: unknown): string {
   return value === null || value === undefined || value === "" ? "Not answered" : String(value);
 }
 
+function DropdownField({
+  field,
+  value,
+  disabled,
+  onChange,
+}: {
+  field: DynamicSubmissionField;
+  value: unknown;
+  disabled: boolean;
+  onChange: (value: unknown) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const selectedOption = (field.options ?? []).find((option) => option.value === value);
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        disabled={disabled}
+        onClick={() => setOpen((current) => !current)}
+        onKeyDown={(event) => {
+          if (event.key === "Escape") setOpen(false);
+        }}
+        className={`w-full rounded-2xl border px-4 py-3 text-left text-sm outline-none transition ${
+          disabled
+            ? "cursor-not-allowed border-white/10 bg-white/[0.04] text-neutral-600"
+            : selectedOption
+              ? "border-amber-300/50 bg-amber-300/10 text-white hover:border-amber-200/70"
+              : "border-white/15 bg-[#17171d] text-neutral-400 hover:border-white/30 hover:bg-[#1d1d24]"
+        }`}
+      >
+        <span className="flex items-center justify-between gap-3">
+          <span className="truncate">{selectedOption?.label ?? "Choose an option"}</span>
+          <ChevronDown className={`h-4 w-4 shrink-0 text-neutral-400 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
+        </span>
+      </button>
+      {open && (
+        <div role="listbox" aria-label={field.label} className="absolute z-40 mt-2 max-h-64 w-full overflow-y-auto rounded-2xl border border-white/15 bg-[#1b1b22] p-2 shadow-2xl shadow-black/50">
+          <button
+            type="button"
+            role="option"
+            aria-selected={!selectedOption}
+            onClick={() => { onChange(""); setOpen(false); }}
+            className={`w-full rounded-xl px-3 py-2.5 text-left text-sm transition ${!selectedOption ? "bg-amber-300/15 text-amber-100" : "text-neutral-400 hover:bg-white/10 hover:text-white"}`}
+          >
+            Choose an option
+          </button>
+          {(field.options ?? []).map((option) => {
+            const selected = option.value === value;
+            return (
+              <button
+                key={option.value}
+                type="button"
+                role="option"
+                aria-selected={selected}
+                onClick={() => { onChange(option.value); setOpen(false); }}
+                className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm transition ${selected ? "bg-amber-300/15 text-amber-100" : "text-neutral-200 hover:bg-white/10 hover:text-white"}`}
+              >
+                <span>{option.label}</span>
+                {selected && <Check className="h-4 w-4 text-amber-300" aria-hidden="true" />}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function FieldInput({
   field,
   value,
@@ -144,23 +215,7 @@ function FieldInput({
   }
 
   if (field.type === "dropdown") {
-    return (
-      <div className="relative">
-        <select
-          id={field.key}
-          className={`${inputClass} appearance-none pr-12 ${value ? "text-white" : "text-neutral-500"}`}
-          value={typeof value === "string" ? value : ""}
-          disabled={disabled}
-          onChange={(event) => onChange(event.target.value)}
-        >
-          <option value="">Choose an option</option>
-          {(field.options ?? []).map((option) => (
-            <option key={option.value} value={option.value}>{option.label}</option>
-          ))}
-        </select>
-        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" aria-hidden="true" />
-      </div>
-    );
+    return <DropdownField field={field} value={value} disabled={disabled} onChange={onChange} />;
   }
 
 
@@ -183,22 +238,39 @@ function FieldInput({
   if (field.type === "linear_scale") {
     const min = Number(field.validation?.min ?? 1);
     const max = Number(field.validation?.max ?? 5);
+    const hasValue = value !== undefined && value !== null && value !== "";
+    const currentValue = hasValue
+      ? Math.min(max, Math.max(min, Number(value)))
+      : min;
+    const progress = max > min ? ((currentValue - min) / (max - min)) * 100 : 0;
     return (
-      <div className="flex flex-wrap gap-2">
-        {Array.from({ length: Math.max(0, max - min + 1) }, (_, index) => min + index).map((option) => (
-          <label key={option} className="flex min-w-12 cursor-pointer flex-col items-center gap-1 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs text-neutral-300">
-            <input
-              type="radio"
-              name={field.key}
-              value={option}
-              checked={Number(value) === option}
-              disabled={disabled}
-              onChange={() => onChange(option)}
-              className="accent-amber-400"
-            />
-            {option}
-          </label>
-        ))}
+      <div className="space-y-4 rounded-2xl border border-white/10 bg-black/15 px-4 py-4">
+        <div className="flex items-center justify-between gap-4 text-sm">
+          <span className="text-neutral-400">Choose a score</span>
+          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${hasValue ? "bg-amber-300/15 text-amber-200" : "bg-white/10 text-neutral-500"}`}>
+            {hasValue ? currentValue : "Not selected"}
+          </span>
+        </div>
+        <input
+          id={field.key}
+          type="range"
+          min={min}
+          max={max}
+          step="1"
+          value={currentValue}
+          disabled={disabled}
+          onChange={(event) => onChange(Number(event.target.value))}
+          aria-label={field.label}
+          aria-valuetext={hasValue ? String(currentValue) : "Not selected"}
+          className="h-2 w-full cursor-pointer appearance-none rounded-full accent-amber-300 disabled:cursor-not-allowed disabled:opacity-50"
+          style={{
+            background: `linear-gradient(to right, #fcd34d ${progress}%, rgba(255,255,255,0.12) ${progress}%)`,
+          }}
+        />
+        <div className="flex items-center justify-between text-xs text-neutral-500">
+          <span>{min}</span>
+          <span>{max}</span>
+        </div>
       </div>
     );
   }
