@@ -157,6 +157,7 @@ export interface DynamicSubmissionResponse {
   missing_required_fields?: string[];
   submitted_at?: string | null;
   updated_at?: string;
+  last_saved_by_name?: string;
 }
 
 export interface DynamicSubmissionScope {
