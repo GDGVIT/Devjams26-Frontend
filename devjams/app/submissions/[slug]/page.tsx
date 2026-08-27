@@ -435,7 +435,7 @@ export default function DynamicSubmissionPage({ params }: { params: Promise<{ sl
       </Link>
 
 
-      <div className="relative z-20 order-1 mx-auto flex w-full max-w-[1072px] flex-col items-center justify-start gap-[clamp(12px,1.8vh,24px)] px-1 pb-8 pt-24 sm:px-3 sm:pt-24 md:order-none md:pt-0">
+      <div className="relative z-20 order-1 mx-auto flex w-full max-w-[1072px] flex-col items-center justify-start gap-[clamp(12px,1.8vh,24px)] px-1 pb-8 pt-28 sm:px-3 sm:pt-32 md:order-none md:pt-28">
         <h1
           className="m-0 w-full select-none text-center text-[clamp(36px,4.5vw,64px)] font-bold capitalize leading-[1.2] tracking-normal text-white"
           style={{ fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif" }}
