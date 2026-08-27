@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -435,25 +434,6 @@ export default function DynamicSubmissionPage({ params }: { params: Promise<{ sl
         </svg>
       </Link>
 
-      <div
-        className="relative order-2 mt-6 flex h-[135px] w-full max-w-[370px] flex-shrink-0 items-center justify-center overflow-visible pointer-events-none sm:mt-8 md:order-none md:-mt-[clamp(24px,5vw,135px)] md:mt-0 md:h-[clamp(140px,22vw,314px)] md:max-w-[848px]"
-        aria-hidden="true"
-      >
-        <div className="relative flex h-full w-full items-center justify-center">
-          <div className="absolute left-0 top-0 flex aspect-square w-[37%] items-center justify-center" style={{ mixBlendMode: "screen", filter: "brightness(1.12) saturate(1.05)" }}>
-            <Image src="/assets/gear.svg" alt="Gear" width={314} height={314} priority className="h-full w-full object-contain" />
-          </div>
-          <div className="absolute left-[32.5%] top-[15%] flex aspect-square w-[27.3%] items-center justify-center" style={{ mixBlendMode: "screen", filter: "brightness(1.12) saturate(1.05)" }}>
-            <Image src="/assets/baked/web.png" alt="Web Track" width={232} height={232} priority className="h-full w-full object-contain" />
-          </div>
-          <div className="absolute left-[55.5%] top-[11.8%] flex aspect-square w-[28.8%] items-center justify-center" style={{ mixBlendMode: "screen", filter: "brightness(1.12) saturate(1.05)" }}>
-            <Image src="/assets/gemini.svg" alt="Gemini Track" width={244} height={244} priority className="h-full w-full object-contain" />
-          </div>
-          <div className="absolute left-[80%] top-[23.3%] flex aspect-[41/53] w-[20%] items-center justify-center" style={{ mixBlendMode: "screen", filter: "brightness(1.12) saturate(1.05)" }}>
-            <Image src="/assets/baked/cursor.png" alt="Cursor" width={170} height={220} priority className="h-full w-full object-contain" />
-          </div>
-        </div>
-      </div>
 
       <div className="relative z-20 order-1 mx-auto flex w-full max-w-[1072px] flex-col items-center justify-start gap-[clamp(12px,1.8vh,24px)] px-1 pb-8 pt-24 sm:px-3 sm:pt-24 md:order-none md:pt-0">
         <h1
