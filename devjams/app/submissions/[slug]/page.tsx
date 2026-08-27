@@ -175,7 +175,7 @@ function FieldInput({
     );
   }
 
-  const inputType = field.type === "email" ? "email" : field.type === "url" ? "url" : field.type === "number" ? "number" : field.type;
+  const inputType = field.type === "short_text" ? "text" : field.type === "email" ? "email" : field.type === "url" ? "url" : field.type === "number" ? "number" : field.type;
   return (
     <input
       id={field.key}
