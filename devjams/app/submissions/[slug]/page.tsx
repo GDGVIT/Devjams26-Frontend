@@ -478,9 +478,9 @@ export default function DynamicSubmissionPage({ params }: { params: Promise<{ sl
         {response?.status === "auto_submitted" && <div className="mb-5 rounded-2xl border border-blue-400/30 bg-blue-400/10 px-4 py-3 text-sm text-blue-100">Your saved draft was automatically submitted at the deadline.</div>}
         {response?.status === "submitted" && !editing && <div className="mb-5 rounded-2xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-100">Your response has been submitted.</div>}
 
-        <div className="space-y-5">
+        <div className="w-full space-y-5">
           {form.fields.map((field, index) => (
-            <section key={field.id || field.key} className="rounded-3xl border border-white/10 bg-white/[0.04] p-5 sm:p-6">
+            <section key={field.id || field.key} className="w-full rounded-3xl border border-white/10 bg-white/[0.04] p-5 sm:p-6">
               <div className="mb-4">
                 <div className="flex items-start justify-between gap-4">
                   <label htmlFor={field.key} className="text-base font-semibold text-white">
