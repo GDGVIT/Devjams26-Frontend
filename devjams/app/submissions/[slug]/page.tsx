@@ -227,17 +227,29 @@ function FieldInput({
 
 
   if (field.type === "boolean") {
+    const checked = value === true;
     return (
-      <label className="flex items-center gap-3 text-sm text-neutral-200">
-        <input
-          id={field.key}
-          type="checkbox"
-          checked={value === true}
-          disabled={disabled}
-          onChange={(event) => onChange(event.target.checked)}
-          className="h-4 w-4 accent-amber-400"
-        />
-        Yes
+      <label
+        className={`group flex cursor-pointer items-center justify-between gap-4 rounded-2xl border px-4 py-3.5 text-sm transition ${
+          disabled ? "cursor-not-allowed opacity-60" : "hover:border-amber-300/40 hover:bg-white/[0.06]"
+        } ${checked ? "border-amber-300/60 bg-amber-300/10 text-white" : "border-white/10 bg-white/[0.035] text-neutral-300"}`}
+      >
+        <span className="flex items-center gap-3">
+          <input
+            id={field.key}
+            type="checkbox"
+            checked={checked}
+            disabled={disabled}
+            aria-label={field.label}
+            onChange={(event) => onChange(event.target.checked)}
+            className="sr-only"
+          />
+          <span className={`flex h-5 w-5 items-center justify-center rounded-md border transition ${checked ? "border-amber-300 bg-amber-300 text-black" : "border-white/30 bg-black/20"}`}>
+            {checked && <Check className="h-3.5 w-3.5 stroke-[3]" aria-hidden="true" />}
+          </span>
+          <span>Yes, I agree</span>
+        </span>
+        {checked && <span className="text-xs font-medium text-amber-200">Confirmed</span>}
       </label>
     );
   }
