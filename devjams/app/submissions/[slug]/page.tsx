@@ -1,10 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Check, ChevronDown } from "lucide-react";
-import { PortalNavbar } from "@/components/portal/PortalNavbar";
+import { GDGLockup } from "@/components/portal/GDGLockup";
 import {
   portalApi,
   type DynamicSubmissionField,
@@ -399,60 +400,96 @@ export default function DynamicSubmissionPage({ params }: { params: Promise<{ sl
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0A0C] text-white">
-      <PortalNavbar />
-      <main className="flex-1 mx-auto w-full max-w-5xl px-4 py-8 sm:px-6">
-        <div className="mb-8">
-          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">{form.title}</h1>
-              <p className="mt-1 text-sm text-neutral-400">
-                {form.description || (form.submission_type === "team" ? "Team submission form" : "Individual submission form")}
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={saveDraft}
-                disabled={!canSaveDraft || saving || submitting}
-                className="cursor-pointer rounded-xl border border-white/10 bg-white/10 px-4 py-2 text-xs font-semibold text-white transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {saving ? "Saving..." : "Save Draft"}
-              </button>
-              <Link
-                href="/portal/dashboard"
-                className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-neutral-300 transition hover:bg-white/10"
-              >
-                View Dashboard
-              </Link>
-            </div>
+    <main className="relative min-h-screen w-full overflow-x-hidden overflow-y-auto bg-black p-4 pb-20 text-white sm:p-6 md:p-10">
+      <header
+        className="absolute left-4 top-4 z-30 sm:left-6 sm:top-6 md:left-10 md:top-8"
+        aria-label="Google Developer Groups"
+      >
+        <GDGLockup />
+      </header>
+
+      <Link
+        href="/profile"
+        className="group absolute right-4 top-4 z-30 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-white/90 transition-all hover:text-white sm:right-6 sm:top-6 md:right-10 md:top-8"
+        aria-label="User Profile"
+      >
+        <span
+          className="text-[16px] font-medium tracking-wide md:text-[18px]"
+          style={{ fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif" }}
+        >
+          Profile
+        </span>
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="text-white transition-transform group-hover:scale-105"
+        >
+          <circle cx="12" cy="8" r="4" />
+          <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
+        </svg>
+      </Link>
+
+      <div
+        className="relative order-2 mt-6 flex h-[135px] w-full max-w-[370px] flex-shrink-0 items-center justify-center overflow-visible pointer-events-none sm:mt-8 md:order-none md:-mt-[clamp(24px,5vw,135px)] md:mt-0 md:h-[clamp(140px,22vw,314px)] md:max-w-[848px]"
+        aria-hidden="true"
+      >
+        <div className="relative flex h-full w-full items-center justify-center">
+          <div className="absolute left-0 top-0 flex aspect-square w-[37%] items-center justify-center" style={{ mixBlendMode: "screen", filter: "brightness(1.12) saturate(1.05)" }}>
+            <Image src="/assets/gear.svg" alt="Gear" width={314} height={314} priority className="h-full w-full object-contain" />
           </div>
-          <div className="mt-5 flex flex-wrap gap-3 text-xs text-neutral-400">
-            <span className="rounded-full border border-white/10 px-3 py-1.5">
-              {form.submission_type === "team" ? "Team submission" : "Individual submission"}
-              {form.submission_type === "team" && form.team_response_policy
-                ? ` • ${form.team_response_policy === "leader_only" ? "Leader submits" : "Any team member"}`
-                : ""}
-            </span>
-            <span className="rounded-full border border-white/10 px-3 py-1.5">Status: {form.status}</span>
-            {form.end_at && <span className="rounded-full border border-white/10 px-3 py-1.5">Deadline: {formatDate(form.end_at)}</span>}
+          <div className="absolute left-[32.5%] top-[15%] flex aspect-square w-[27.3%] items-center justify-center" style={{ mixBlendMode: "screen", filter: "brightness(1.12) saturate(1.05)" }}>
+            <Image src="/assets/baked/web.png" alt="Web Track" width={232} height={232} priority className="h-full w-full object-contain" />
           </div>
-          {payload.scope?.type === "team" && <p className="mt-4 text-sm text-neutral-300">Team: <strong className="text-white">{payload.scope.team_name}</strong></p>}
-          {form.notes && form.notes.length > 0 && (
-            <div className="mt-5 space-y-3" aria-label="Submission notes">
-              {form.notes.map((note) => (
-                <aside
-                  key={`${note.position}-${note.title}`}
-                  role="note"
-                  className={`rounded-2xl border px-4 py-3 ${SUBMISSION_NOTE_STYLES[note.type]}`}
-                >
-                  <p className="text-sm font-semibold">{note.title}</p>
-                  <p className="mt-1 whitespace-pre-wrap text-sm leading-6 opacity-90">{note.content}</p>
-                </aside>
-              ))}
-            </div>
-          )}
+          <div className="absolute left-[55.5%] top-[11.8%] flex aspect-square w-[28.8%] items-center justify-center" style={{ mixBlendMode: "screen", filter: "brightness(1.12) saturate(1.05)" }}>
+            <Image src="/assets/gemini.svg" alt="Gemini Track" width={244} height={244} priority className="h-full w-full object-contain" />
+          </div>
+          <div className="absolute left-[80%] top-[23.3%] flex aspect-[41/53] w-[20%] items-center justify-center" style={{ mixBlendMode: "screen", filter: "brightness(1.12) saturate(1.05)" }}>
+            <Image src="/assets/baked/cursor.png" alt="Cursor" width={170} height={220} priority className="h-full w-full object-contain" />
+          </div>
         </div>
+      </div>
+
+      <div className="relative z-20 order-1 mx-auto flex w-full max-w-[1072px] flex-col items-center justify-start gap-[clamp(12px,1.8vh,24px)] px-1 pb-8 pt-24 sm:px-3 sm:pt-24 md:order-none md:pt-0">
+        <h1
+          className="m-0 w-full select-none text-center text-[clamp(36px,4.5vw,64px)] font-bold capitalize leading-[1.2] tracking-normal text-white"
+          style={{ fontFamily: "var(--font-google-sans), 'Google Sans', sans-serif" }}
+        >
+          {form.title}
+        </h1>
+        {form.description && (
+          <p className="w-full text-center text-sm text-neutral-400">{form.description}</p>
+        )}
+        <div className="flex w-full flex-wrap justify-center gap-3 text-xs text-neutral-400">
+          <span className="rounded-full border border-white/10 px-3 py-1.5">
+            {form.submission_type === "team" ? "Team submission" : "Individual submission"}
+            {form.submission_type === "team" && form.team_response_policy
+              ? ` • ${form.team_response_policy === "leader_only" ? "Leader submits" : "Any team member"}`
+              : ""}
+          </span>
+          <span className="rounded-full border border-white/10 px-3 py-1.5">Status: {form.status}</span>
+          {form.end_at && <span className="rounded-full border border-white/10 px-3 py-1.5">Deadline: {formatDate(form.end_at)}</span>}
+        </div>
+        {payload.scope?.type === "team" && <p className="w-full text-center text-sm text-neutral-300">Team: <strong className="text-white">{payload.scope.team_name}</strong></p>}
+        {form.notes && form.notes.length > 0 && (
+          <div className="w-full space-y-3" aria-label="Submission notes">
+            {form.notes.map((note) => (
+              <aside
+                key={`${note.position}-${note.title}`}
+                role="note"
+                className={`rounded-2xl border px-4 py-3 ${SUBMISSION_NOTE_STYLES[note.type]}`}
+              >
+                <p className="text-sm font-semibold">{note.title}</p>
+                <p className="mt-1 whitespace-pre-wrap text-sm leading-6 opacity-90">{note.content}</p>
+              </aside>
+            ))}
+          </div>
+        )}
 
         {error && <div className="mb-5 rounded-2xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-200">{error}</div>}
         {savedMessage && <div className="mb-5 rounded-2xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-200">{savedMessage}</div>}
@@ -495,7 +532,7 @@ export default function DynamicSubmissionPage({ params }: { params: Promise<{ sl
             {response.updated_at ? ` on ${new Date(response.updated_at).toLocaleString()}` : ""}
           </p>
         )}
-      </main>
-    </div>
+      </div>
+    </main>
   );
 }
