@@ -340,7 +340,7 @@ export default function DynamicSubmissionPage({ params }: { params: Promise<{ sl
                     {index + 1}. {field.label}
                     {field.required
                       ? <span className="ml-1 text-amber-300">*</span>
-                      : <span className="ml-2 text-xs font-normal text-neutral-500">(Optional)</span>}
+                      : <span className="ml-2 text-xs font-normal text-neutral-500">{" "}(Optional)</span>}
                   </label>
                 </div>
                 {field.description && <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-neutral-400">{field.description}</p>}
