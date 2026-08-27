@@ -4,6 +4,7 @@ import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Check, ChevronDown, CircleCheck, Info, ShieldAlert, TriangleAlert } from "lucide-react";
+import { getCountries, getCountryCallingCode, type CountryCode } from "libphonenumber-js";
 import { GDGLockup } from "@/components/portal/GDGLockup";
 import {
   portalApi,
@@ -27,6 +28,10 @@ const SUBMISSION_NOTE_ICONS: Record<DynamicSubmissionNote["type"], typeof Info> 
   success: CircleCheck,
 };
 
+const PHONE_COUNTRY_OPTIONS = getCountries()
+  .map((country) => ({ country, callingCode: getCountryCallingCode(country) }))
+  .sort((left, right) => left.country.localeCompare(right.country));
+
 function answerIsEmpty(value: unknown): boolean {
   if (value === null || value === undefined) return true;
   if (typeof value === "string") return value.trim() === "";
@@ -49,6 +54,77 @@ function answerDisplayValue(value: unknown): string {
   if (Array.isArray(value)) return value.join(", ");
   if (typeof value === "boolean") return value ? "Yes" : "No";
   return value === null || value === undefined || value === "" ? "Not answered" : String(value);
+}
+
+function PhoneField({
+  field,
+  value,
+  disabled,
+  onChange,
+}: {
+  field: DynamicSubmissionField;
+  value: unknown;
+  disabled: boolean;
+  onChange: (value: unknown) => void;
+}) {
+  const phone = value && typeof value === "object" && !Array.isArray(value)
+    ? value as { country?: CountryCode; country_code?: string; national_number?: string }
+    : {};
+  const selectedCountry = PHONE_COUNTRY_OPTIONS.some((option) => option.country === phone.country)
+    ? phone.country as CountryCode
+    : "IN";
+  const callingCode = `+${getCountryCallingCode(selectedCountry)}`;
+  const nationalNumber = typeof phone.national_number === "string" ? phone.national_number : "";
+
+  return (
+    <div className="flex w-full flex-col gap-3 sm:flex-row">
+      <div className="relative sm:w-56 sm:shrink-0">
+        <select
+          aria-label={`${field.label} country`}
+          value={selectedCountry}
+          disabled={disabled}
+          onChange={(event) => {
+            const country = event.target.value as CountryCode;
+            onChange({
+              country,
+              country_code: `+${getCountryCallingCode(country)}`,
+              national_number: nationalNumber,
+            });
+          }}
+          className="w-full appearance-none rounded-2xl border border-white/15 bg-[#17171d] px-4 py-3 pr-11 text-sm text-white outline-none transition hover:border-white/30 focus:border-amber-300/60 disabled:cursor-not-allowed disabled:opacity-60"
+          style={{ colorScheme: "dark" }}
+        >
+          {PHONE_COUNTRY_OPTIONS.map((option) => (
+            <option key={option.country} value={option.country}>
+              {option.country} ({`+${option.callingCode}`})
+            </option>
+          ))}
+        </select>
+        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" aria-hidden="true" />
+      </div>
+      <div className="relative min-w-0 flex-1">
+        <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium text-amber-200">
+          {callingCode}
+        </span>
+        <input
+          id={field.key}
+          type="tel"
+          inputMode="numeric"
+          autoComplete="tel-national"
+          maxLength={15}
+          placeholder={field.placeholder || "Enter mobile number"}
+          value={nationalNumber}
+          disabled={disabled}
+          onChange={(event) => onChange({
+            country: selectedCountry,
+            country_code: callingCode,
+            national_number: event.target.value.replace(/\D/g, ""),
+          })}
+          className="w-full rounded-2xl border border-white/15 bg-white/[0.06] px-4 py-3 pl-14 text-sm text-white outline-none transition placeholder:text-neutral-600 focus:border-amber-400/60 disabled:cursor-not-allowed disabled:opacity-60"
+        />
+      </div>
+    </div>
+  );
 }
 
 function DropdownField({
@@ -134,6 +210,9 @@ function FieldInput({
   onChange: (value: unknown) => void;
 }) {
   const inputClass = "w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm text-white outline-none transition focus:border-amber-400/60 disabled:cursor-not-allowed disabled:opacity-60";
+  if (field.type === "phone") {
+    return <PhoneField field={field} value={value} disabled={disabled} onChange={onChange} />;
+  }
 
   if (field.type === "long_text") {
     return (

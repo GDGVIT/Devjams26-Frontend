@@ -82,6 +82,7 @@ export interface AttendanceCheckin {
 export type DynamicSubmissionFieldType =
   | "short_text"
   | "long_text"
+  | "phone"
   | "email"
   | "url"
   | "multiple_urls"
