@@ -3,7 +3,7 @@
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Check, ChevronDown } from "lucide-react";
+import { Check, ChevronDown, CircleCheck, Info, ShieldAlert, TriangleAlert } from "lucide-react";
 import { GDGLockup } from "@/components/portal/GDGLockup";
 import {
   portalApi,
@@ -18,6 +18,13 @@ const SUBMISSION_NOTE_STYLES: Record<DynamicSubmissionNote["type"], string> = {
   warning: "border-amber-400/30 bg-amber-400/10 text-amber-100",
   destructive: "border-red-400/30 bg-red-400/10 text-red-100",
   success: "border-emerald-400/30 bg-emerald-400/10 text-emerald-100",
+};
+
+const SUBMISSION_NOTE_ICONS: Record<DynamicSubmissionNote["type"], typeof Info> = {
+  info: Info,
+  warning: TriangleAlert,
+  destructive: ShieldAlert,
+  success: CircleCheck,
 };
 
 function answerIsEmpty(value: unknown): boolean {
@@ -462,16 +469,22 @@ export default function DynamicSubmissionPage({ params }: { params: Promise<{ sl
         {payload.scope?.type === "team" && <p className="w-full text-center text-sm text-neutral-300">Team: <strong className="text-white">{payload.scope.team_name}</strong></p>}
         {form.notes && form.notes.length > 0 && (
           <div className="w-full space-y-3" aria-label="Submission notes">
-            {form.notes.map((note) => (
-              <aside
-                key={`${note.position}-${note.title}`}
-                role="note"
-                className={`rounded-2xl border px-4 py-3 ${SUBMISSION_NOTE_STYLES[note.type]}`}
-              >
-                <p className="text-sm font-semibold">{note.title}</p>
-                <p className="mt-1 whitespace-pre-wrap text-sm leading-6 opacity-90">{note.content}</p>
-              </aside>
-            ))}
+            {form.notes.map((note) => {
+              const NoteIcon = SUBMISSION_NOTE_ICONS[note.type];
+              return (
+                <aside
+                  key={`${note.position}-${note.title}`}
+                  role="note"
+                  className={`flex items-start gap-3 rounded-2xl border px-4 py-3 ${SUBMISSION_NOTE_STYLES[note.type]}`}
+                >
+                  <NoteIcon className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold">{note.title}</p>
+                    <p className="mt-1 whitespace-pre-wrap text-sm leading-6 opacity-90">{note.content}</p>
+                  </div>
+                </aside>
+              );
+            })}
           </div>
         )}
 
