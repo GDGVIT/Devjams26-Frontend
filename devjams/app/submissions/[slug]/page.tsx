@@ -455,20 +455,9 @@ export default function DynamicSubmissionPage({ params }: { params: Promise<{ sl
           <span className="rounded-full border border-white/10 px-3 py-1.5">Status: {form.status}</span>
         </div>
         {form.end_at && (
-          <div className="mt-4 flex w-full max-w-[760px] items-center gap-4 rounded-2xl border border-amber-300/25 bg-amber-300/[0.08] px-4 py-3.5 text-left sm:px-5">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-300/15 text-amber-200">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <rect x="3" y="4" width="18" height="17" rx="2" />
-                <path d="M16 2v4M8 2v4M3 10h18" />
-                <path d="M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01" />
-              </svg>
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-amber-200/80">Submission deadline</p>
-              <p className="mt-1 text-sm font-semibold text-amber-50 sm:text-base">{formatDate(form.end_at)}</p>
-              <p className="mt-0.5 text-xs text-amber-100/60">Responses close at this time.</p>
-            </div>
-          </div>
+          <p className="w-full text-center text-sm text-neutral-400">
+            Submission deadline: <span className="text-neutral-200">{formatDate(form.end_at)}</span>
+          </p>
         )}
         {payload.scope?.type === "team" && <p className="w-full text-center text-sm text-neutral-300">Team: <strong className="text-white">{payload.scope.team_name}</strong></p>}
         {form.notes && form.notes.length > 0 && (
