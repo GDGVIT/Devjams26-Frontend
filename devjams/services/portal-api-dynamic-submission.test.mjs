@@ -32,9 +32,15 @@ test("fetches a participant submission form by slug", async () => {
       form: {
         slug: "project-intake",
         title: "Project Intake",
+        description: "Provide your project details.",
         submission_type: "individual",
         status: "open",
-        fields: [],
+        notes: [
+          { type: "warning", title: "Before you start", content: "Use working links.", position: 1 },
+        ],
+        fields: [
+          { id: "field-1", key: "project_title", type: "short_text", label: "Project title", placeholder: "Example project", required: false, position: 1 },
+        ],
       },
       response: null,
       can_edit: true,
@@ -44,6 +50,10 @@ test("fetches a participant submission form by slug", async () => {
     const form = await portalApi.fetchSubmissionForm("project-intake");
     assert.equal(form.form.slug, "project-intake");
     assert.equal(form.form.status, "open");
+    assert.equal(form.form.notes[0].type, "warning");
+    assert.equal(form.form.notes[0].content, "Use working links.");
+    assert.equal(form.form.fields[0].placeholder, "Example project");
+    assert.equal(form.form.fields[0].required, false);
   });
   assert.equal(requestedUrl, `${backendUrl}/participant/submissions/project-intake`);
 });

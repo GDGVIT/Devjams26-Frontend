@@ -111,6 +111,15 @@ export interface DynamicSubmissionOption {
   label: string;
 }
 
+export type DynamicSubmissionNoteType = "info" | "warning" | "destructive" | "success";
+
+export interface DynamicSubmissionNote {
+  type: DynamicSubmissionNoteType;
+  title: string;
+  content: string;
+  position: number;
+}
+
 export interface DynamicSubmissionField {
   id: string;
   key: string;
@@ -129,6 +138,7 @@ export interface DynamicSubmissionForm {
   slug: string;
   title: string;
   description: string;
+  notes?: DynamicSubmissionNote[];
   submission_type: "individual" | "team";
   team_response_policy?: "leader_only" | "any_member";
   drafts_enabled: boolean;

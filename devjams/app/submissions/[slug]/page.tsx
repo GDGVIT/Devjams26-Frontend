@@ -6,9 +6,17 @@ import { PortalNavbar } from "@/components/portal/PortalNavbar";
 import {
   portalApi,
   type DynamicSubmissionField,
+  type DynamicSubmissionNote,
   type DynamicSubmissionPayload,
   type UserSession,
 } from "@/services/portalApi";
+
+const SUBMISSION_NOTE_STYLES: Record<DynamicSubmissionNote["type"], string> = {
+  info: "border-sky-400/30 bg-sky-400/10 text-sky-100",
+  warning: "border-amber-400/30 bg-amber-400/10 text-amber-100",
+  destructive: "border-red-400/30 bg-red-400/10 text-red-100",
+  success: "border-emerald-400/30 bg-emerald-400/10 text-emerald-100",
+};
 
 function answerIsEmpty(value: unknown): boolean {
   if (value === null || value === undefined) return true;
@@ -300,6 +308,20 @@ export default function DynamicSubmissionPage({ params }: { params: Promise<{ sl
             {form.end_at && <span className="rounded-full border border-white/10 px-3 py-1.5">Deadline: {formatDate(form.end_at)}</span>}
           </div>
           {payload.scope?.type === "team" && <p className="mt-4 text-sm text-neutral-300">Team: <strong className="text-white">{payload.scope.team_name}</strong></p>}
+          {form.notes && form.notes.length > 0 && (
+            <div className="mt-5 space-y-3" aria-label="Submission notes">
+              {form.notes.map((note) => (
+                <aside
+                  key={`${note.position}-${note.title}`}
+                  role="note"
+                  className={`rounded-2xl border px-4 py-3 ${SUBMISSION_NOTE_STYLES[note.type]}`}
+                >
+                  <p className="text-sm font-semibold">{note.title}</p>
+                  <p className="mt-1 whitespace-pre-wrap text-sm leading-6 opacity-90">{note.content}</p>
+                </aside>
+              ))}
+            </div>
+          )}
         </div>
 
         {error && <div className="mb-5 rounded-2xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-200">{error}</div>}
@@ -314,7 +336,12 @@ export default function DynamicSubmissionPage({ params }: { params: Promise<{ sl
             <section key={field.id || field.key} className="rounded-3xl border border-white/10 bg-white/[0.04] p-5 sm:p-6">
               <div className="mb-4">
                 <div className="flex items-start justify-between gap-4">
-                  <label htmlFor={field.key} className="text-base font-semibold text-white">{index + 1}. {field.label}{field.required && <span className="ml-1 text-amber-300">*</span>}</label>
+                  <label htmlFor={field.key} className="text-base font-semibold text-white">
+                    {index + 1}. {field.label}
+                    {field.required
+                      ? <span className="ml-1 text-amber-300">*</span>
+                      : <span className="ml-2 text-xs font-normal text-neutral-500">(Optional)</span>}
+                  </label>
                 </div>
                 {field.description && <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-neutral-400">{field.description}</p>}
               </div>
