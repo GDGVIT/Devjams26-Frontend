@@ -22,9 +22,33 @@ export function SponsorCard({ sponsor, index = 0 }: SponsorCardProps) {
           alt=""
           width={138}
           height={146}
-          sizes="68px"
+          sizes="(max-width: 700px) 60px, 80px"
           aria-hidden="true"
           className="sponsor-card__dino"
+        />
+      )}
+
+      {sponsor.topDeco && (
+        <AssetImage
+          src={sponsor.topDeco}
+          alt=""
+          width={68}
+          height={70}
+          sizes="50px"
+          aria-hidden="true"
+          className="sponsor-card__top-deco"
+        />
+      )}
+
+      {sponsor.bottomDeco && (
+        <AssetImage
+          src={sponsor.bottomDeco}
+          alt=""
+          width={136}
+          height={136}
+          sizes="60px"
+          aria-hidden="true"
+          className="sponsor-card__bottom-deco"
         />
       )}
 

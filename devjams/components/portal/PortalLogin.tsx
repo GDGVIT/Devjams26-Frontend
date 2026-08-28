@@ -140,6 +140,12 @@ export function PortalLogin() {
             </motion.button>
           </div>
         </motion.div>
+
+        {error && (
+          <div className="mt-4 px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm text-center">
+            {error}
+          </div>
+        )}
       </div>
 
     </main>
