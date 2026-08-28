@@ -79,6 +79,103 @@ export interface AttendanceCheckin {
   timestamp: string;
 }
 
+export type DynamicSubmissionFieldType =
+  | "short_text"
+  | "long_text"
+  | "phone"
+  | "email"
+  | "url"
+  | "multiple_urls"
+  | "number"
+  | "date"
+  | "time"
+  | "single_choice"
+  | "multiple_choice"
+  | "dropdown"
+  | "boolean"
+  | "linear_scale";
+
+export type DynamicSubmissionStatus =
+  | "draft"
+  | "scheduled"
+  | "open"
+  | "closed"
+  | "archived";
+
+export type DynamicSubmissionResponseStatus =
+  | "draft"
+  | "submitted"
+  | "auto_submitted";
+
+export interface DynamicSubmissionOption {
+  value: string;
+  label: string;
+}
+
+export type DynamicSubmissionNoteType = "info" | "warning" | "destructive" | "success";
+
+export interface DynamicSubmissionNote {
+  type: DynamicSubmissionNoteType;
+  title: string;
+  content: string;
+  position: number;
+}
+
+export interface DynamicSubmissionField {
+  id: string;
+  key: string;
+  type: DynamicSubmissionFieldType;
+  label: string;
+  description?: string;
+  placeholder?: string;
+  required: boolean;
+  options?: DynamicSubmissionOption[];
+  validation?: Record<string, unknown>;
+  position: number;
+}
+
+export interface DynamicSubmissionForm {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  notes?: DynamicSubmissionNote[];
+  submission_type: "individual" | "team";
+  team_response_policy?: "leader_only" | "any_member";
+  drafts_enabled: boolean;
+  auto_submit_drafts_on_deadline: boolean;
+  allow_resubmission: boolean;
+  status: DynamicSubmissionStatus;
+  start_at?: string | null;
+  end_at?: string | null;
+  fields: DynamicSubmissionField[];
+}
+
+export interface DynamicSubmissionResponse {
+  id: string;
+  status: DynamicSubmissionResponseStatus;
+  answers: Record<string, unknown>;
+  missing_required_fields?: string[];
+  submitted_at?: string | null;
+  updated_at?: string;
+  last_saved_by_name?: string;
+}
+
+export interface DynamicSubmissionScope {
+  type: "individual" | "team";
+  team_id?: string;
+  team_name?: string;
+  participant_role?: "leader" | "member";
+}
+
+export interface DynamicSubmissionPayload {
+  form: DynamicSubmissionForm;
+  response: DynamicSubmissionResponse | null;
+  scope?: DynamicSubmissionScope;
+  can_edit: boolean;
+  can_submit: boolean;
+}
+
 export interface BackendTeamMember {
   id?: string;
   name: string;
@@ -613,6 +710,41 @@ export const portalApi = {
       console.warn("fetchAttendanceHistory error:", errMsg);
       return null;
     }
+  },
+
+  async fetchSubmissionForm(slug: string): Promise<DynamicSubmissionPayload> {
+    const encodedSlug = encodeURIComponent(slug.trim());
+    return portalApi.request<DynamicSubmissionPayload>(`/participant/submissions/${encodedSlug}`, {
+      method: "GET",
+    });
+  },
+
+  async saveSubmissionDraft(
+    slug: string,
+    answers: Record<string, unknown>,
+  ): Promise<{ response: DynamicSubmissionResponse }> {
+    const encodedSlug = encodeURIComponent(slug.trim());
+    return portalApi.request<{ response: DynamicSubmissionResponse }>(
+      `/participant/submissions/${encodedSlug}/draft`,
+      {
+        method: "PUT",
+        body: JSON.stringify({ answers }),
+      },
+    );
+  },
+
+  async submitSubmissionResponse(
+    slug: string,
+    answers: Record<string, unknown>,
+  ): Promise<{ response: DynamicSubmissionResponse }> {
+    const encodedSlug = encodeURIComponent(slug.trim());
+    return portalApi.request<{ response: DynamicSubmissionResponse }>(
+      `/participant/submissions/${encodedSlug}/submit`,
+      {
+        method: "POST",
+        body: JSON.stringify({ answers }),
+      },
+    );
   },
 
   // Fetch team from GET /participant/team
