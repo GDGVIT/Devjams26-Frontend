@@ -1183,16 +1183,15 @@ body {
   min-height: 100svh;
   background: #000;
   color: #fff;
-  padding: clamp(56px, 9vw, 104px) 16px clamp(64px, 10vw, 120px);
+  padding: clamp(24px, 3vh, 48px) 16px clamp(32px, 4vh, 60px);
   overflow: hidden;
 }
 
 .sponsors__title {
-  margin: 0 0 clamp(40px, 6vw, 72px);
+  margin: 0 0 clamp(36px, 5vh, 64px);
   font-family: "Google Sans", sans-serif;
   font-weight: 700;
-  /* Spec is 64px; clamped so it does not overflow narrow phones. */
-  font-size: clamp(34px, 8vw, 64px);
+  font-size: clamp(34px, 5.5vw, 64px);
   line-height: 100%;
   letter-spacing: 0;
   text-align: center;
@@ -1204,8 +1203,8 @@ body {
   flex-wrap: wrap;
   align-items: flex-start;
   justify-content: center;
-  gap: clamp(28px, 5vw, 76px);
-  max-width: 1120px;
+  gap: clamp(24px, 3.5vh, 44px) clamp(32px, 4.5vw, 68px);
+  max-width: 1280px;
   margin: 0 auto;
 }
 
@@ -1213,7 +1212,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(14px, 2vw, 22px);
+  gap: clamp(10px, 1.4vh, 16px);
 }
 
 .sponsor-card {
@@ -1221,20 +1220,22 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: clamp(220px, 24vw, 280px);
-  height: clamp(300px, 33vw, 380px);
-  padding: 0 clamp(20px, 2.4vw, 28px);
+  width: clamp(250px, 27vw, 340px);
+  height: clamp(155px, 21vh, 205px);
+  padding: 0 clamp(24px, 2.5vw, 36px);
   border-radius: 24px;
-  /* The Figma export is an SVG rect (#202124, rx 24) plus a backdrop-blur
-     layer. The blur blurs a solid black backdrop, so it contributes nothing
-     visible — and Safari rasterizes foreignObject+backdrop-filter at low
-     resolution, blurring the whole card. A plain CSS background renders the
-     identical card crisp on every browser. */
-  background: #202124;
-  /* overflow stays visible so the dino can sit on the top edge;
-     the bg SVG itself is clipped to the radius */
+  background: transparent;
   overflow: visible;
   isolation: isolate;
+}
+
+.sponsor-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  background: #202124;
+  z-index: 1;
 }
 
 /* Stands upright on the card top edge rather than overlapping the corner:
@@ -1242,22 +1243,47 @@ body {
 .sponsor-card__dino {
   position: absolute;
   bottom: 100%;
-  left: clamp(14px, 2vw, 26px);
-  z-index: 2;
-  width: clamp(34px, 3.2vw, 44px);
+  left: clamp(16px, 2.5vw, 32px);
+  z-index: 3;
+  width: clamp(56px, 5.5vw, 76px);
   height: auto;
   margin-bottom: -2px;
   pointer-events: none;
   user-select: none;
 }
 
+/* Starburst peeking from BEHIND the Platinum card top edge */
+.sponsor-card__top-deco {
+  position: absolute;
+  top: clamp(-24px, -2.4vh, -16px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 0;
+  width: clamp(40px, 3.8vw, 54px);
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Starburst peeking from BEHIND the Silver card bottom-left corner */
+.sponsor-card__bottom-deco {
+  position: absolute;
+  bottom: clamp(-20px, -2vh, -14px);
+  left: clamp(-24px, -2.2vw, -16px);
+  z-index: 0;
+  width: clamp(50px, 4.8vw, 68px);
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+}
+
 .sponsor-card__logo {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: block;
   width: 100%;
   height: auto;
-  max-height: 44%;
+  max-height: 60%;
   object-fit: contain;
 }
 
@@ -1272,10 +1298,7 @@ body {
   margin: 0;
   font-family: "Google Sans", sans-serif;
   font-weight: 700;
-  /* The 58.43px spec was sized against GOLD, four characters. DIAMOND is seven
-     and ran 290px wide against a 280px card — measured — so the ceiling drops
-     to fit the longest label with margin to spare. */
-  font-size: clamp(28px, 6vw, 46px);
+  font-size: clamp(28px, 4.2vw, 58px);
   line-height: 100%;
   letter-spacing: 0;
   text-align: center;
@@ -1286,28 +1309,35 @@ body {
    the first layer paints on top, so keeping the white would hide the gradient
    entirely — it is Figma's base fill, not part of the visible treatment. */
 .sponsor-tier--diamond {
-  background: linear-gradient(327.19deg, #06a0ff -83.2%, #003ce1 93.53%);
+  background: linear-gradient(180deg, #06a0ff 0%, #003ce1 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.sponsor-tier--platinum {
+  background: linear-gradient(180deg, #dde6ff 0%, #56a5ff 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
 .sponsor-tier--gold {
-  background: linear-gradient(126.45deg, #efef46 28.81%, #b77d00 118.45%);
+  background: linear-gradient(180deg, #efef46 0%, #b77d00 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
 .sponsor-tier--silver {
-  background: linear-gradient(126.45deg, #ffffff 28.81%, #8b8b8b 118.45%);
+  background: linear-gradient(180deg, #ffffff 0%, #8b8b8b 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
 .sponsor-tier--bronze {
-  background: linear-gradient(126.45deg, #f2a25c 28.81%, #a4531b 118.45%);
+  background: linear-gradient(180deg, #f2a25c 0%, #a4531b 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -1332,8 +1362,7 @@ body {
   width: 100%;
 }
 
-/* Decorative starburst around the sponsors heading. The wrapper keeps it
-   unclipped, so the original top-left placement now renders whole. */
+/* Decorative starburst around the sponsors heading. Placed between DevJams and heading. */
 .sponsors__sun {
   position: absolute;
   height: auto;
@@ -1342,27 +1371,46 @@ body {
 }
 
 .sponsors__sun--lead {
-  top: clamp(-22px, -1.4vw, 4px);
-  left: clamp(0px, 5vw, 72px);
-  width: clamp(104px, 10vw, 150px);
+  top: clamp(-28px, -2vw, -8px);
+  left: clamp(20%, 25vw, 30%);
+  width: clamp(96px, 9vw, 136px);
 }
 
-/* Scatter of themed svgs (android, cloud, ded, spons-dino, sponsc1/2,
-   umbrella, maps). Position and --deco-rot come inline from
-   SponsorDecorations.tsx, which re-rolls them on every page load; the anchor
-   is the deco's centre. */
+/* Fixed decorative assets positioned according to design */
 .sponsors__deco {
   position: absolute;
-  z-index: 0;
-  height: auto;
-  --deco-s: 1;
-  transform: translate(-50%, -50%) rotate(var(--deco-rot, 0deg))
-    scale(var(--deco-s));
   pointer-events: none;
   user-select: none;
-  /* The scatter mounts client-side, a beat after first paint; fade it in so
-     the arrival reads as intentional rather than a pop. */
+  z-index: 0;
   animation: sponsors-deco-in 0.6s ease-out both;
+}
+
+.sponsors__deco--ded {
+  top: clamp(32px, 7vh, 80px);
+  right: clamp(14%, 18vw, 24%);
+  width: clamp(46px, 4.4vw, 66px);
+  height: auto;
+}
+
+.sponsors__deco--cloud {
+  top: clamp(62%, 66vh, 72%);
+  left: clamp(12px, 3.5vw, 56px);
+  width: clamp(54px, 5.2vw, 80px);
+  height: auto;
+}
+
+.sponsors__deco--antigravity {
+  top: clamp(62%, 66vh, 72%);
+  right: clamp(12px, 3.5vw, 56px);
+  width: clamp(52px, 5.2vw, 78px);
+  height: auto;
+}
+
+.sponsors__deco--android {
+  bottom: 0px;
+  right: clamp(12%, 16vw, 22%);
+  width: clamp(44px, 4.2vw, 62px);
+  height: auto;
 }
 
 @keyframes sponsors-deco-in {
@@ -1381,36 +1429,58 @@ body {
   z-index: 1;
 }
 
-/* Both starbursts crowd the heading on a phone, where the section is much
-   narrower — keep the large one only. */
 @media (max-width: 700px) {
-  /* Original top-left corner placement, fully inside the viewport. */
   .sponsors__sun--lead {
-    top: -8px;
-    left: 0;
-    width: 104px;
+    top: -12px;
+    left: 10%;
+    width: 80px;
   }
 
-  /* Shrink the scatter so it stays airy on a narrow screen. */
-  .sponsors__deco {
-    --deco-s: 0.68;
+  .sponsors__deco--ded {
+    top: 24px;
+    right: 8%;
+    width: 38px;
+  }
+
+  .sponsors__deco--cloud {
+    top: 70%;
+    left: 8px;
+    width: 44px;
+  }
+
+  .sponsors__deco--antigravity {
+    top: 70%;
+    right: 8px;
+    width: 44px;
+  }
+
+  .sponsors__deco--android {
+    bottom: -6px;
+    right: 10%;
+    width: 36px;
   }
 
   /* Extra clearance between the heading and the cards on phones. */
   .sponsors__title {
-    margin-bottom: 56px;
+    margin-bottom: 28px;
+    font-size: clamp(28px, 7vw, 38px);
   }
 
   /* Wider than the 220px floor so the card carries the section instead of
      looking stranded in the middle of a narrow screen. */
   .sponsor-card {
-    width: min(62vw, 262px);
-    height: min(84vw, 354px);
+    width: min(76vw, 300px);
+    height: min(44vw, 170px);
+    border-radius: 24px;
+  }
+
+  .sponsor-tier {
+    font-size: clamp(20px, 5.5vw, 32px);
   }
 
   /* The section is mostly empty below the tier label at this width. */
   .sponsors {
-    padding-bottom: 64px;
+    padding: 36px 16px;
   }
 }
 
