@@ -7,6 +7,7 @@ import { motion } from "../../components/gsap-motion";
 import { GDGLockup } from "@/components/portal/GDGLockup";
 import {
   portalApi,
+  portalLoginPath,
   type AttendanceCheckin,
   type AttendanceStatus,
   type UserSession,
@@ -33,7 +34,7 @@ export default function ProfilePage() {
     const loadProfile = async () => {
       const token = portalApi.getToken();
       if (!token && !portalApi.getSession()) {
-        router.push("/portal");
+        router.push(portalLoginPath(`${window.location.pathname}${window.location.search}`));
         return;
       }
 

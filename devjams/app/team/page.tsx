@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "../../components/gsap-motion";
 import { GDGLockup } from "@/components/portal/GDGLockup";
-import { portalApi, type BackendTeamMember } from "@/services/portalApi";
+import { portalApi, portalLoginPath, type BackendTeamMember } from "@/services/portalApi";
 import { memberActionFor, shouldWarnSubmittedIdeaRemoval } from "../team-member-actions";
 
 export default function TeamPage() {
@@ -33,7 +33,7 @@ export default function TeamPage() {
     const loadTeamData = async () => {
       const token = portalApi.getToken();
       if (!token && !portalApi.getSession()) {
-        router.push("/portal");
+        router.push(portalLoginPath(`${window.location.pathname}${window.location.search}`));
         return;
       }
 

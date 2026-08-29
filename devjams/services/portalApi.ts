@@ -373,7 +373,20 @@ const STORAGE_KEY_SESSION = "devjams26_portal_session";
 const STORAGE_KEY_ONBOARDING = "devjams26_portal_onboarding";
 const STORAGE_KEY_SUBMISSION = "devjams26_portal_submission";
 const STORAGE_KEY_TEAM = "devjams26_portal_team";
+const STORAGE_KEY_LOGIN_REDIRECT = "devjams26_login_redirect";
 const pendingRemovedMemberIds = new Set<string>();
+function safeLoginRedirect(value?: string | null): string | null {
+  if (!value || !value.startsWith("/") || value.startsWith("//") || value.includes("\\")) {
+    return null;
+  }
+  return value;
+}
+
+export function portalLoginPath(returnTo?: string): string {
+  const safePath = safeLoginRedirect(returnTo);
+  return safePath ? `/portal?redirect=${encodeURIComponent(safePath)}` : "/portal";
+}
+
 
 async function persistIdea(
   idea: BackendTeamIdea,
@@ -446,6 +459,31 @@ export const portalApi = {
   clearToken(): void {
     if (typeof window !== "undefined") {
       localStorage.removeItem(STORAGE_KEY_TOKEN);
+    }
+  },
+
+  rememberLoginRedirect(returnTo: string): void {
+    if (typeof window === "undefined") return;
+    const safePath = safeLoginRedirect(returnTo);
+    if (safePath) {
+      localStorage.setItem(STORAGE_KEY_LOGIN_REDIRECT, safePath);
+    } else {
+      localStorage.removeItem(STORAGE_KEY_LOGIN_REDIRECT);
+    }
+  },
+
+  getLoginRedirect(): string | null {
+    if (typeof window === "undefined") return null;
+    const safePath = safeLoginRedirect(localStorage.getItem(STORAGE_KEY_LOGIN_REDIRECT));
+    if (!safePath) {
+      localStorage.removeItem(STORAGE_KEY_LOGIN_REDIRECT);
+    }
+    return safePath;
+  },
+
+  clearLoginRedirect(): void {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(STORAGE_KEY_LOGIN_REDIRECT);
     }
   },
 
