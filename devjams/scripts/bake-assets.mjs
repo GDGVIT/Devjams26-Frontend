@@ -55,6 +55,19 @@ const TARGETS = [
   { src: "reka-spons.svg", out: "reka-spons.png", width: 480, height: 117 },
   // Sponsors decoration: 92x63 viewBox, scattered at ~66px wide.
   { src: "ded.svg", out: "ded.png", width: 184, height: 126 },
+  // Bank of India: 1043x533 viewBox, shown at ~240px wide.
+  { src: "bank-of-india.svg", out: "bank-of-india.png", width: 522, height: 267 },
+  // Bank of Baroda: 3780x980 viewBox, shown at ~240px wide.
+  { src: "bank-of-baroda.svg", out: "bank-of-baroda.png", width: 600, height: 156 },
+  // Exasol: 1693x405 viewBox, shown at ~240px wide.
+  { src: "exasol-light.svg", out: "exasol-light.png", width: 500, height: 120 },
+  // AEMS / bronze-logo: 259x106 viewBox, shown at ~240px wide.
+  { src: "bronze-logo.svg", out: "bronze-logo.png", width: 518, height: 212 },
+  // Antigravity logo: 299x276 viewBox, shown at ~80px wide.
+  { src: "antigravity.svg", out: "antigravity.png", width: 299, height: 276 },
+  // Sponsor starburst decos: 68x70 viewBox.
+  { src: "sponsc1.svg", out: "sponsc1.png", width: 136, height: 140 },
+  { src: "sponsc2.svg", out: "sponsc2.png", width: 136, height: 140 },
 ];
 
 const CHROME_CANDIDATES = [

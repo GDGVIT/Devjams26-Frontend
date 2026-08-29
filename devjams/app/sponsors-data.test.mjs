@@ -30,9 +30,28 @@ test("sponsors list contains all required sponsors with correct tiers in order",
 test("sponsor logo asset files exist in public directory", () => {
   const boiLogo = path.join(rootDir, "public", "assets", "bank-of-india.svg");
   const bobLogo = path.join(rootDir, "public", "assets", "bank-of-baroda.svg");
+  const exasolLogo = path.join(rootDir, "public", "assets", "exasol-light.svg");
+  const aemsLogo = path.join(rootDir, "public", "assets", "bronze-logo.svg");
 
   assert.ok(fs.existsSync(boiLogo), "bank-of-india.svg exists");
   assert.ok(fs.existsSync(bobLogo), "bank-of-baroda.svg exists");
+  assert.ok(fs.existsSync(exasolLogo), "exasol-light.svg exists");
+  assert.ok(fs.existsSync(aemsLogo), "bronze-logo.svg exists");
+});
+
+test("all sponsor logos are cached/baked as PNGs", () => {
+  const bakedDir = path.join(rootDir, "public", "assets", "baked");
+  const logos = [
+    "reka-spons.png",
+    "bank-of-india.png",
+    "exasol-light.png",
+    "bank-of-baroda.png",
+    "bronze-logo.png",
+  ];
+
+  for (const file of logos) {
+    assert.ok(fs.existsSync(path.join(bakedDir, file)), `Baked file ${file} exists`);
+  }
 });
 
 test("globals.css has platinum tier styling", () => {

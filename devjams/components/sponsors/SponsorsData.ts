@@ -43,7 +43,7 @@ export const SPONSORS: Sponsor[] = [
     id: "exasol",
     tier: "gold",
     name: "Exasol",
-    logo: "/exasol-light.svg",
+    logo: "/assets/exasol-light.svg",
     url: "https://www.exasol.com/",
   },
   {
@@ -58,7 +58,7 @@ export const SPONSORS: Sponsor[] = [
     id: "aems",
     tier: "bronze",
     name: "AEMS",
-    logo: "/bronze-logo.svg",
+    logo: "/assets/bronze-logo.svg",
     url: "https://www.aemsinfra.com/",
   },
 ];

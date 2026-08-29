@@ -31,10 +31,17 @@ const BAKED_ASSETS = new Set([
   "ded",
   "logo/triangle",
   "logo/circle",
+  "bank-of-india",
+  "bank-of-baroda",
+  "exasol-light",
+  "bronze-logo",
+  "antigravity",
+  "sponsc1",
+  "sponsc2",
 ]);
 
 function resolveSrc(src: string) {
-  const name = src.replace(/^\/?assets\//, "").replace(/\.svg$/, "");
+  const name = src.replace(/^\/?(assets\/)?/, "").replace(/\.svg$/, "");
   return BAKED_ASSETS.has(name) ? `/assets/baked/${name}.png` : src;
 }
 
