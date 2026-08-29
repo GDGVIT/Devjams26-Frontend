@@ -8,12 +8,12 @@ import { getCountries, getCountryCallingCode, type CountryCode } from "libphonen
 import { GDGLockup } from "@/components/portal/GDGLockup";
 import {
   portalApi,
+  portalLoginPath,
   type DynamicSubmissionField,
   type DynamicSubmissionNote,
   type DynamicSubmissionPayload,
   type UserSession,
 } from "@/services/portalApi";
-
 const SUBMISSION_NOTE_STYLES: Record<DynamicSubmissionNote["type"], string> = {
   info: "border-sky-400/30 bg-sky-400/10 text-sky-100",
   warning: "border-amber-400/30 bg-amber-400/10 text-amber-100",
@@ -416,10 +416,9 @@ export default function DynamicSubmissionPage({ params }: { params: Promise<{ sl
 
   useEffect(() => {
     if (!session || !portalApi.getToken()) {
-      router.push("/portal");
+      router.push(portalLoginPath(`${window.location.pathname}${window.location.search}`));
       return;
     }
-
     portalApi.fetchSubmissionForm(slug)
       .then((nextPayload) => {
         setPayload(nextPayload);

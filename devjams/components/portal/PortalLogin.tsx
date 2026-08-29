@@ -20,6 +20,10 @@ export function PortalLogin() {
 
   useEffect(() => {
     const parameters = new URLSearchParams(window.location.search);
+    const requestedRedirect = parameters.get("redirect");
+    if (requestedRedirect) {
+      portalApi.rememberLoginRedirect(requestedRedirect);
+    }
     const oauthCode = parameters.get("oauth_code");
     const authError = parameters.get("auth_error");
 
@@ -38,7 +42,11 @@ export function PortalLogin() {
       void Promise.resolve().then(() => setLoading(true));
       portalApi
         .completeGoogleLogin(oauthCode)
-        .then((session) => router.replace(nextPortalRoute(session)))
+        .then((session) => {
+          const redirect = portalApi.getLoginRedirect();
+          portalApi.clearLoginRedirect();
+          router.replace(redirect ?? nextPortalRoute(session));
+        })
         .catch((reason: unknown) => {
           setError(reason instanceof Error ? reason.message : "Google sign-in could not be completed.");
           setLoading(false);
@@ -50,7 +58,11 @@ export function PortalLogin() {
       if (!portalApi.getToken()) return;
       try {
         const session = await portalApi.fetchMe();
-        if (session) router.replace(nextPortalRoute(session));
+        if (session) {
+          const redirect = portalApi.getLoginRedirect();
+          portalApi.clearLoginRedirect();
+          router.replace(redirect ?? nextPortalRoute(session));
+        }
       } catch {
         portalApi.logout();
       }
@@ -60,6 +72,10 @@ export function PortalLogin() {
 
   const beginGoogleLogin = (type: "internal" | "external") => {
     setError("");
+    const requestedRedirect = new URLSearchParams(window.location.search).get("redirect");
+    if (requestedRedirect) {
+      portalApi.rememberLoginRedirect(requestedRedirect);
+    }
     setPendingType(type);
     setLoading(true);
     window.location.assign(portalApi.googleOAuthStartUrl(type));
